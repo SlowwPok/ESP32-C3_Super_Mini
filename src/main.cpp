@@ -43,10 +43,13 @@ LGFX lcd;
 
 void setup()
 {
-    
-
   lcd.init();
+
   lcd.fillScreen(TFT_RED);
+  delay(800);
+  lcd.fillScreen(TFT_GREEN);
+  delay(800);
+  lcd.fillScreen(TFT_BLUE);
 
   delay(500);
 

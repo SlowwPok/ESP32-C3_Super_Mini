@@ -13,7 +13,7 @@ constexpr RGB COLOR_YELLOW_LIGHT            = {255, 220, 0};   //RGB(255, 220, 0
 constexpr RGB COLOR_GREEN_LIME              = {220, 255, 0};   //RGB(220, 255, 0)
 constexpr RGB COLOR_GREEN_BRIGHT            = {160, 255, 0};   //RGB(160, 255, 0)
 constexpr RGB COLOR_GREEN_ELECTRIC          = {80, 255, 0};    //RGB(80, 255, 0)
-constexpr RGB COLOR_GREEN                   = {0, 255, 0};
+constexpr RGB COLOR_GREEN                   = {0, 255, 0};     //RGB(0, 255, 0)
 
 // --- Colors --- CYAN -> MAGENTA                           //in mode 2|2-strip - per pixel gradient
 constexpr RGB COLOR_CYAN                    = {0, 255, 255};   //RGB(0, 255, 255)
