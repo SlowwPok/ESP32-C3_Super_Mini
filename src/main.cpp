@@ -28,7 +28,7 @@ public:
     pcfg.panel_width   = 170;
     pcfg.panel_height  = 320;
 
-    pcfg.offset_x = 35;
+    pcfg.offset_x = 35; 
     pcfg.offset_y = 0;
 
     pcfg.invert = true;
@@ -41,18 +41,59 @@ public:
 
 LGFX lcd;
 
+void drawGrid() {
+  int w = lcd.width();
+  int h = lcd.height();
+
+  lcd.fillScreen(TFT_BLACK);
+
+  // грід
+  for (int x = 0; x <= w; x += 10) {
+    lcd.drawLine(x, 0, x, h, TFT_DARKGREY);
+  }
+
+  for (int y = 0; y <= h; y += 10) {
+    lcd.drawLine(0, y, w, y, TFT_DARKGREY);
+  }
+
+  // рамка
+  lcd.drawRect(0, 0, w, h, TFT_WHITE);
+
+  // логічний 0,0
+  lcd.setTextColor(TFT_YELLOW);
+  lcd.setTextSize(1);
+  lcd.setCursor(5, 5);
+  lcd.print("0,0");
+
+  // центр екрана
+  int cx = w / 2;
+  int cy = h / 2;
+  int s  = 16; // розмір квадрата
+
+  // центральний
+  lcd.fillRect(cx - s/2, cy - s/2, s, s, TFT_WHITE);
+
+  // ліво
+  lcd.fillRect(cx - s*2, cy - s/2, s, s, TFT_RED);
+
+  // право
+  lcd.fillRect(cx + s, cy - s/2, s, s, TFT_GREEN);
+
+  // верх
+  lcd.fillRect(cx - s/2, cy - s*2, s, s, TFT_BLUE);
+
+  // низ
+  lcd.fillRect(cx - s/2, cy + s, s, s, TFT_MAGENTA);
+}
+
 void setup()
 {
   lcd.init();
+  lcd.setRotation(3);
+  drawGrid();
 
-  lcd.fillScreen(TFT_RED);
-  delay(800);
-  lcd.fillScreen(TFT_GREEN);
-  delay(800);
-  lcd.fillScreen(TFT_BLUE);
 
-  delay(500);
-
+  // Initialize the RGB strip
   RGB_strip_Init();
 }
 
