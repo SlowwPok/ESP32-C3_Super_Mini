@@ -1,5 +1,5 @@
 #pragma once
-#include "rgb_types.h"
+#include "rgb_strip/rgb_types.h"
 
 /* =========================================================
    БАЗОВА ПАЛІТРА КОЛЬОРІВ

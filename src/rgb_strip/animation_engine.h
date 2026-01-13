@@ -1,7 +1,7 @@
 #pragma once
 #include <Arduino.h>
-#include <rgb_strip.h>
-#include <rgb_types.h>
+#include "rgb_strip/rgb_strip.h"
+#include "rgb_strip/rgb_types.h"
 
 /*
   AnimationState — ОКРЕМИЙ СТАН ДЛЯ КОЖНОГО РЕЖИМУ

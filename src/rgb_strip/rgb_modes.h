@@ -1,6 +1,6 @@
 #pragma once
-#include <rgb_strip.h>
-#include <animation_engine.h>
+#include "rgb_strip/rgb_strip.h"
+#include "rgb_strip/animation_engine.h"
 
 /**
  * Повертає загальну кількість доступних режимів освітлення.

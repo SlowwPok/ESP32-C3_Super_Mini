@@ -1,8 +1,8 @@
 #include <Arduino.h>
 #include <Adafruit_NeoPixel.h>
-#include "rgb_strip.h"
-#include "rgb_modes.h"
-#include "animation_engine.h"
+#include "rgb_strip/rgb_strip.h"
+#include "rgb_strip/rgb_modes.h"
+#include "rgb_strip/animation_engine.h"
 
 /* =========================================================
    ВНУТРІШНІ ТИПИ ДАНИХ

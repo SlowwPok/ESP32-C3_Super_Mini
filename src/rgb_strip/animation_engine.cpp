@@ -1,4 +1,4 @@
-#include "animation_engine.h"
+#include "rgb_strip/animation_engine.h"
 
 /* =========================================================
    ВНУТРІШНІ ДОПОМІЖНІ ФУНКЦІЇ

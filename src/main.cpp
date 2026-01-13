@@ -1,6 +1,6 @@
 #include <Arduino.h>
-#include "rgb_strip.h"
-#include "display_LovyanGFX.h"
+#include "rgb_strip/rgb_strip.h"
+#include "display/display_LovyanGFX.h"
 
 
 void setup()

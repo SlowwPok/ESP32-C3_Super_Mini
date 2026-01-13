@@ -1,8 +1,8 @@
 #pragma once
 #include <Arduino.h>
 #include <Adafruit_NeoPixel.h>
-#include <rgb_types.h>
-#include <animation_engine.h>
+#include "rgb_strip/rgb_types.h"
+#include "rgb_strip/animation_engine.h"
 
 /* =========================================================
    КОНФІГУРАЦІЯ ПРОЕКТУ
