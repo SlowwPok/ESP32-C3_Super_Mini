@@ -35,7 +35,7 @@ static const RGBMode modes[] = {
         .type = MODE_SOLID,          // Тип режиму: суцільний колір
         .brightness = 18,            // Яскравість: 18% (дуже низька)
         .solid = {
-            COLOR_BROWN_DARK,           /
+            COLOR_BROWN_DARK,           
             COLOR_BROWN_DARK            // Альтернативний колір (той самий)
         }
     },
