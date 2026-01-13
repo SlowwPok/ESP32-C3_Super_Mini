@@ -5,16 +5,6 @@
    БАЗОВА ПАЛІТРА КОЛЬОРІВ
    ========================================================= */
 
-// ---- Cyberpunk 2077 UI Colors ----
-// first COLOR_BLACK
-constexpr RGB COLOR_NEON_MAGENTA            = {200, 0, 255};
-constexpr RGB COLOR_PINK_SOFT               = {255, 0, 180};
-constexpr RGB COLOR_PINK_WARM               = {255, 0, 140};
-
-constexpr RGB COLOR_CYAN_ELECTRIC           = {0, 255, 220};
-constexpr RGB COLOR_CYAN_SOFT               = {0, 255, 180};
-constexpr RGB COLOR_BLUE_NEON               = {0, 200, 255};
-
 // --- Colors --- RED -> GREEN
 constexpr RGB COLOR_RED                     = {255, 0, 0};
 constexpr RGB COLOR_ORANGE_DEEP             = {255, 80, 0};
