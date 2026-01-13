@@ -40,7 +40,8 @@ static bool ledsEnabled = false;
 static uint8_t currentMode = 0;
 
 // Стани анімацій для кожного режиму (масив для всіх можливих режимів)
-static AnimationState animStates[16];
+// [mode][0 = strip1, 1 = strip2]
+static AnimationState animStates[16][2];
 
 /* =========================================================
    ВИБІР РЕЖИМУ ОСВІТЛЕННЯ
@@ -129,6 +130,19 @@ static void renderMode(const RGBMode& m)
     strip_1.setBrightness(m.brightness);
     strip_2.setBrightness(m.brightness);
 
+        if (m.type == MODE_ANIMATED)
+        {
+            if (m.animated.anim.syncStrips)
+            {
+                Animation_Update(animStates[currentMode][0], m.animated.anim);
+            }
+            else
+            {
+                Animation_Update(animStates[currentMode][0], m.animated.anim);
+                Animation_Update(animStates[currentMode][1], m.animated.anim);
+            }
+        }
+
     // Прохід по всіх пікселях (від 0 до NUMPIXELS-1)
     for (int i = 0; i < NUMPIXELS; i++)
     {
@@ -155,17 +169,28 @@ static void renderMode(const RGBMode& m)
         {
             // Анімований режим: використовує базовий режим + анімацію
             const RGBMode& base = RGB_modes_Get(m.animated.baseModeIndex); // Базовий режим
-            AnimationState& state = animStates[currentMode];                // Стан анімації
 
-            Animation_Update(state, m.animated.anim); // Оновлення стану анімації
+            if (base.type != MODE_PER_PIXEL)
+            {
+                //захист від помилки конфігурації
+                c1 = {0, 0, 0};
+                c2 = {0, 0, 0};
+            }
+            else
+            {
+                AnimationState& s1 = animStates[currentMode][0];
+                AnimationState& s2 = m.animated.anim.syncStrips
+                    ? animStates[currentMode][0]
+                    : animStates[currentMode][1];
 
-            // Отримання базових кольорів для поточного пікселя
-            RGB base1 = base.perPixel.strip1[i];
-            RGB base2 = base.perPixel.strip2[i];
+                // Отримання базових кольорів для поточного пікселя
+                RGB base1 = base.perPixel.strip1[i];
+                RGB base2 = base.perPixel.strip2[i];
 
-            // Застосування анімації до базових кольорів
-            c1 = Animation_Apply(state, m.animated.anim, base1, i);
-            c2 = Animation_Apply(state, m.animated.anim, base2, i);
+                // Застосування анімації до базових кольорів
+                c1 = Animation_Apply(s1, m.animated.anim, base1, i);
+                c2 = Animation_Apply(s2, m.animated.anim, base2, i);
+            }
         }
 
         // Встановлення кольорів на пікселях смуг
@@ -198,7 +223,8 @@ void RGB_strip_Init()
     // Ініціалізація станів анімацій для всіх режимів
     for (uint8_t i = 0; i < RGB_modes_Count(); i++)
     {
-        Animation_Init(animStates[i]);
+        Animation_Init(animStates[i][0]);
+        Animation_Init(animStates[i][1]);
     }
 
     // Початкове відображення поточного режиму

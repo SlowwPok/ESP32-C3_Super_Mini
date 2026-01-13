@@ -31,6 +31,24 @@ static RGB dim(const RGB& c, uint8_t div)
     return RGB{ uint8_t(c.r / div), uint8_t(c.g / div), uint8_t(c.b / div) };
 }
 
+/**
+ * Зробити колір контрастніше бустанути.
+ * Збільшує яскравість кольору для створення ефекту контрасту.
+ *
+ * @param c Вхідний колір RGB
+ * @param strength Множник яскравості (чим більше, тим яскравіше)
+ * @return RGB Яскравіший колір
+ */
+static RGB boost(const RGB& c, uint8_t strength)
+{
+  return RGB{
+    clampAdd(c.r, random(strength, strength * 2)),
+    clampAdd(c.g, random(strength, strength * 2)),
+    clampAdd(c.b, random(strength, strength * 2))
+  };
+}
+
+
 /* =========================================================
    ІНІЦІАЛІЗАЦІЯ АНІМАЦІЙ
    ========================================================= */
@@ -137,16 +155,12 @@ RGB Animation_Apply(const AnimationState& s, const AnimationParams& p, const RGB
             // Якщо гліч активний і поточний піксель у зоні глічу
             if (s.glitchActive && i >= s.glitchPixel && i < s.glitchPixel + s.glitchCount)
             {
-                // Короткий яскравий спалах: додавання випадкової яскравості
-                return RGB{
-                    clampAdd(base.r, random(20, 60)), // Додавання 20-60 до червоного
-                    clampAdd(base.g, random(20, 60)), // Додавання 20-60 до зеленого
-                    clampAdd(base.b, random(20, 60))  // Додавання 20-60 до синього
-                };
+                // КОНТРАСТНИЙ КОЛЬОРОВИЙ СПАЛАХ
+                return boost(base, p.intensity * 15);
             }
 
-            // Фон приглушений для створення контрасту з глічем
-            return dim(base, 4);
+            // чоний фон
+            return RGB(0, 0, 0);
         }
 
         // Якщо тип анімації невідомий, повертаємо базовий колір без змін
