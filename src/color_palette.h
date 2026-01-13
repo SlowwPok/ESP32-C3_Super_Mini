@@ -5,7 +5,7 @@
    БАЗОВА ПАЛІТРА КОЛЬОРІВ
    ========================================================= */
 
-// --- Colors --- RED -> GREEN
+// --- Colors --- RED -> GREEN                              //in mode 2|1-strip - per pixel gradient
 constexpr RGB COLOR_RED                     = {255, 0, 0};
 constexpr RGB COLOR_ORANGE_DEEP             = {255, 80, 0};
 constexpr RGB COLOR_ORANGE_VIVID            = {255, 160, 0};
@@ -15,7 +15,7 @@ constexpr RGB COLOR_GREEN_BRIGHT            = {160, 255, 0};
 constexpr RGB COLOR_GREEN_ELECTRIC          = {80, 255, 0};
 constexpr RGB COLOR_GREEN                   = {0, 255, 0};
 
-// --- Colors --- CYAN -> MAGENTA
+// --- Colors --- CYAN -> MAGENTA                           //in mode 2|2-strip - per pixel gradient
 constexpr RGB COLOR_CYAN                    = {0, 255, 255};
 constexpr RGB COLOR_CYAN_BRIGHT             = {0, 180, 255};
 constexpr RGB COLOR_BLUE_DEEP               = {0, 120, 255};
@@ -26,8 +26,8 @@ constexpr RGB COLOR_PURPLE_DEEP             = {120, 0, 255};
 constexpr RGB COLOR_MAGENTA                 = {180, 0, 255};
 
 // ---- Warm ----
-constexpr RGB COLOR_AMBER                   = {255, 126, 0}; 
-constexpr RGB COLOR_BROWN_DARK              = {60, 40, 25}; //192D3C
+constexpr RGB COLOR_AMBER                   = {255, 126, 0}; //in mode 0 - warm evening
+constexpr RGB COLOR_BROWN_DARK              = {60, 40, 25};  //in mode 1 - night
 
 // ---- Utility ----
 constexpr RGB COLOR_BLACK                   = {0, 0, 0};
