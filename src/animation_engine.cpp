@@ -160,7 +160,7 @@ RGB Animation_Apply(const AnimationState& s, const AnimationParams& p, const RGB
             }
 
             // чоний фон
-            return RGB(0, 0, 0);
+            return RGB{0, 0, 0};
         }
 
         // Якщо тип анімації невідомий, повертаємо базовий колір без змін
