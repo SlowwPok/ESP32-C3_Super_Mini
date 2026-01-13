@@ -107,12 +107,12 @@ void Animation_Update(AnimationState& s, const AnimationParams& p)
         }
 
         // Випадковий старт нового глічу (~12% шанс на кожному кроці)
-        if (!s.glitchActive && random(100) < 12)
+        if (!s.glitchActive && random(100) < 15)
         {
             s.glitchActive = true;
             s.glitchPixel = random(NUMPIXELS);         // Випадковий піксель для початку глічу
-            s.glitchCount = random(1, 4);              // 1-3 пікселі будуть у глічі
-            s.glitchUntil = now + random(40, 120);     // Тривалість глічу: 40-120 мс
+            s.glitchCount = random(1, 2);              // 1-3 пікселі будуть у глічі
+            s.glitchUntil = now + random(50, 100);     // Тривалість глічу: 40-120 мс
         }
     }
 }
@@ -156,7 +156,7 @@ RGB Animation_Apply(const AnimationState& s, const AnimationParams& p, const RGB
             if (s.glitchActive && i >= s.glitchPixel && i < s.glitchPixel + s.glitchCount)
             {
                 // КОНТРАСТНИЙ КОЛЬОРОВИЙ СПАЛАХ
-                return boost(base, p.intensity * 15);
+                return boost(base, p.intensity * 1);
             }
 
             // чоний фон
