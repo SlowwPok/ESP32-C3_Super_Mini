@@ -7,13 +7,13 @@
 
 // ---- Cyberpunk 2077 UI Colors ----
 // first COLOR_BLACK
-constexpr RGB COLOR_NEON_MAGENTA  = {200, 0, 255};
-constexpr RGB COLOR_PINK_SOFT     = {255, 0, 180};
-constexpr RGB COLOR_PINK_WARM     = {255, 0, 140};
+constexpr RGB COLOR_NEON_MAGENTA            = {200, 0, 255};
+constexpr RGB COLOR_PINK_SOFT               = {255, 0, 180};
+constexpr RGB COLOR_PINK_WARM               = {255, 0, 140};
 
-constexpr RGB COLOR_CYAN_ELECTRIC = {0, 255, 220};
-constexpr RGB COLOR_CYAN_SOFT     = {0, 255, 180};
-constexpr RGB COLOR_BLUE_NEON     = {0, 200, 255};
+constexpr RGB COLOR_CYAN_ELECTRIC           = {0, 255, 220};
+constexpr RGB COLOR_CYAN_SOFT               = {0, 255, 180};
+constexpr RGB COLOR_BLUE_NEON               = {0, 200, 255};
 
 // --- Colors --- RED -> GREEN
 constexpr RGB COLOR_RED                     = {255, 0, 0};
@@ -33,18 +33,13 @@ constexpr RGB COLOR_BLUE_DARK               = {0, 60, 255};
 constexpr RGB COLOR_BLUE                    = {0, 0, 255};
 constexpr RGB COLOR_PURPLE_DARK             = {60, 0, 255};
 constexpr RGB COLOR_PURPLE_DEEP             = {120, 0, 255};
-
-
-
-
-
 constexpr RGB COLOR_MAGENTA                 = {180, 0, 255};
 
 // ---- Warm ----
-constexpr RGB COLOR_ORANGE         = {255, 126, 0}; //FF7E00
-constexpr RGB COLOR_BLUE_WARM      = {60, 40, 25}; //192D3C
+constexpr RGB COLOR_AMBER                   = {255, 126, 0}; 
+constexpr RGB COLOR_BROWN_DARK              = {60, 40, 25}; //192D3C
 
 // ---- Utility ----
-constexpr RGB COLOR_BLACK         = {0, 0, 0};
-constexpr RGB COLOR_WHITE         = {255, 255, 255};
+constexpr RGB COLOR_BLACK                   = {0, 0, 0};
+constexpr RGB COLOR_WHITE                   = {255, 255, 255};
 
