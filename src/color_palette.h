@@ -25,7 +25,20 @@ constexpr RGB COLOR_GREEN_LIGHT             = {160, 255, 0};
 constexpr RGB COLOR_GREEN_ELECTRIC          = {80, 255, 0};
 constexpr RGB COLOR_GREEN                   = {0, 255, 0};
 
-// --- Colors --- RED -> GREEN
+// --- Colors --- CYAN -> MAGENTA
+constexpr RGB COLOR_CYAN                    = {0, 255, 255};
+constexpr RGB COLOR_CYAN_BRIGHT             = {0, 180, 255};
+constexpr RGB COLOR_BLUE_DEEP               = {0, 120, 255};
+constexpr RGB COLOR_BLUE_DARK               = {0, 60, 255};
+constexpr RGB COLOR_BLUE                    = {0, 0, 255};
+constexpr RGB COLOR_PURPLE_DARK             = {60, 0, 255};
+constexpr RGB COLOR_PURPLE_DEEP             = {120, 0, 255};
+
+
+
+
+
+constexpr RGB COLOR_MAGENTA                 = {180, 0, 255};
 
 // ---- Warm ----
 constexpr RGB COLOR_ORANGE         = {255, 126, 0}; //FF7E00

@@ -54,24 +54,24 @@ static const RGBMode modes[] = {
         .brightness = 40,            // Яскравість: 40%
         .perPixel = {
             {   // Смуга 1: Градієнт від червоного до зеленого
-                COLOR_RED,              // Червоний
-                COLOR_ORANGE_RED,       // Помаранчево-червоний
-                COLOR_ORANGE_PEEL,      // Помаранчевий
-                COLOR_ORANGE_YELLOW,    // Жовто-помаранчевий
-                COLOR_YELLOW_GREEN,     // Жовто-зелений
-                COLOR_GREEN_LIGHT,      // Світло-зелений
-                COLOR_GREEN_ELECTRIC,   // Зелений
-                COLOR_GREEN             // Яскраво-зелений
+                COLOR_RED,
+                COLOR_ORANGE_RED,
+                COLOR_ORANGE_PEEL,     
+                COLOR_ORANGE_YELLOW,  
+                COLOR_YELLOW_GREEN,    
+                COLOR_GREEN_LIGHT,   
+                COLOR_GREEN_ELECTRIC,  
+                COLOR_GREEN             
             },
             {   // Смуга 2: Градієнт від блакитного до фіолетового
-                {0, 255, 255},      // Блакитний
-                {0, 180, 255},      // Світло-блакитний
-                {0, 120, 255},      // Блакитний
-                {0, 60, 255},       // Темно-блакитний
-                {0, 0, 255},        // Синій
-                {60, 0, 255},       // Синьо-фіолетовий
-                {120, 0, 255},      // Фіолетовий
-                {180, 0, 255}       // Яскраво-фіолетовий
+                COLOR_CYAN,      
+                COLOR_CYAN_BRIGHT,     
+                COLOR_BLUE_DEEP,   
+                COLOR_BLUE_DARK,    
+                COLOR_BLUE,       
+                COLOR_PURPLE_DARK,     
+                COLOR_PURPLE_DEEP,     
+                COLOR_MAGENTA      
             }
         }
     },
