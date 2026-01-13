@@ -55,11 +55,11 @@ static const RGBMode modes[] = {
         .perPixel = {
             {   // Смуга 1: Градієнт від червоного до зеленого
                 COLOR_RED,
-                COLOR_ORANGE_RED,
-                COLOR_ORANGE_PEEL,     
-                COLOR_ORANGE_YELLOW,  
-                COLOR_YELLOW_GREEN,    
-                COLOR_GREEN_LIGHT,   
+                COLOR_ORANGE_DEEP,
+                COLOR_ORANGE_VIVID,     
+                COLOR_YELLOW_LIGHT,  
+                COLOR_GREEN_LIME,    
+                COLOR_GREEN_BRIGHT,   
                 COLOR_GREEN_ELECTRIC,  
                 COLOR_GREEN             
             },

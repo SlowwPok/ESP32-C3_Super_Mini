@@ -17,11 +17,11 @@ constexpr RGB COLOR_BLUE_NEON     = {0, 200, 255};
 
 // --- Colors --- RED -> GREEN
 constexpr RGB COLOR_RED                     = {255, 0, 0};
-constexpr RGB COLOR_ORANGE_RED              = {255, 80, 0};
-constexpr RGB COLOR_ORANGE_PEEL             = {255, 160, 0};
-constexpr RGB COLOR_ORANGE_YELLOW           = {255, 220, 0};
-constexpr RGB COLOR_YELLOW_GREEN            = {220, 255, 0};
-constexpr RGB COLOR_GREEN_LIGHT             = {160, 255, 0};
+constexpr RGB COLOR_ORANGE_DEEP             = {255, 80, 0};
+constexpr RGB COLOR_ORANGE_VIVID            = {255, 160, 0};
+constexpr RGB COLOR_YELLOW_LIGHT            = {255, 220, 0};
+constexpr RGB COLOR_GREEN_LIME              = {220, 255, 0};
+constexpr RGB COLOR_GREEN_BRIGHT            = {160, 255, 0};
 constexpr RGB COLOR_GREEN_ELECTRIC          = {80, 255, 0};
 constexpr RGB COLOR_GREEN                   = {0, 255, 0};
 
