@@ -15,10 +15,23 @@ constexpr RGB COLOR_CYAN_ELECTRIC = {0, 255, 220};
 constexpr RGB COLOR_CYAN_SOFT     = {0, 255, 180};
 constexpr RGB COLOR_BLUE_NEON     = {0, 200, 255};
 
+// --- Colors --- RED -> GREEN
+constexpr RGB COLOR_RED                     = {255, 0, 0};
+constexpr RGB COLOR_ORANGE_RED              = {255, 80, 0};
+constexpr RGB COLOR_ORANGE_PEEL             = {255, 160, 0};
+constexpr RGB COLOR_ORANGE_YELLOW           = {255, 220, 0};
+constexpr RGB COLOR_YELLOW_GREEN            = {220, 255, 0};
+constexpr RGB COLOR_GREEN_LIGHT             = {160, 255, 0};
+constexpr RGB COLOR_GREEN_ELECTRIC          = {80, 255, 0};
+constexpr RGB COLOR_GREEN                   = {0, 255, 0};
+
+// --- Colors --- RED -> GREEN
+
 // ---- Warm ----
-constexpr RGB COLOR_ORANGE         = {255, 126, 0}; //#ff7e00
-constexpr RGB COLOR_ORANGE_RED      = {255, 69, 0}; //FF4500
+constexpr RGB COLOR_ORANGE         = {255, 126, 0}; //FF7E00
+constexpr RGB COLOR_BLUE_WARM      = {60, 40, 25}; //192D3C
 
 // ---- Utility ----
 constexpr RGB COLOR_BLACK         = {0, 0, 0};
 constexpr RGB COLOR_WHITE         = {255, 255, 255};
+
