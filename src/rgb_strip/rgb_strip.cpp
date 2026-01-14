@@ -188,8 +188,8 @@ static void renderMode(const RGBMode& m)
                 RGB base2 = base.perPixel.strip2[i];
 
                 // Застосування анімації до базових кольорів
-                c1 = Animation_Apply(s1, m.animated.anim, base1, i);
-                c2 = Animation_Apply(s2, m.animated.anim, base2, i);
+                c1 = Animation_Apply(s1, m.animated.anim, base1, i, false);
+                c2 = Animation_Apply(s2, m.animated.anim, base2, i, true);
             }
         }
 

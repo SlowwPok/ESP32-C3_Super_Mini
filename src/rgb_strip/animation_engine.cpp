@@ -48,6 +48,46 @@ static RGB boost(const RGB& c, uint8_t strength)
   };
 }
 
+static RGB ensureMinBrightness(const RGB& c, uint8_t min)
+{
+    RGB out = c;
+
+    if (out.r < min) out.r = min;
+    if (out.g < min) out.g = min;
+    if (out.b < min) out.b = min;
+
+    return out;
+}
+
+struct AnimColors
+{
+    RGB background;
+    RGB head;
+    RGB tail;
+};
+
+static AnimColors resolveWalkingPixelColors(
+    const RGB& base,
+    const AnimationParams& p
+)
+{
+    AnimColors c;
+
+    if (!p.invertEffect)
+    {
+        c.background = dim(base, 5);
+        c.tail       = boost(base, p.intensity * 6);
+        c.head       = boost(base, p.intensity * 12);
+    }
+    else
+    {
+        c.background = ensureMinBrightness(base, 8);
+        c.tail       = dim(c.background, 4);
+        c.head       = RGB{0, 0, 0};
+    }
+
+    return c;
+}
 
 /* =========================================================
    ІНІЦІАЛІЗАЦІЯ АНІМАЦІЙ
@@ -64,6 +104,7 @@ void Animation_Init(AnimationState& s)
     s.index = 0;           // Початковий індекс пікселя
     s.phase = 0.0f;        // Початкова фаза (для плавних переходів)
     s.lastStep = 0;        // Час останнього кроку анімації
+    s.evenPhase = true;    // Початкова фаза для парних/непарних анімацій
 
     // Параметри гліч-ефекту
     s.glitchActive = false; // Гліч не активний на старті
@@ -96,6 +137,13 @@ void Animation_Update(AnimationState& s, const AnimationParams& p)
     // Стандартний рух: зміна індексу пікселя та фази
     s.index = (s.index + 1) % NUMPIXELS; // Циклічний рух по пікселях
     s.phase += 0.1f;                     // Плавне збільшення фази
+
+    /* ---------- ЛОГІКА ПАРНИХ/НЕПАРНИХ ---------- */
+    if (p.type == ANIM_EVEN_ODD)
+    {
+        s.evenPhase = !s.evenPhase; // <-- головне
+        return;
+    }
 
     /* ---------- ЛОГІКА ГЛІЧ-ЕФЕКТУ ---------- */
     if (p.type == ANIM_GLITCH)
@@ -131,7 +179,7 @@ void Animation_Update(AnimationState& s, const AnimationParams& p)
  * @param i Індекс пікселя (0 до NUMPIXELS-1)
  * @return RGB Результуючий колір після застосування анімації
  */
-RGB Animation_Apply(const AnimationState& s, const AnimationParams& p, const RGB& base, uint8_t i)
+RGB Animation_Apply(const AnimationState& s, const AnimationParams& p, const RGB& base, uint8_t i, bool isSecondStrip)
 {
     switch (p.type)
     {
@@ -139,14 +187,50 @@ RGB Animation_Apply(const AnimationState& s, const AnimationParams& p, const RGB
         // Опис: Один яскравий піксель "ходить" вздовж смуги,
         // інші пікселі приглушені
         case ANIM_WALKING_PIXEL:
-            return (i == s.index) ? base : dim(base, 6); // Поточний піксель яскравий, інші темні
+        {
+            uint8_t pos = s.index;
 
+            // інверсія напрямку для другої стрічки
+            if (p.invertSecond && isSecondStrip)
+            {
+                pos = (NUMPIXELS - 1) - pos;
+            }
+
+            uint8_t dist = (i > pos) ? (i - pos) : (pos - i);
+
+            AnimColors colors = resolveWalkingPixelColors(base, p);
+
+            RGB out = colors.background;
+
+            if (dist == 0)
+            {
+                out = colors.head;
+            }
+            else if (dist <= p.intensity)
+            {
+                out = colors.tail;
+            }
+
+            return out;
+        }
         /* ===== ПАРНІ/НЕПАРНІ ===== */
         // Опис: Парні пікселі світяться базовим кольором,
+        // Та перемикаються через заданий час
         // непарні - вимкнені (чорні)
         case ANIM_EVEN_ODD:
-            return (i % 2 == 0) ? base : RGB{ 0, 0, 0 }; // Парні: базовий колір, непарні: чорний
+        {
+            bool isEvenPixel = (i % 2 == 0);
+            bool lit = s.evenPhase ? isEvenPixel : !isEvenPixel;
 
+            // інверсія другої стрічки
+            if (p.invertSecond && isSecondStrip)
+                lit = !lit;
+
+            // інтенсивність як яскравість
+            RGB on = boost(base, p.intensity * 10);
+
+            return lit ? on : RGB{0, 0, 0};
+        }
         /* ===== ГЛІЧ ===== */
         // Опис: Випадкові пікселі спалахують яскравіше на короткий час,
         // імітуючи цифровий збій

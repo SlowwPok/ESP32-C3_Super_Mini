@@ -23,6 +23,8 @@ struct AnimationState
     float phase;            // Фаза анімації (для плавних переходів або хвиль)
     unsigned long lastStep; // Час останнього кроку анімації (для керування швидкістю)
 
+    bool evenPhase;        // Фаза для парних/непарних анімацій
+
     // Стан гліч-ефекту
     bool glitchActive;      // Чи активний гліч в даний момент
     uint8_t glitchPixel;    // Індекс пікселя, з якого починається гліч
@@ -61,4 +63,10 @@ void Animation_Update(AnimationState& s, const AnimationParams& p);
  * @param pixelIndex Індекс пікселя (0 до NUMPIXELS-1)
  * @return RGB Результуючий колір після застосування анімації
  */
-RGB Animation_Apply(const AnimationState& s, const AnimationParams& p, const RGB& base, uint8_t pixelIndex);
+RGB Animation_Apply(
+  const AnimationState& s, 
+  const AnimationParams& p, 
+  const RGB& base, 
+  uint8_t pixelIndex,
+  bool isSecondStrip
+);

@@ -42,4 +42,5 @@ struct AnimationParams
     bool syncStrips;      // Чи синхронізовані смуги (true - так, false - ні)
     bool invertSecond;    // Чи інвертувати другу смугу (для різноманітності)
     uint8_t intensity;    // Інтенсивність ефекту (1-10, де 10 - максимальна)
+    bool invertEffect;    // Чи інвертувати ефект анімації
 };
