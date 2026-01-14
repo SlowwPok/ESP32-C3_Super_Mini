@@ -143,7 +143,7 @@ static const RGBMode modes[] = {
     {
         .selectable = false,         // Режим не доступний для вибору (службовий)
         .type = MODE_PER_PIXEL,      // Тип режиму: окремий колір на кожен піксель
-        .brightness = 40,            // Яскравість: 40%
+        .brightness = 35,            // Яскравість: 40%
         .perPixel = {
             {   // Смуга 1: Неоновий маджента
                 {200, 0, 255},      // Фіолетово-рожевий
@@ -177,15 +177,16 @@ static const RGBMode modes[] = {
     {
         .selectable = true,          // Режим доступний для вибору
         .type = MODE_ANIMATED,       // Тип режиму: анімований
-        .brightness = 40,            // Яскравість: 40%
+        .brightness = 35,            // Яскравість: 40%
         .animated = {
-            .baseModeIndex = 2,     // Використовує режим 5 як основу (неоновий гліч)
+            .baseModeIndex = 5,     // Використовує режим 5 як основу (неоновий гліч)
             .anim = {
                 .type = ANIM_GLITCH,        // Тип анімації: гліч
-                .speedMs = 90,              // Швидкість анімації: 90 мс між кадрами
+                .speedMs = 120,              // Швидкість анімації: 90 мс між кадрами
                 .syncStrips = false,         // Синхронізація: ні
                 .invertSecond = false,      // Додатковий параметр (не використовується)
-                .intensity = 4              // Параметр глічу: м'який гліч (soft glitch)
+                .intensity = 10,              // Параметр глічу: м'який гліч (soft glitch)
+                .invertEffect = false       // Інверсія ефекту
             }
         }
     },
@@ -200,7 +201,7 @@ static const RGBMode modes[] = {
         .type = MODE_ANIMATED,       // Тип режиму: анімований
         .brightness = 40,            // Яскравість: 40%
         .animated = {
-            .baseModeIndex = 1,     // Використовує режим 5 як основу (неоновий гліч)
+            .baseModeIndex = 4,     // Використовує режим 5 як основу (неоновий гліч)
             .anim = {
                 .type = ANIM_WALKING_PIXEL,        // Тип анімації: бігаючий піксель
                 .speedMs = 130,              // Швидкість анімації: 90 мс між кадрами

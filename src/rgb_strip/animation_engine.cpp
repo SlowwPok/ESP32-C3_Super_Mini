@@ -236,15 +236,26 @@ RGB Animation_Apply(const AnimationState& s, const AnimationParams& p, const RGB
         // імітуючи цифровий збій
         case ANIM_GLITCH:
         {
-            // Якщо гліч активний і поточний піксель у зоні глічу
-            if (s.glitchActive && i >= s.glitchPixel && i < s.glitchPixel + s.glitchCount)
+            // базовий колір завжди присутній
+            RGB out = base;
+
+            if (s.glitchActive &&
+                i >= s.glitchPixel &&
+                i < s.glitchPixel + s.glitchCount)
             {
-                // КОНТРАСТНИЙ КОЛЬОРОВИЙ СПАЛАХ
-                return boost(base, p.intensity * 1);
+                if (!p.invertEffect)
+                {
+                    // підсвітити
+                    out = boost(base, p.intensity * 8);
+                }
+                else
+                {
+                    // приглушити (інверсний гліч)
+                    out = dim(base, 4);
+                }
             }
 
-            // чоний фон
-            return RGB{0, 0, 0};
+            return out;
         }
 
         // Якщо тип анімації невідомий, повертаємо базовий колір без змін
