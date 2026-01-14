@@ -61,11 +61,11 @@ void Display_DrawGrid()
   }
 
   // ===== ТЕКСТОВА ІНФОРМАЦІЯ =====
-  Display_DrawText(5, 5, "DISPLAY TEST", COLOR_WHITE); //RGB(255, 255, 255)
+  Display_DrawText(5, 5, 1, "DISPLAY TEST", COLOR_WHITE); //RGB(255, 255, 255)
 
   char buf[32];
   snprintf(buf, sizeof(buf), "%dx%d rot=%d", w, h, DISP_ROTATION);
-  Display_DrawText(5, 20, buf, COLOR_YELLOW); //RGB(255, 255, 0)
+  Display_DrawText(5, 20, 1, buf, COLOR_YELLOW); //RGB(255, 255, 0)
 }
 
 // ===== ФУНКЦІЯ МАЛЮВАННЯ ДЕБАГ ПАТЕРНУ =====
@@ -95,7 +95,8 @@ void Display_DrawDebugPattern()
     COLOR_GREEN,  //RGB(0, 255, 0)
     COLOR_MAGENTA,//RGB(255, 0, 255)
     COLOR_RED,    //RGB(255, 0, 0)
-    COLOR_BLUE    //RGB(0, 0, 255)
+    COLOR_BLUE,   //RGB(0, 0, 255)
+    COLOR_BLACK   //RGB(0, 0, 0)
   };
 
   int barH = h / 12;
@@ -113,8 +114,8 @@ void Display_DrawDebugPattern()
   drawCross(w - 1, h - 1, COLOR_YELLOW); //RGB(255, 255, 0)
 
   // ─── ТЕКСТ ───
-  Display_DrawText(10, 10, "LovyanGFX Library", COLOR_WHITE); //RGB(255, 255, 255)
-  Display_DrawText(10, 10, "ST7789 DEBUG", COLOR_WHITE); //RGB(255, 255, 255)
-  Display_DrawText(10, 26, "RGB565 OK", COLOR_WHITE); //RGB(255, 255, 255)
-  Display_DrawText(10, 42, "ROTATION = 3", COLOR_WHITE); //RGB(255, 255, 255)
+  Display_DrawTextEx(10, 10, "LovyanGFX Library", COLOR_BLACK, COLOR_RED, true, nullptr, 2); //RGB(255, 0, 255)
+  Display_DrawText(10, 26, 1, "ST7789 DEBUG", COLOR_BLACK); //RGB(255, 0, 255)
+  Display_DrawText(10, 42, 1, "RGB565 OK", COLOR_BLACK); //RGB(255, 0, 255)
+  Display_DrawText(10, 58, 1, "ROTATION = 3", COLOR_BLACK); //RGB(255, 0, 255)
 }

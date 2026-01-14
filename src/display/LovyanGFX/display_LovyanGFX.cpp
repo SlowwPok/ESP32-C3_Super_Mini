@@ -64,9 +64,70 @@ void Display_FillRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color
   lcd.fillRect(x, y, w, h, color);
 }
 
-void Display_DrawText(int16_t x, int16_t y, const char* text, uint16_t color) {
+
+/** Просте малювання тексту (bitmap font).
+ *
+ * @param x     X координата
+ * @param y     Y координата
+ * @param size  Розмір тексту (1–3)
+ * @param text  Текст
+ * @param color Колір тексту
+ */
+void Display_DrawText(
+  int16_t x,
+  int16_t y,
+  uint8_t size,
+  const char* text,
+  uint16_t color
+)
+{
   lcd.setCursor(x, y);
-  lcd.setTextColor(color, COLOR_BLACK); //RGB(0, 0, 0)
+  lcd.setFont(&lgfx::fonts::Font0); // стандартний шрифт
+  lcd.setTextSize(size);
+  lcd.setTextColor(color);          // без фону
+  lcd.print(text);
+}
+
+/**
+ * Розширене малювання тексту.
+ *
+ * @param x       X координата
+ * @param y       Y координата
+ * @param text    Текст
+ * @param color   Колір тексту
+ * @param bg      Колір фону
+ * @param use_bg  Малювати фон чи ні
+ * @param font    Шрифт (nullptr = Font0)
+ * @param size    Розмір bitmap-шрифту (ігнорується для FreeFont)
+ */
+void Display_DrawTextEx(
+  int16_t x,
+  int16_t y,
+  const char* text,
+  uint16_t color,
+  uint16_t bg,
+  bool use_bg,
+  const lgfx::v1::IFont* font,
+  uint8_t size
+)
+{
+  lcd.setCursor(x, y);
+
+  if (font)
+  {
+    lcd.setFont(font);   // FreeFont або FontX
+  }
+  else
+  {
+    lcd.setFont(&lgfx::fonts::Font0);
+    lcd.setTextSize(size);
+  }
+
+  if (use_bg)
+    lcd.setTextColor(color, bg);
+  else
+    lcd.setTextColor(color);
+
   lcd.print(text);
 }
 
