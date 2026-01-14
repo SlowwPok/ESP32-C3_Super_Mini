@@ -3,234 +3,207 @@
 
 /* =========================================================
    БІБЛІОТЕКА РЕЖИМІВ RGB СВІТЛОДІОДІВ
-   ЄДИНЕ МІСЦЕ ДЛЯ ВИЗНАЧЕННЯ ВСІХ РЕЖИМІВ
+   Усі режими (solid, per-pixel, animated) у одному місці
    ========================================================= */
 
 static const RGBMode modes[] = {
 
-    // ========================================================================
+    // ═════════════════════════════════════════════════════════════════════
     // РЕЖИМ 0: Теплий вечір (Warm Evening)
-    // ========================================================================
-    // Опис: Спокійний теплий колір, імітує світло заходу сонця.
-    // Використовується для створення затишної атмосфери ввечері.
-    // Колір: Теплий помаранчевий з відтінком жовтого.
+    // ═════════════════════════════════════════════════════════════════════
     {
-        .selectable = true,          // Режим доступний для вибору користувачем
-        .type = MODE_SOLID,          // Тип режиму: суцільний колір
-        .brightness = 35,            // Яскравість: 35%
+        .selectable = true,          // Доступний користувачеві (кнопка TAP)
+        .type = MODE_SOLID,          // Одноколірний режим
+        .brightness = 35,            // Яскравість: 35% (затишно для очей)
         .solid = {
-            COLOR_AMBER,      
-            COLOR_AMBER         // Альтернативний колір (якщо потрібно)
+            COLOR_AMBER,             // RGB(255, 126, 0)
+            COLOR_AMBER
         }
     },
 
-    // ========================================================================
+    // ═════════════════════════════════════════════════════════════════════
     // РЕЖИМ 1: Ніч (Night)
-    // ========================================================================
-    // Опис: Темний, приглушений колір для нічного освітлення.
-    // Створює мінімальне світло, щоб не заважати сну.
-    // Колір: Темно-коричневий з відтінком.
+    // ═════════════════════════════════════════════════════════════════════
     {
-        .selectable = true,          // Режим доступний для вибору
-        .type = MODE_SOLID,          // Тип режиму: суцільний колір
-        .brightness = 18,            // Яскравість: 18% (дуже низька)
+        .selectable = true,          // Доступний користувачеві
+        .type = MODE_SOLID,          // Одноколірний режим
+        .brightness = 18,            // Яскравість: 18% (мінімальна)
         .solid = {
-            COLOR_BROWN_DARK,           
-            COLOR_BROWN_DARK            // Альтернативний колір (той самий)
+            COLOR_BROWN_DARK,        // RGB(60, 40, 25)
+            COLOR_BROWN_DARK
         }
     },
 
-    // ========================================================================
-    // РЕЖИМ 2: Базовий градієнт (Base Gradient) - СЛУЖБОВИЙ
-    // ========================================================================
-    // Опис: Градієнт кольорів веселки для двох смуг світлодіодів.
-    // Використовується як основа для анімованих режимів.
-    // Не доступний для прямого вибору користувачем.
-    // Смуга 1: Від червоного до зеленого
-    // Смуга 2: Від блакитного до фіолетового
+    // ═════════════════════════════════════════════════════════════════════
+    // РЕЖИМ 2: Базовий веселковий градієнт (Base Rainbow) - СЛУЖБОВИЙ
+    // ═════════════════════════════════════════════════════════════════════
     {
-        .selectable = false,         // Режим не доступний для вибору (службовий)
-        .type = MODE_PER_PIXEL,      // Тип режиму: окремий колір на кожен піксель
+        .selectable = false,         // Тільки для анімацій (режим 3)
+        .type = MODE_PER_PIXEL,      // Окремий колір на піксель
         .brightness = 40,            // Яскравість: 40%
         .perPixel = {
-            {   // Смуга 1: Градієнт від червоного до зеленого
-                COLOR_RED,
-                COLOR_ORANGE_DEEP,
-                COLOR_ORANGE_VIVID,     
-                COLOR_YELLOW_LIGHT,  
-                COLOR_GREEN_LIME,    
-                COLOR_GREEN_BRIGHT,   
-                COLOR_GREEN_ELECTRIC,  
-                COLOR_GREEN             
+            {   // Смуга 1: Червоний → Зелений
+                COLOR_RED,               // RGB(255, 0, 0)
+                COLOR_ORANGE_DEEP,       // RGB(255, 80, 0)
+                COLOR_ORANGE_VIVID,      // RGB(255, 160, 0)
+                COLOR_YELLOW_LIGHT,      // RGB(255, 220, 0)
+                COLOR_GREEN_LIME,        // RGB(220, 255, 0)
+                COLOR_GREEN_BRIGHT,      // RGB(160, 255, 0)
+                COLOR_GREEN_ELECTRIC,    // RGB(80, 255, 0)
+                COLOR_GREEN              // RGB(0, 255, 0)
             },
-            {   // Смуга 2: Градієнт від блакитного до фіолетового
-                COLOR_CYAN,      
-                COLOR_CYAN_BRIGHT,     
-                COLOR_BLUE_DEEP,   
-                COLOR_BLUE_DARK,    
-                COLOR_BLUE,       
-                COLOR_PURPLE_DARK,     
-                COLOR_PURPLE_DEEP,     
-                COLOR_MAGENTA      
+            {   // Смуга 2: Бірюзовий → Маджента
+                COLOR_CYAN,              // RGB(0, 255, 255)
+                COLOR_CYAN_BRIGHT,       // RGB(0, 180, 255)
+                COLOR_BLUE_DEEP,         // RGB(0, 120, 255)
+                COLOR_BLUE_DARK,         // RGB(0, 60, 255)
+                COLOR_BLUE,              // RGB(0, 0, 255)
+                COLOR_PURPLE_DARK,       // RGB(60, 0, 255)
+                COLOR_PURPLE_DEEP,       // RGB(120, 0, 255)
+                COLOR_MAGENTA            // RGB(180, 0, 255)
             }
         }
     },
 
-    // ========================================================================
-    // РЕЖИМ 3: Анімований - Ходячий піксель по градієнту (Walking Pixel over Gradient)
-    // ========================================================================
-    // Опис: Анімація, де яскравий піксель "ходить" вздовж градієнта.
-    // Використовує базовий градієнт (режим 2) як основу.
-    // Створює динамічний, рухливий ефект.
+    // ═════════════════════════════════════════════════════════════════════
+    // РЕЖИМ 3: Ходячий піксель по веселці (Walking Pixel)
+    // ═════════════════════════════════════════════════════════════════════
     {
-        .selectable = true,          // Режим доступний для вибору
-        .type = MODE_ANIMATED,       // Тип режиму: анімований
+        .selectable = true,
+        .type = MODE_ANIMATED,
         .brightness = 40,            // Яскравість: 40%
         .animated = {
-            .baseModeIndex = 2,     // Використовує режим 2 як основу
+            .baseModeIndex = 2,      // База: режим 2 (веселка)
             .anim = {
-                .type = ANIM_WALKING_PIXEL,     // Тип анімації: ходячий піксель
-                .speedMs = 90,                 // Швидкість анімації: 120 мс між кадрами
-                .syncStrips = true,             // Синхронізація: так
-                .invertSecond = true,           // інвертувати другу смугу
+                .type = ANIM_WALKING_PIXEL,    // Один піксель ходить
+                .speedMs = 90,                 // Інтервал: 90 мс (9 FPS)
+                .syncStrips = true,            // Обидві смуги синхронізовані
+                .invertSecond = true,          // Друга смуга: дзеркальний напрямок
+                .intensity = 8,                // Видимість хвоста: 8/10
+                .invertEffect = false
             }
         }
     },
 
-    // ========================================================================
-    // РЕЖИМ 4: Кіберпанківський градієнт (Cyberpunk Gradient)
-    // ========================================================================
-    // Опис: Неонові кольори в стилі кіберпанку.
-    // Фіолетові та блакитні відтінки для футуристичного вигляду.
-    // Смуга 1: Від фіолетового до рожевого
-    // Смуга 2: Від блакитного до синього
-    {
-        .selectable = true,          // Режим доступний для вибору
-        .type = MODE_PER_PIXEL,      // Тип режиму: окремий колір на кожен піксель
-        .brightness = 60,            // Яскравість: 60% (вища для неонового ефекту)
-        .perPixel = {
-            {   // Смуга 1: Градієнт від фіолетового до рожевого
-                {180, 0, 255},      // Фіолетовий
-                {200, 0, 255},      // Яскраво-фіолетовий
-                {220, 0, 255},      // Фіолетово-рожевий
-                {255, 0, 220},      // Рожевий
-                {255, 0, 180},      // Світло-рожевий
-                {255, 0, 140},      // Помаранчево-рожевий
-                {255, 0, 100},      // Темно-рожевий
-                {255, 0, 60}        // Бордово-рожевий
-            },
-            {   // Смуга 2: Градієнт від блакитного до синього
-                {0, 255, 200},      // Блакитний
-                {0, 220, 255},      // Світло-блакитний
-                {0, 180, 255},      // Блакитний
-                {0, 140, 255},      // Темно-блакитний
-                {0, 100, 255},      // Синьо-блакитний
-                {0, 60, 255},       // Синій
-                {0, 30, 255},       // Темно-синій
-                {0, 0, 255}         // Яскраво-синій
-            }
-        }
-    },
-
-    // ========================================================================
-    // РЕЖИМ 5: Кіберпанківський гліч (Cyberpunk Glitch) - СЛУЖБОВИЙ
-    // ========================================================================
-    // Опис: Неонові кольори для гліч-ефекту.
-    // Використовується як основа для анімованого гліч-режиму.
-    // Не доступний для прямого вибору.
-    // Смуга 1: Неоновий маджента
-    // Смуга 2: Електричний блакитний
-    {
-        .selectable = false,         // Режим не доступний для вибору (службовий)
-        .type = MODE_PER_PIXEL,      // Тип режиму: окремий колір на кожен піксель
-        .brightness = 35,            // Яскравість: 40%
-        .perPixel = {
-            {   // Смуга 1: Неоновий маджента
-                {200, 0, 255},      // Фіолетово-рожевий
-                {220, 0, 255},      // Яскраво-фіолетовий
-                {255, 0, 220},      // Рожевий
-                {255, 0, 180},      // Світло-рожевий
-                {255, 0, 140},      // Помаранчево-рожевий
-                {255, 0, 100},      // Темно-рожевий
-                {255, 0, 60},       // Бордово-рожевий
-                {255, 0, 30}        // Темно-бордовий
-            },
-            {   // Смуга 2: Електричний блакитний
-                {0, 255, 220},      // Блакитний
-                {0, 255, 180},      // Світло-блакитний
-                {0, 255, 140},      // Блакитний
-                {0, 255, 100},      // Темно-блакитний
-                {0, 255, 60},       // Синьо-блакитний
-                {0, 255, 30},       // Темно-синьо-блакитний
-                {0, 200, 255},      // Світло-блакитний
-                {0, 160, 255}       // Блакитний
-            }
-        }
-    },
-
-    // ========================================================================
-    // РЕЖИМ 6: Анімований - Гліч над неоном (Glitch over Neon)
-    // ========================================================================
-    // Опис: Гліч-анімація над неоновими кольорами.
-    // Створює ефект цифрового збою з неоновими спалахами.
-    // Використовує кіберпанківський гліч (режим 5) як основу.
-    {
-        .selectable = true,          // Режим доступний для вибору
-        .type = MODE_ANIMATED,       // Тип режиму: анімований
-        .brightness = 35,            // Яскравість: 40%
-        .animated = {
-            .baseModeIndex = 5,     // Використовує режим 5 як основу (неоновий гліч)
-            .anim = {
-                .type = ANIM_GLITCH,        // Тип анімації: гліч
-                .speedMs = 120,              // Швидкість анімації: 90 мс між кадрами
-                .syncStrips = false,         // Синхронізація: ні
-                .invertSecond = false,      // Додатковий параметр (не використовується)
-                .intensity = 10,              // Параметр глічу: м'який гліч (soft glitch)
-                .invertEffect = false       // Інверсія ефекту
-            }
-        }
-    },
-    // ========================================================================
-    // РЕЖИМ 7: Анімований - Бігаюча стрічка дзеркальна (Even-Odd Mirror Running)
-    // ========================================================================
-    // Опис: Гліч-анімація над градіентом.
-    // Створює 2 дзеркальні бігаючі вогники по лінійкам.
-    // Використовує режим 2 як основу.
-    {
-        .selectable = true,          // Режим доступний для вибору
-        .type = MODE_ANIMATED,       // Тип режиму: анімований
-        .brightness = 40,            // Яскравість: 40%
-        .animated = {
-            .baseModeIndex = 4,     // Використовує режим 5 як основу (неоновий гліч)
-            .anim = {
-                .type = ANIM_WALKING_PIXEL,        // Тип анімації: бігаючий піксель
-                .speedMs = 130,              // Швидкість анімації: 90 мс між кадрами
-                .syncStrips = true,         // Синхронізація: ні
-                .invertSecond = true,        // Додатковий параметр (не використовується)
-                .intensity = 1,             // Параметр глічу: м'який гліч (soft glitch)
-                .invertEffect = true        // Інверсія ефекту
-            }
-        }
-    },
-    //РЕЖИМ 8: Warm Ambient (Pulse / Noise base)
-    //     Ідеально для
-    // ANIM_PULSE
-    // ANIM_NOISE (intensity 2–3)
-    // нічні режими, invertEffect = true
+    // ═════════════════════════════════════════════════════════════════════
+    // РЕЖИМ 4: Неоновий кіберпанк (Cyberpunk Neon Gradient)
+    // ═════════════════════════════════════════════════════════════════════
     {
         .selectable = true,
         .type = MODE_PER_PIXEL,
-        .brightness = 30,
+        .brightness = 60,            // Яскравість: 60% (висока для неону)
         .perPixel = {
-            {   // Смуга 1: Теплий бурштин → темний коричневий
-                COLOR_WARM_AMBER_BRIGHT,
-                COLOR_WARM_AMBER,
-                COLOR_WARM_ORANGE_SOFT,
-                COLOR_WARM_ORANGE_DIM,
-                COLOR_WARM_BROWN_LIGHT,
-                COLOR_WARM_BROWN,
-                COLOR_WARM_BROWN_DARK,
-                COLOR_WARM_BROWN_DEEP
+            {   // Смуга 1: Неон фіолет → синій
+                COLOR_NEON_PURPLE_BRIGHT,   // RGB(120, 0, 255)
+                COLOR_NEON_PURPLE,          // RGB(100, 0, 255)
+                COLOR_NEON_VIOLET,          // RGB(80, 0, 255)
+                COLOR_NEON_BLUE_VIOLET,     // RGB(60, 0, 255)
+                COLOR_NEON_BLUE,            // RGB(40, 0, 255)
+                COLOR_NEON_BLUE_DEEP,       // RGB(20, 0, 255)
+                COLOR_NEON_BLUE_DIM,        // RGB(10, 0, 200)
+                COLOR_NEON_BLUE_DARK        // RGB(0, 0, 160)
+            },
+            {   // Смуга 2: Неон блакитний
+                COLOR_ICE_WHITE,            // RGB(180, 240, 255)
+                COLOR_ICE_LIGHT,            // RGB(160, 230, 255)
+                COLOR_ICE_SOFT,             // RGB(140, 220, 255)
+                COLOR_ICE_BLUE,             // RGB(120, 210, 255)
+                COLOR_ICE_BLUE_LIGHT,       // RGB(100, 200, 255)
+                COLOR_ICE_BLUE_DIM,         // RGB(80, 190, 245)
+                COLOR_ICE_BLUE_DARK,        // RGB(60, 180, 235)
+                COLOR_ICE_STEEL             // RGB(40, 170, 225)
+            }
+        }
+    },
+
+    // ═════════════════════════════════════════════════════════════════════
+    // РЕЖИМ 5: Неон + Гліч база (Neon Glitch Base) - СЛУЖБОВИЙ
+    // ═════════════════════════════════════════════════════════════════════
+    {
+        .selectable = false,         // Тільки для анімацій (режим 6)
+        .type = MODE_PER_PIXEL,
+        .brightness = 35,            // Яскравість: 35%
+        .perPixel = {
+            {   // Смуга 1: Неон фіолет
+                COLOR_NEON_PURPLE_BRIGHT,   // RGB(120, 0, 255)
+                COLOR_NEON_PURPLE,          // RGB(100, 0, 255)
+                COLOR_NEON_VIOLET,          // RGB(80, 0, 255)
+                COLOR_NEON_BLUE_VIOLET,     // RGB(60, 0, 255)
+                COLOR_NEON_BLUE,            // RGB(40, 0, 255)
+                COLOR_NEON_BLUE_DEEP,       // RGB(20, 0, 255)
+                COLOR_NEON_BLUE_DIM,        // RGB(10, 0, 200)
+                COLOR_NEON_BLUE_DARK        // RGB(0, 0, 160)
+            },
+            {   // Смуга 2: Неон блакитний
+                COLOR_ICE_WHITE,            // RGB(180, 240, 255)
+                COLOR_ICE_LIGHT,            // RGB(160, 230, 255)
+                COLOR_ICE_SOFT,             // RGB(140, 220, 255)
+                COLOR_ICE_BLUE,             // RGB(120, 210, 255)
+                COLOR_ICE_BLUE_LIGHT,       // RGB(100, 200, 255)
+                COLOR_ICE_BLUE_DIM,         // RGB(80, 190, 245)
+                COLOR_ICE_BLUE_DARK,        // RGB(60, 180, 235)
+                COLOR_ICE_STEEL             // RGB(40, 170, 225)
+            }
+        }
+    },
+
+    // ═════════════════════════════════════════════════════════════════════
+    // РЕЖИМ 6: Гліч над неоном (Glitch over Neon)
+    // ═════════════════════════════════════════════════════════════════════
+    {
+        .selectable = true,
+        .type = MODE_ANIMATED,
+        .brightness = 35,            // Яскравість: 35%
+        .animated = {
+            .baseModeIndex = 5,      // База: режим 5 (неонова палітра)
+            .anim = {
+                .type = ANIM_GLITCH,       // Випадкові спалахи
+                .speedMs = 120,            // Інтервал: 120 мс (8 FPS)
+                .syncStrips = false,       // Кожна смуга: незалежні спалахи
+                .invertSecond = false,
+                .intensity = 10,           // Інтенсивність: максимальна
+                .invertEffect = false
+            }
+        }
+    },
+
+    // ═════════════════════════════════════════════════════════════════════
+    // РЕЖИМ 7: Дзеркальна стрічка (Mirror Running)
+    // ═════════════════════════════════════════════════════════════════════
+    {
+        .selectable = true,
+        .type = MODE_ANIMATED,
+        .brightness = 40,            // Яскравість: 40%
+        .animated = {
+            .baseModeIndex = 4,      // База: режим 4 (неон)
+            .anim = {
+                .type = ANIM_WALKING_PIXEL,    // Ходячий піксель
+                .speedMs = 130,                // Інтервал: 130 мс (7 FPS)
+                .syncStrips = true,            // Синхронізовані
+                .invertSecond = true,          // Дзеркальний напрямок
+                .intensity = 1,                // Мінімальний хвіст
+                .invertEffect = true           // Інвертований режим
+            }
+        }
+    },
+
+    // ═════════════════════════════════════════════════════════════════════
+    // РЕЖИМ 8: Теплий бурштин (Warm Ambient) - СЛУЖБОВИЙ
+    // ═════════════════════════════════════════════════════════════════════
+    {
+        .selectable = true,         // База для PULSE/NOISE анімацій
+        .type = MODE_PER_PIXEL,
+        .brightness = 30,            // Яскравість: 30%
+        .perPixel = {
+            {   // Смуга 1: Бурштин → коричневий
+                COLOR_WARM_AMBER_BRIGHT,   // RGB(255, 140, 60)
+                COLOR_WARM_AMBER,          // RGB(255, 130, 55)
+                COLOR_WARM_ORANGE_SOFT,    // RGB(245, 120, 50)
+                COLOR_WARM_ORANGE_DIM,     // RGB(235, 110, 45)
+                COLOR_WARM_BROWN_LIGHT,    // RGB(225, 100, 40)
+                COLOR_WARM_BROWN,          // RGB(215, 90, 35)
+                COLOR_WARM_BROWN_DARK,     // RGB(205, 80, 30)
+                COLOR_WARM_BROWN_DEEP      // RGB(195, 70, 25)
             },
             {   // Смуга 2: Дзеркально
                 COLOR_WARM_BROWN_DEEP,
@@ -244,57 +217,55 @@ static const RGBMode modes[] = {
             }
         }
     },
-    //РЕЖИМ 9: Cyber Neon (Wave / Scanline base)
-    //     Ідеально для
-    // ANIM_WAVE
-    // invertSecond = true
-    // швидкі scanline / cyber ефекти
+
+    // ═════════════════════════════════════════════════════════════════════
+    // РЕЖИМ 9: Неон WAVE (Cyber Wave Base) - СЛУЖБОВИЙ
+    // ═════════════════════════════════════════════════════════════════════
     {
-        .selectable = true,
+        .selectable = true,         // База для WAVE анімацій
         .type = MODE_PER_PIXEL,
-        .brightness = 45,
+        .brightness = 45,            // Яскравість: 45%
         .perPixel = {
-            {   // Смуга 1: Фіолетовий неон → синій
-                COLOR_NEON_PURPLE_BRIGHT,
-                COLOR_NEON_PURPLE,
-                COLOR_NEON_VIOLET,
-                COLOR_NEON_BLUE_VIOLET,
-                COLOR_NEON_BLUE,
-                COLOR_NEON_BLUE_DEEP,
-                COLOR_NEON_BLUE_DIM,
-                COLOR_NEON_BLUE_DARK
+            {   // Смуга 1: Неон фіолет → синій
+                COLOR_NEON_PURPLE_BRIGHT,   // RGB(120, 0, 255)
+                COLOR_NEON_PURPLE,          // RGB(100, 0, 255)
+                COLOR_NEON_VIOLET,          // RGB(80, 0, 255)
+                COLOR_NEON_BLUE_VIOLET,     // RGB(60, 0, 255)
+                COLOR_NEON_BLUE,            // RGB(40, 0, 255)
+                COLOR_NEON_BLUE_DEEP,       // RGB(20, 0, 255)
+                COLOR_NEON_BLUE_DIM,        // RGB(10, 0, 200)
+                COLOR_NEON_BLUE_DARK        // RGB(0, 0, 160)
             },
-            {   // Смуга 2: Бірюзово-блакитний неон
-                COLOR_CYAN,
-                COLOR_CYAN_BRIGHT,
-                COLOR_BLUE_DEEP,
-                COLOR_BLUE_DARK,
-                COLOR_BLUE,
-                COLOR_PURPLE_DARK,
-                COLOR_PURPLE_DEEP,
-                COLOR_MAGENTA
+            {   // Смуга 2: Бірюза → магента
+                COLOR_CYAN,                 // RGB(0, 255, 255)
+                COLOR_CYAN_BRIGHT,          // RGB(0, 180, 255)
+                COLOR_BLUE_DEEP,            // RGB(0, 120, 255)
+                COLOR_BLUE_DARK,            // RGB(0, 60, 255)
+                COLOR_BLUE,                 // RGB(0, 0, 255)
+                COLOR_PURPLE_DARK,          // RGB(60, 0, 255)
+                COLOR_PURPLE_DEEP,          // RGB(120, 0, 255)
+                COLOR_MAGENTA               // RGB(180, 0, 255)
             }
         }
     },
-    //РЕЖИМ 10: Forest / Organic (Noise base)
-    //     🌿 Ідеально для
-    // ANIM_NOISE
-    // intensity 2–4
-    // повільні, “живі” режими
+
+    // ═════════════════════════════════════════════════════════════════════
+    // РЕЖИМ 10: Лісовий зелений (Forest Organic) - СЛУЖБОВИЙ
+    // ═════════════════════════════════════════════════════════════════════
     {
-        .selectable = true,
+        .selectable = true,         // База для NOISE анімацій
         .type = MODE_PER_PIXEL,
-        .brightness = 35,
+        .brightness = 35,            // Яскравість: 35%
         .perPixel = {
-            {   // Смуга 1: Лісовий зелений → мох / синьо-зелений
-                COLOR_FOREST_GREEN_BRIGHT,
-                COLOR_FOREST_GREEN,
-                COLOR_FOREST_OLIVE,
-                COLOR_FOREST_MOSS,
-                COLOR_FOREST_TEAL,
-                COLOR_FOREST_TEAL_DIM,
-                COLOR_FOREST_BLUEGREEN,
-                COLOR_FOREST_BLUEGREEN_DARK
+            {   // Смуга 1: Зелень → синьозелень
+                COLOR_FOREST_GREEN_BRIGHT,  // RGB(20, 120, 40)
+                COLOR_FOREST_GREEN,         // RGB(25, 110, 45)
+                COLOR_FOREST_OLIVE,         // RGB(30, 100, 50)
+                COLOR_FOREST_MOSS,          // RGB(35, 90, 55)
+                COLOR_FOREST_TEAL,          // RGB(40, 80, 60)
+                COLOR_FOREST_TEAL_DIM,      // RGB(45, 70, 65)
+                COLOR_FOREST_BLUEGREEN,     // RGB(50, 60, 70)
+                COLOR_FOREST_BLUEGREEN_DARK // RGB(55, 50, 75)
             },
             {   // Смуга 2: Дзеркально
                 COLOR_FOREST_BLUEGREEN_DARK,
@@ -308,25 +279,24 @@ static const RGBMode modes[] = {
             }
         }
     },
-    //РЕЖИМ 11: Ice / Glass (Pulse + Wave base)
-    // Ідеально для
-    // ANIM_PULSE
-    // ANIM_WAVE
-    // повільні, “скандинавські” сцени
+
+    // ═════════════════════════════════════════════════════════════════════
+    // РЕЖИМ 11: Лід / Скло (Ice Glass) - СЛУЖБОВИЙ
+    // ═════════════════════════════════════════════════════════════════════
     {
-        .selectable = true,
+        .selectable = true,         // База для PULSE/WAVE анімацій
         .type = MODE_PER_PIXEL,
-        .brightness = 40,
+        .brightness = 40,            // Яскравість: 40%
         .perPixel = {
-            {   // Смуга 1: Лід / скло
-                COLOR_ICE_WHITE,
-                COLOR_ICE_LIGHT,
-                COLOR_ICE_SOFT,
-                COLOR_ICE_BLUE,
-                COLOR_ICE_BLUE_LIGHT,
-                COLOR_ICE_BLUE_DIM,
-                COLOR_ICE_BLUE_DARK,
-                COLOR_ICE_STEEL
+            {   // Смуга 1: Лід від світлого до темного
+                COLOR_ICE_WHITE,            // RGB(180, 240, 255)
+                COLOR_ICE_LIGHT,            // RGB(160, 230, 255)
+                COLOR_ICE_SOFT,             // RGB(140, 220, 255)
+                COLOR_ICE_BLUE,             // RGB(120, 210, 255)
+                COLOR_ICE_BLUE_LIGHT,       // RGB(100, 200, 255)
+                COLOR_ICE_BLUE_DIM,         // RGB(80, 190, 245)
+                COLOR_ICE_BLUE_DARK,        // RGB(60, 180, 235)
+                COLOR_ICE_STEEL             // RGB(40, 170, 225)
             },
             {   // Смуга 2: Дзеркально
                 COLOR_ICE_STEEL,
@@ -340,87 +310,102 @@ static const RGBMode modes[] = {
             }
         }
     },
-    // 12 mode
+
+    // ═════════════════════════════════════════════════════════════════════
+    // РЕЖИМ 12: Пульс (Warm Pulse)
+    // ═════════════════════════════════════════════════════════════════════
     {
         .selectable = true,
         .type = MODE_ANIMATED,
-        .brightness = 40,
+        .brightness = 35,            // Яскравість: 40%
         .animated = {
-            .baseModeIndex = 8, // будь-який гарний per-pixel base
+            .baseModeIndex = 8,      // База: режим 8 (теплий)
             .anim = {
-                .type = ANIM_PULSE,
-                .speedMs = 80,        // швидкість дихання
-                .syncStrips = true,
+                .type = ANIM_PULSE,        // Пульсуючий ефект
+                .speedMs = 80,             // Інтервал: 80 мс (дихання)
+                .syncStrips = true,        // Синхронізовані
                 .invertSecond = false,
-                .intensity = 4,       // сила пульсу
+                .intensity = 3,            // Сила пульсу: 3/10 (м'яка)
                 .invertEffect = false
             }
         }
     },
-    // 13 mode
+
+    // ═════════════════════════════════════════════════════════════════════
+    // РЕЖИМ 13: Пульс льоду (Ice Pulse)
+    // ═════════════════════════════════════════════════════════════════════
     {
         .selectable = true,
         .type = MODE_ANIMATED,
-        .brightness = 40,
+        .brightness = 28,            // Яскравість: 40%
         .animated = {
-            .baseModeIndex = 11, // будь-який гарний per-pixel base
+            .baseModeIndex = 11,     // База: режим 11 (лід)
             .anim = {
-                .type = ANIM_PULSE,
-                .speedMs = 80,        // швидкість дихання
-                .syncStrips = true,
+                .type = ANIM_PULSE,        // Пульсуючий ефект
+                .speedMs = 80,             // Інтервал: 80 мс
+                .syncStrips = true,        // Синхронізовані
                 .invertSecond = false,
-                .intensity = 4,       // сила пульсу
+                .intensity = 3,            // Сила пульсу: 3/10
                 .invertEffect = false
             }
         }
     },
-    // 13 mode
+
+    // ═════════════════════════════════════════════════════════════════════
+    // РЕЖИМ 14: Хвиля неону (Neon Wave)
+    // ═════════════════════════════════════════════════════════════════════
     {
         .selectable = true,
         .type = MODE_ANIMATED,
-        .brightness = 45,
+        .brightness = 45,            // Яскравість: 45%
         .animated = {
-            .baseModeIndex = 9,   // градієнт
+            .baseModeIndex = 9,      // База: режим 9 (неон WAVE)
             .anim = {
-                .type = ANIM_WAVE,
-                .speedMs = 90,
-                .syncStrips = true,
-                .invertSecond = true,
-                .intensity = 6,   // сила хвилі
+                .type = ANIM_WAVE,         // Хвильовий ефект
+                .speedMs = 70,             // Інтервал: 70 мс (14 FPS)
+                .syncStrips = true,        // Синхронізовані
+                .invertSecond = true,      // Дзеркальний напрямок
+                .intensity = 5,            // Сила хвилі: 6/10
                 .invertEffect = false
             }
         }
     },
-    // 14 mode
+
+    // ═════════════════════════════════════════════════════════════════════
+    // РЕЖИМ 15: Хвиля льоду (Ice Wave)
+    // ═════════════════════════════════════════════════════════════════════
     {
         .selectable = true,
         .type = MODE_ANIMATED,
-        .brightness = 45,
+        .brightness = 40,            // Яскравість: 45%
         .animated = {
-            .baseModeIndex = 11,   // градієнт
+            .baseModeIndex = 11,     // База: режим 11 (лід)
             .anim = {
-                .type = ANIM_WAVE,
-                .speedMs = 90,
-                .syncStrips = true,
-                .invertSecond = true,
-                .intensity = 6,   // сила хвилі
+                .type = ANIM_WAVE,         // Хвильовий ефект
+                .speedMs = 90,             // Інтервал: 90 мс
+                .syncStrips = true,        // Синхронізовані
+                .invertSecond = true,      // Дзеркальний напрямок
+                .intensity = 6,            // Сила хвилі: 6/10
                 .invertEffect = false
             }
         }
     },
-    // 14 mode
+
+    // ═════════════════════════════════════════════════════════════════════
+    // РЕЖИМ 16: Шум (Organic Noise)
+    // ═════════════════════════════════════════════════════════════════════
     {
         .selectable = true,
         .type = MODE_ANIMATED,
-        .brightness = 35,
+        .brightness = 30,            // Яскравість: 35%
         .animated = {
-            .baseModeIndex = 10, // градієнт або теплий base
+            .baseModeIndex = 10,     // База: режим 10 (лісовий)
             .anim = {
-                .type = ANIM_NOISE,
-                .speedMs = 120,
-                .syncStrips = false,
+                .type = ANIM_NOISE,        // Органічний шум
+                .speedMs = 120,            // Інтервал: 120 мс (8 FPS)
+                .syncStrips = false,       // Кожна смуга: незалежний шум
                 .invertSecond = false,
-                .intensity = 3,   // дуже важливо: low–mid
+                .intensity = 2,            // Інтенсивність: 2/10 (дуже м'яка)
                 .invertEffect = false
             }
         }
@@ -428,28 +413,11 @@ static const RGBMode modes[] = {
     
 };
 
-// ========================================================================
-// ДОПОМІЖНІ ФУНКЦІЇ ДЛЯ РОБОТИ З РЕЖИМАМИ
-// ========================================================================
-
-/**
- * Повертає загальну кількість доступних режимів.
- * Використовується для ітерації по всіх режимах.
- *
- * @return uint8_t Кількість режимів у масиві
- */
 uint8_t RGB_modes_Count()
 {
     return sizeof(modes) / sizeof(modes[0]);
 }
 
-/**
- * Повертає посилання на режим за індексом.
- * Використовується для отримання конфігурації конкретного режиму.
- *
- * @param index Індекс режиму (починається з 0)
- * @return const RGBMode& Посилання на структуру режиму
- */
 const RGBMode& RGB_modes_Get(uint8_t index)
 {
     return modes[index];

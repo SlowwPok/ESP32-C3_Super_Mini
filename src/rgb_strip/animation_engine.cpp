@@ -32,70 +32,113 @@ static RGB dim(const RGB& c, uint8_t div)
 }
 
 /**
- * Зробити колір контрастніше бустанути.
- * Збільшує яскравість кольору для створення ефекту контрасту.
+ * Збільшення яскравості кольору з випадковим компонентом.
+ * Додає до кожного каналу випадкове значення в діапазоні.
  *
  * @param c Вхідний колір RGB
- * @param strength Множник яскравості (чим більше, тим яскравіше)
- * @return RGB Яскравіший колір
+ * @param strength Сила бусту (базова величина випадкового додавання)
+ * @return RGB Бустований колір з забезпеченням від переповнення
  */
 static RGB boost(const RGB& c, uint8_t strength)
 {
-  return RGB{
-    clampAdd(c.r, random(strength, strength * 2)),
-    clampAdd(c.g, random(strength, strength * 2)),
-    clampAdd(c.b, random(strength, strength * 2))
-  };
+    return RGB{
+        clampAdd(c.r, random(strength, strength * 2)), // Додавання випадкового значення до червоного
+        clampAdd(c.g, random(strength, strength * 2)), // Додавання випадкового значення до зеленого
+        clampAdd(c.b, random(strength, strength * 2))  // Додавання випадкового значення до синього
+    };
 }
 
+/**
+ * Гарантування мінімальної яскравості для кольору.
+ * Переконує, що жоден канал не темніший за вказане значення.
+ * Корисно для забезпечення видимості в темних ефектах.
+ *
+ * @param c Вхідний колір RGB
+ * @param min Мінімальне значення для кожного каналу
+ * @return RGB Колір з гарантованою мінімальною яскравістю
+ */
 static RGB ensureMinBrightness(const RGB& c, uint8_t min)
 {
     RGB out = c;
 
-    if (out.r < min) out.r = min;
-    if (out.g < min) out.g = min;
-    if (out.b < min) out.b = min;
+    if (out.r < min) out.r = min; // Встановлення мінімуму для червоного каналу
+    if (out.g < min) out.g = min; // Встановлення мінімуму для зеленого каналу
+    if (out.b < min) out.b = min; // Встановлення мінімуму для синього каналу
 
     return out;
 }
 
+/**
+ * Структура для зберігання кольорів анімованого пікселя.
+ * Містить три компоненти: фон, голова (яскравий піксель) та хвіст (згасання).
+ */
 struct AnimColors
 {
-    RGB background;
-    RGB head;
-    RGB tail;
+    RGB background; // Колір фону (для пікселів без анімації)
+    RGB head;       // Колір "голови" (основний яскравий піксель)
+    RGB tail;       // Колір "хвоста" (згасання за яскравим пікселем)
 };
 
+/**
+ * Визначення інтенсивності ефекту на основі параметрів.
+ * Конвертує значення інтенсивності (1-10) у масштабоване значення (4-40).
+ * Використовується для контролю яскравості ефектів.
+ *
+ * @param sp Параметри анімації, що містять поле intensity
+ * @return uint8_t Масштабована інтенсивність (1 → ~4, 10 → ~40)
+ */
 static uint8_t resolveIntensity(const AnimationParams& sp)
 {
-    // обмеження безпеки
+    // Обмеження безпеки: забезпечення коректного діапазону
     uint8_t i = sp.intensity;
-    if (i < 1) i = 1;
-    if (i > 10) i = 10;
+    if (i < 1) i = 1;   // Мінімум: 1
+    if (i > 10) i = 10; // Максимум: 10
 
-    // базова шкала сили ефекту
-    // 1 → ~4
-    // 10 → ~40
+    // Базова шкала сили ефекту
+    // intensity = 1 → результат = 4
+    // intensity = 10 → результат = 40
     return i * 4;
 }
 
-// Наскільки ЯСКРАВО
+/**
+ * Визначення потужності (яскравості) ефекту.
+ * Простий обгортач над resolveIntensity для читабельності коду.
+ *
+ * @param p Параметри анімації
+ * @return uint8_t Потужність ефекту (наскільки яскраво)
+ */
 static uint8_t resolvePower(const AnimationParams& p)
 {
-    return resolveIntensity(p);
+    return resolveIntensity(p); // Обчислення яскравості на основі інтенсивності
 }
 
-// Наскільки ДАЛЕКО (довжина хвоста)
+/**
+ * Визначення діапазону (дальність) ефекту.
+ * Конвертує інтенсивність у довжину "хвоста" анімації (1-4 пікселі).
+ * Використовується для контролю того, наскільки далеко простягається ефект.
+ *
+ * @param p Параметри анімації
+ * @return uint8_t Діапазон ефекту в пікселях (1-4)
+ */
 static uint8_t resolveRange(const AnimationParams& p)
 {
-    // intensity 1–10 → range 1–4
+    // Конвертація інтенсивності (1-10) в діапазон (1-4)
     uint8_t i = p.intensity;
-    if (i < 1) i = 1;
-    if (i > 10) i = 10;
+    if (i < 1) i = 1;   // Мінімум: 1
+    if (i > 10) i = 10; // Максимум: 10
 
-    return (i + 2) / 3; // 1..4
+    return (i + 2) / 3; // 1..4 (формула для плавного розподілу)
 }
 
+/**
+ * Визначення кольорів для анімації "ходячого пікселя".
+ * Розраховує фон, голову та хвіст на основі базового кольору та параметрів.
+ * Підтримує нормальний та інвертований режими.
+ *
+ * @param base Базовий колір градієнта
+ * @param p Параметри анімації (містять intensity та invertEffect)
+ * @return AnimColors Структура з кольорами для різних частин ефекту
+ */
 static AnimColors resolveWalkingPixelColors(
     const RGB& base,
     const AnimationParams& p
@@ -105,42 +148,53 @@ static AnimColors resolveWalkingPixelColors(
 
     if (!p.invertEffect)
     {
-        c.background = dim(base, 5);
+        // Нормальний режим: яскравий піксель на темному фоні
+        c.background = dim(base, 5);        // Сильно приглушений фон
         
         uint8_t power = resolvePower(p);
 
-        c.tail = boost(base, power);
-        c.head = boost(base, power * 2);
+        c.tail = boost(base, power);        // Хвіст: помірно бустований колір
+        c.head = boost(base, power * 2);    // Голова: сильно бустований колір
     }
     else
     {
-        c.background = ensureMinBrightness(base, 8);
-        c.tail       = dim(c.background, 2);
-        c.head       = RGB{0, 0, 0};
+        // Інвертований режим: темний піксель на світлому фоні
+        c.background = ensureMinBrightness(base, 8);  // Світлий фон
+        c.tail       = dim(c.background, 2);          // Хвіст: приглушення фону
+        c.head       = RGB{0, 0, 0};                  // Голова: чорний (контраст)
     }
 
     return c;
 }
 
+/**
+ * Санітизація параметрів анімації перед використанням.
+ * Переконує, що всі параметри мають розумні значення,
+ * та коригує конфліктні комбінації параметрів.
+ *
+ * @param in Оригінальні параметри анімації
+ * @return AnimationParams Сантивизовані параметри, готові до використання
+ */
 static AnimationParams sanitizeParams(const AnimationParams& in)
 {
     AnimationParams p = in;
 
-    // intensity ніколи не 0
+    // Обмеження безпеки: intensity ніколи не повинна бути 0
     if (p.intensity < 1)
         p.intensity = 1;
 
-    // walking pixel: invertEffect без сенсу при intensity = 1
+    // Ходячий піксель: invertEffect без сенсу при intensity = 1
+    // Коригуємо для видимого ефекту
     if (p.type == ANIM_WALKING_PIXEL && p.invertEffect && p.intensity == 1)
     {
-        // мінімальний хвіст, щоб ефект був видимий
+        // Збільшуємо інтенсивність для мінімального видимого хвоста
         p.intensity = 2;
     }
 
-    // glitch: syncStrips не має сенсу
+    // Гліч: syncStrips не має сенсу (завжди окремі стани для кожної смуги)
     if (p.type == ANIM_GLITCH)
     {
-        p.syncStrips = false;
+        p.syncStrips = false; // Примусово розсинхронізуємо смуги
     }
 
     return p;
@@ -195,10 +249,11 @@ void Animation_Update(AnimationState& s, const AnimationParams& p)
     s.index = (s.index + 1) % NUMPIXELS; // Циклічний рух по пікселях
     s.phase += 0.1f;                     // Плавне збільшення фази
 
-    /* ---------- ЛОГІКА ПАРНИХ/НЕПАРНИХ ---------- */
+    /* ---------- ЛОГІКА ПАРНИХ/НЕПАРНИХ АНІМАЦІЙ ---------- */
     if (p.type == ANIM_EVEN_ODD)
     {
-        s.evenPhase = !s.evenPhase; // <-- головне
+        // Перемикання фази для чергування парних/непарних пікселів
+        s.evenPhase = !s.evenPhase;
         return;
     }
 
@@ -208,16 +263,16 @@ void Animation_Update(AnimationState& s, const AnimationParams& p)
         // Завершення активного глічу, якщо час минув
         if (s.glitchActive && now > s.glitchUntil)
         {
-            s.glitchActive = false;
+            s.glitchActive = false; // Деактивація глічу
         }
 
-        // Випадковий старт нового глічу (~12% шанс на кожному кроці)
+        // Випадковий старт нового глічу (~15% шанс на кожному кроці)
         if (!s.glitchActive && random(100) < 15)
         {
             s.glitchActive = true;
             s.glitchPixel = random(NUMPIXELS);         // Випадковий піксель для початку глічу
-            s.glitchCount = random(1, 2);              // 1-3 пікселі будуть у глічі
-            s.glitchUntil = now + random(50, 100);     // Тривалість глічу: 40-120 мс
+            s.glitchCount = random(1, 2);              // 1-2 пікселі будуть у глічі
+            s.glitchUntil = now + random(50, 100);     // Тривалість глічу: 50-100 мс
         }
     }
 }
@@ -248,140 +303,153 @@ RGB Animation_Apply(const AnimationState& s, const AnimationParams& p, const RGB
         {
             uint8_t pos = s.index;
 
-            // інверсія напрямку для другої стрічки
+            // Інверсія напрямку для другої стрічки (якщо потрібна асиметрія)
             if (sp.invertSecond && isSecondStrip)
             {
-                pos = (NUMPIXELS - 1) - pos;
+                pos = (NUMPIXELS - 1) - pos; // Обернений напрямок руху
             }
 
+            // Обчислення відстані від поточного пікселя до позиції голови
             uint8_t dist = (i > pos) ? (i - pos) : (pos - i);
 
+            // Розрахунок кольорів для головної та хвостової частини
             AnimColors colors = resolveWalkingPixelColors(base, sp);
 
-            RGB out = colors.background;
+            RGB out = colors.background; // За замовчуванням фон
 
-            uint8_t range = resolveRange(sp);
+            uint8_t range = resolveRange(sp); // Діапазон хвоста
 
+            // Визначення, які пікселі належать до голови чи хвоста
             if (dist == 0)
             {
-                out = colors.head;
+                out = colors.head;  // Поточна позиція: яскрава голова
             }
             else if (dist <= range)
             {
-                out = colors.tail;
+                out = colors.tail;  // Близько до голови: хвіст (згасання)
             }
 
             return out;
         }
         /* ===== ПАРНІ/НЕПАРНІ ===== */
-        // Опис: Парні пікселі світяться базовим кольором,
-        // Та перемикаються через заданий час
-        // непарні - вимкнені (чорні)
+        // Опис: Парні пікселі світяться базовим кольором та перемикаються через час
+        // Непарні - вимкнені (чорні), або навпаки залежно від фази
         case ANIM_EVEN_ODD:
         {
             bool isEvenPixel = (i % 2 == 0);
+            
+            // Визначення, чи світить піксель залежно від поточної фази
             bool lit = s.evenPhase ? isEvenPixel : !isEvenPixel;
 
-            // інверсія другої стрічки
+            // Інверсія режиму для другої стрічки (чередування парних/непарних)
             if (sp.invertSecond && isSecondStrip)
                 lit = !lit;
 
-            // інтенсивність як яскравість
+            // Світлі пікселі мають інтенсивність, темні - чорні
             RGB on = boost(base, resolveIntensity(sp));
 
-            return lit ? on : RGB{0, 0, 0};
+            return lit ? on : RGB{0, 0, 0}; // Світло або чорний
         }
         /* ===== ГЛІЧ ===== */
-        // Опис: Випадкові пікселі спалахують яскравіше на короткий час,
-        // імітуючи цифровий збій
+        // Опис: Випадкові пікселі спалахують яскравіше на короткий час
+        // Імітує цифровий збій з контрастними спалахами
         case ANIM_GLITCH:
         {
-            // базовий колір завжди присутній
+            // Базовий колір завжди присутній як основа
             RGB out = base;
 
+            // Перевірка, чи піксель у зоні активного глічу
             if (s.glitchActive &&
                 i >= s.glitchPixel &&
                 i < s.glitchPixel + s.glitchCount)
             {
                 if (!sp.invertEffect)
                 {
-                    // підсвітити
+                    // Нормальний режим: підсвітити (освітліть глітч)
                     out = boost(base, resolveIntensity(sp));
                 }
                 else
                 {
-                    // приглушити (інверсний гліч)
-                    out = dim(base, 4);
+                    // Інвертований режим: затемнити (темний глітч на світлому фоні)
+                    out = dim(base, 4); // Приглушення для контрасту
                 }
             }
 
             return out;
         }
 
+        /* ===== ПУЛЬС ===== */
+        // Опис: Плавне збільшення та зменшення яскравості
+        // Створює ритмічний пульсуючий ефект
         case ANIM_PULSE:
         {
-            // базовий колір завжди присутній
+            // Базовий колір як основа
             RGB out = base;
 
-            // фаза → плавна хвиля 0..1
+            // Конвертація фази в плавну хвилю від 0 до 1
             float pulse = (sin(s.phase) + 1.0f) * 0.5f;
 
             uint8_t power = resolvePower(sp);
 
-            // масштабуємо яскравість
+            // Масштабування яскравості кожного каналу за фазою
             out.r = clampAdd(0, uint8_t(base.r * pulse));
             out.g = clampAdd(0, uint8_t(base.g * pulse));
             out.b = clampAdd(0, uint8_t(base.b * pulse));
 
-            // додатковий контраст через power
+            // Додатковий контраст через інтенсивність
             if (!sp.invertEffect)
             {
-                out = boost(out, power / 2);
+                out = boost(out, power / 2); // Посилення яскравих піків
             }
             else
             {
-                out = dim(out, 2);
+                out = dim(out, 2);            // Приглушення темних долин
             }
 
             return out;
         }
 
+        /* ===== ХВИЛЯ ===== */
+        // Опис: Косинусоїдна хвиля, що рухається по смузі
+        // Створює ефект хвилі, що розповсюджується
         case ANIM_WAVE:
         {
-            uint8_t center = s.index;
+            uint8_t center = s.index; // Центр хвилі
 
-            // дзеркалимо для другої стрічки
+            // Дзеркалення центру для другої стрічки (асиметрія)
             if (sp.invertSecond && isSecondStrip)
             {
                 center = (NUMPIXELS - 1) - center;
             }
 
+            // Обчислення відстані від центру хвилі
             uint8_t dist = (i > center) ? (i - center) : (center - i);
             uint8_t range = resolveRange(sp);
 
-            // за межами хвилі — просто база
+            // За межами хвилі повертаємо базовий колір
             if (dist > range)
                 return base;
 
-            // dist 0..range → 1..0
+            // Нормалізація: dist 0..range → 1..0 (від максимуму до мінімуму)
             float norm = 1.0f - (float(dist) / float(range + 1));
-            float wave = cos(norm * (PI / 2.0f)); // мʼякий спад
+            float wave = cos(norm * (PI / 2.0f)); // М'яка косинусна крива
 
             uint8_t power = resolvePower(sp);
 
+            // Масштабування кольору за хвилею
             RGB out;
             out.r = clampAdd(0, uint8_t(base.r * wave));
             out.g = clampAdd(0, uint8_t(base.g * wave));
             out.b = clampAdd(0, uint8_t(base.b * wave));
 
-            // підсилюємо хвилю
+            // Підсилення хвилі інтенсивністю
             if (!sp.invertEffect)
             {
-                out = boost(out, power);
+                out = boost(out, power); // Посилення хвилі
             }
             else
             {
-                out = dim(out, 2);
+                out = dim(out, 2);       // Пом'якшення хвилі
             }
 
             return out;

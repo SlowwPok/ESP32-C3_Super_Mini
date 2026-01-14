@@ -39,9 +39,11 @@ static bool ledsEnabled = false;
 // Поточний вибраний режим освітлення (індекс з rgb_modes)
 static uint8_t currentMode = 0;
 
-// Стани анімацій для кожного режиму (масив для всіх можливих режимів)
-// [mode][0 = strip1, 1 = strip2]
-static AnimationState animStates[16][2];
+// Стани анімацій для кожного режиму
+// [режим][смуга] - кожен режим має 2 стани для синхронізованих та окремих смуг
+// animStates[currentMode][0] - стан для першої смуги або синхронізований стан
+// animStates[currentMode][1] - стан для другої смуги (при несинхронізованих смугах)
+static AnimationState animStates[RGB_MODES_MAX][2];
 
 /* =========================================================
    ВИБІР РЕЖИМУ ОСВІТЛЕННЯ
@@ -132,12 +134,15 @@ static void renderMode(const RGBMode& m)
 
         if (m.type == MODE_ANIMATED)
         {
+            // Оновлення стану анімації залежно від налаштувань синхронізації
             if (m.animated.anim.syncStrips)
             {
+                // Синхронізовані смуги: використовуємо один стан для обох
                 Animation_Update(animStates[currentMode][0], m.animated.anim);
             }
             else
             {
+                // Окремі смуги: оновлюємо стан для кожної смуги окремо
                 Animation_Update(animStates[currentMode][0], m.animated.anim);
                 Animation_Update(animStates[currentMode][1], m.animated.anim);
             }
@@ -170,24 +175,27 @@ static void renderMode(const RGBMode& m)
             // Анімований режим: використовує базовий режим + анімацію
             const RGBMode& base = RGB_modes_Get(m.animated.baseModeIndex); // Базовий режим
 
+            // Захист від помилки конфігурації: базовий режим повинен бути MODE_PER_PIXEL
             if (base.type != MODE_PER_PIXEL)
             {
-                //захист від помилки конфігурації
+                // Якщо базовий режим не MODE_PER_PIXEL, показуємо чорний колір (сигнал помилки)
                 c1 = {0, 0, 0};
                 c2 = {0, 0, 0};
             }
             else
             {
+                // Отримання станів анімацій для обох смуг
                 AnimationState& s1 = animStates[currentMode][0];
                 AnimationState& s2 = m.animated.anim.syncStrips
-                    ? animStates[currentMode][0]
-                    : animStates[currentMode][1];
+                    ? animStates[currentMode][0] // Синхронізовані: використовуємо один стан
+                    : animStates[currentMode][1]; // Окремі: кожна смуга має свій стан
 
                 // Отримання базових кольорів для поточного пікселя
                 RGB base1 = base.perPixel.strip1[i];
                 RGB base2 = base.perPixel.strip2[i];
 
                 // Застосування анімації до базових кольорів
+                // Параметр isSecondStrip дозволяє анімації змінювати ефект для другої смуги
                 c1 = Animation_Apply(s1, m.animated.anim, base1, i, false);
                 c2 = Animation_Apply(s2, m.animated.anim, base2, i, true);
             }
