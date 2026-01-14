@@ -113,6 +113,7 @@ void Display_DrawDebugPattern()
   drawCross(w - 1, h - 1, COLOR_YELLOW); //RGB(255, 255, 0)
 
   // ─── ТЕКСТ ───
+  Display_DrawText(10, 10, "LovyanGFX Library", COLOR_WHITE); //RGB(255, 255, 255)
   Display_DrawText(10, 10, "ST7789 DEBUG", COLOR_WHITE); //RGB(255, 255, 255)
   Display_DrawText(10, 26, "RGB565 OK", COLOR_WHITE); //RGB(255, 255, 255)
   Display_DrawText(10, 42, "ROTATION = 3", COLOR_WHITE); //RGB(255, 255, 255)

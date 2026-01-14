@@ -1,14 +1,19 @@
 #include <Arduino.h>
-#include "display/LovyanGFX/display_LovyanGFX.h"
-#include "display/LovyanGFX/display_LovyanGFX_debug.h"
+
+// #include "display/LovyanGFX/display_LovyanGFX.h"
+// #include "display/LovyanGFX/display_LovyanGFX_debug.h"
+
+#include "display/AdafruitGFX/display_adafruit.h"
+#include "display/AdafruitGFX/display_adafruit_debug.h"
+
 #include "rgb_strip/rgb_strip.h"
 
 
 void setup()
 {
-  Display_Init();
-  Display_DrawDebugPattern();
-
+  Display_Init();                 // Initialize the display (using AdafruitGFX same as LovyanGFX)  
+  // Display_DrawDebugPattern();  // LovyanGFX
+  Display_DebugPattern();         // AdafruitGFX
 
   // Initialize the RGB strip
   RGB_strip_Init();
