@@ -1,12 +1,13 @@
 #include <Arduino.h>
+#include "display/LovyanGFX/display_LovyanGFX.h"
+#include "display/LovyanGFX/display_LovyanGFX_debug.h"
 #include "rgb_strip/rgb_strip.h"
-#include "display/display_LovyanGFX.h"
 
 
 void setup()
 {
   Display_Init();
-  Display_DrawGrid();
+  Display_DrawDebugPattern();
 
 
   // Initialize the RGB strip
