@@ -66,6 +66,36 @@ struct AnimColors
     RGB tail;
 };
 
+static uint8_t resolveIntensity(const AnimationParams& sp)
+{
+    // обмеження безпеки
+    uint8_t i = sp.intensity;
+    if (i < 1) i = 1;
+    if (i > 10) i = 10;
+
+    // базова шкала сили ефекту
+    // 1 → ~4
+    // 10 → ~40
+    return i * 4;
+}
+
+// Наскільки ЯСКРАВО
+static uint8_t resolvePower(const AnimationParams& p)
+{
+    return resolveIntensity(p);
+}
+
+// Наскільки ДАЛЕКО (довжина хвоста)
+static uint8_t resolveRange(const AnimationParams& p)
+{
+    // intensity 1–10 → range 1–4
+    uint8_t i = p.intensity;
+    if (i < 1) i = 1;
+    if (i > 10) i = 10;
+
+    return (i + 2) / 3; // 1..4
+}
+
 static AnimColors resolveWalkingPixelColors(
     const RGB& base,
     const AnimationParams& p
@@ -76,17 +106,44 @@ static AnimColors resolveWalkingPixelColors(
     if (!p.invertEffect)
     {
         c.background = dim(base, 5);
-        c.tail       = boost(base, p.intensity * 6);
-        c.head       = boost(base, p.intensity * 12);
+        
+        uint8_t power = resolvePower(p);
+
+        c.tail = boost(base, power);
+        c.head = boost(base, power * 2);
     }
     else
     {
         c.background = ensureMinBrightness(base, 8);
-        c.tail       = dim(c.background, 4);
+        c.tail       = dim(c.background, 2);
         c.head       = RGB{0, 0, 0};
     }
 
     return c;
+}
+
+static AnimationParams sanitizeParams(const AnimationParams& in)
+{
+    AnimationParams p = in;
+
+    // intensity ніколи не 0
+    if (p.intensity < 1)
+        p.intensity = 1;
+
+    // walking pixel: invertEffect без сенсу при intensity = 1
+    if (p.type == ANIM_WALKING_PIXEL && p.invertEffect && p.intensity == 1)
+    {
+        // мінімальний хвіст, щоб ефект був видимий
+        p.intensity = 2;
+    }
+
+    // glitch: syncStrips не має сенсу
+    if (p.type == ANIM_GLITCH)
+    {
+        p.syncStrips = false;
+    }
+
+    return p;
 }
 
 /* =========================================================
@@ -181,7 +238,8 @@ void Animation_Update(AnimationState& s, const AnimationParams& p)
  */
 RGB Animation_Apply(const AnimationState& s, const AnimationParams& p, const RGB& base, uint8_t i, bool isSecondStrip)
 {
-    switch (p.type)
+    AnimationParams sp = sanitizeParams(p);
+    switch (sp.type)
     {
         /* ===== ХОДЯЧИЙ ПІКСЕЛЬ ===== */
         // Опис: Один яскравий піксель "ходить" вздовж смуги,
@@ -191,22 +249,24 @@ RGB Animation_Apply(const AnimationState& s, const AnimationParams& p, const RGB
             uint8_t pos = s.index;
 
             // інверсія напрямку для другої стрічки
-            if (p.invertSecond && isSecondStrip)
+            if (sp.invertSecond && isSecondStrip)
             {
                 pos = (NUMPIXELS - 1) - pos;
             }
 
             uint8_t dist = (i > pos) ? (i - pos) : (pos - i);
 
-            AnimColors colors = resolveWalkingPixelColors(base, p);
+            AnimColors colors = resolveWalkingPixelColors(base, sp);
 
             RGB out = colors.background;
+
+            uint8_t range = resolveRange(sp);
 
             if (dist == 0)
             {
                 out = colors.head;
             }
-            else if (dist <= p.intensity)
+            else if (dist <= range)
             {
                 out = colors.tail;
             }
@@ -223,11 +283,11 @@ RGB Animation_Apply(const AnimationState& s, const AnimationParams& p, const RGB
             bool lit = s.evenPhase ? isEvenPixel : !isEvenPixel;
 
             // інверсія другої стрічки
-            if (p.invertSecond && isSecondStrip)
+            if (sp.invertSecond && isSecondStrip)
                 lit = !lit;
 
             // інтенсивність як яскравість
-            RGB on = boost(base, p.intensity * 10);
+            RGB on = boost(base, resolveIntensity(sp));
 
             return lit ? on : RGB{0, 0, 0};
         }
@@ -243,16 +303,117 @@ RGB Animation_Apply(const AnimationState& s, const AnimationParams& p, const RGB
                 i >= s.glitchPixel &&
                 i < s.glitchPixel + s.glitchCount)
             {
-                if (!p.invertEffect)
+                if (!sp.invertEffect)
                 {
                     // підсвітити
-                    out = boost(base, p.intensity * 8);
+                    out = boost(base, resolveIntensity(sp));
                 }
                 else
                 {
                     // приглушити (інверсний гліч)
                     out = dim(base, 4);
                 }
+            }
+
+            return out;
+        }
+
+        case ANIM_PULSE:
+        {
+            // базовий колір завжди присутній
+            RGB out = base;
+
+            // фаза → плавна хвиля 0..1
+            float pulse = (sin(s.phase) + 1.0f) * 0.5f;
+
+            uint8_t power = resolvePower(sp);
+
+            // масштабуємо яскравість
+            out.r = clampAdd(0, uint8_t(base.r * pulse));
+            out.g = clampAdd(0, uint8_t(base.g * pulse));
+            out.b = clampAdd(0, uint8_t(base.b * pulse));
+
+            // додатковий контраст через power
+            if (!sp.invertEffect)
+            {
+                out = boost(out, power / 2);
+            }
+            else
+            {
+                out = dim(out, 2);
+            }
+
+            return out;
+        }
+
+        case ANIM_WAVE:
+        {
+            uint8_t center = s.index;
+
+            // дзеркалимо для другої стрічки
+            if (sp.invertSecond && isSecondStrip)
+            {
+                center = (NUMPIXELS - 1) - center;
+            }
+
+            uint8_t dist = (i > center) ? (i - center) : (center - i);
+            uint8_t range = resolveRange(sp);
+
+            // за межами хвилі — просто база
+            if (dist > range)
+                return base;
+
+            // dist 0..range → 1..0
+            float norm = 1.0f - (float(dist) / float(range + 1));
+            float wave = cos(norm * (PI / 2.0f)); // мʼякий спад
+
+            uint8_t power = resolvePower(sp);
+
+            RGB out;
+            out.r = clampAdd(0, uint8_t(base.r * wave));
+            out.g = clampAdd(0, uint8_t(base.g * wave));
+            out.b = clampAdd(0, uint8_t(base.b * wave));
+
+            // підсилюємо хвилю
+            if (!sp.invertEffect)
+            {
+                out = boost(out, power);
+            }
+            else
+            {
+                out = dim(out, 2);
+            }
+
+            return out;
+        }
+        case ANIM_NOISE:
+        {
+            // базовий колір завжди є
+            RGB out = base;
+
+            uint8_t power = resolvePower(sp);
+
+            // унікальна фаза для кожного пікселя
+            float n =
+                sin(s.phase * 1.7f + i * 1.31f) * 0.5f +
+                sin(s.phase * 0.9f + i * 0.77f) * 0.5f;
+
+            // нормалізація → 0..1
+            float noise = (n + 1.0f) * 0.5f;
+
+            // масштабуємо базу
+            out.r = uint8_t(base.r * noise);
+            out.g = uint8_t(base.g * noise);
+            out.b = uint8_t(base.b * noise);
+
+            if (!sp.invertEffect)
+            {
+                out = boost(out, power);
+            }
+            else
+            {
+                // “нічний” органічний режим
+                out = dim(out, 2);
             }
 
             return out;

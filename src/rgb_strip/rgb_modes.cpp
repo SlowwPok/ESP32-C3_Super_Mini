@@ -212,6 +212,220 @@ static const RGBMode modes[] = {
             }
         }
     },
+    //РЕЖИМ 8: Warm Ambient (Pulse / Noise base)
+    //     Ідеально для
+    // ANIM_PULSE
+    // ANIM_NOISE (intensity 2–3)
+    // нічні режими, invertEffect = true
+    {
+        .selectable = true,
+        .type = MODE_PER_PIXEL,
+        .brightness = 30,
+        .perPixel = {
+            {   // Смуга 1: Теплий бурштин → темний коричневий
+                COLOR_WARM_AMBER_BRIGHT,
+                COLOR_WARM_AMBER,
+                COLOR_WARM_ORANGE_SOFT,
+                COLOR_WARM_ORANGE_DIM,
+                COLOR_WARM_BROWN_LIGHT,
+                COLOR_WARM_BROWN,
+                COLOR_WARM_BROWN_DARK,
+                COLOR_WARM_BROWN_DEEP
+            },
+            {   // Смуга 2: Дзеркально
+                COLOR_WARM_BROWN_DEEP,
+                COLOR_WARM_BROWN_DARK,
+                COLOR_WARM_BROWN,
+                COLOR_WARM_BROWN_LIGHT,
+                COLOR_WARM_ORANGE_DIM,
+                COLOR_WARM_ORANGE_SOFT,
+                COLOR_WARM_AMBER,
+                COLOR_WARM_AMBER_BRIGHT
+            }
+        }
+    },
+    //РЕЖИМ 9: Cyber Neon (Wave / Scanline base)
+    //     Ідеально для
+    // ANIM_WAVE
+    // invertSecond = true
+    // швидкі scanline / cyber ефекти
+    {
+        .selectable = true,
+        .type = MODE_PER_PIXEL,
+        .brightness = 45,
+        .perPixel = {
+            {   // Смуга 1: Фіолетовий неон → синій
+                COLOR_NEON_PURPLE_BRIGHT,
+                COLOR_NEON_PURPLE,
+                COLOR_NEON_VIOLET,
+                COLOR_NEON_BLUE_VIOLET,
+                COLOR_NEON_BLUE,
+                COLOR_NEON_BLUE_DEEP,
+                COLOR_NEON_BLUE_DIM,
+                COLOR_NEON_BLUE_DARK
+            },
+            {   // Смуга 2: Бірюзово-блакитний неон
+                COLOR_CYAN,
+                COLOR_CYAN_BRIGHT,
+                COLOR_BLUE_DEEP,
+                COLOR_BLUE_DARK,
+                COLOR_BLUE,
+                COLOR_PURPLE_DARK,
+                COLOR_PURPLE_DEEP,
+                COLOR_MAGENTA
+            }
+        }
+    },
+    //РЕЖИМ 10: Forest / Organic (Noise base)
+    //     🌿 Ідеально для
+    // ANIM_NOISE
+    // intensity 2–4
+    // повільні, “живі” режими
+    {
+        .selectable = true,
+        .type = MODE_PER_PIXEL,
+        .brightness = 35,
+        .perPixel = {
+            {   // Смуга 1: Лісовий зелений → мох / синьо-зелений
+                COLOR_FOREST_GREEN_BRIGHT,
+                COLOR_FOREST_GREEN,
+                COLOR_FOREST_OLIVE,
+                COLOR_FOREST_MOSS,
+                COLOR_FOREST_TEAL,
+                COLOR_FOREST_TEAL_DIM,
+                COLOR_FOREST_BLUEGREEN,
+                COLOR_FOREST_BLUEGREEN_DARK
+            },
+            {   // Смуга 2: Дзеркально
+                COLOR_FOREST_BLUEGREEN_DARK,
+                COLOR_FOREST_BLUEGREEN,
+                COLOR_FOREST_TEAL_DIM,
+                COLOR_FOREST_TEAL,
+                COLOR_FOREST_MOSS,
+                COLOR_FOREST_OLIVE,
+                COLOR_FOREST_GREEN,
+                COLOR_FOREST_GREEN_BRIGHT
+            }
+        }
+    },
+    //РЕЖИМ 11: Ice / Glass (Pulse + Wave base)
+    // Ідеально для
+    // ANIM_PULSE
+    // ANIM_WAVE
+    // повільні, “скандинавські” сцени
+    {
+        .selectable = true,
+        .type = MODE_PER_PIXEL,
+        .brightness = 40,
+        .perPixel = {
+            {   // Смуга 1: Лід / скло
+                COLOR_ICE_WHITE,
+                COLOR_ICE_LIGHT,
+                COLOR_ICE_SOFT,
+                COLOR_ICE_BLUE,
+                COLOR_ICE_BLUE_LIGHT,
+                COLOR_ICE_BLUE_DIM,
+                COLOR_ICE_BLUE_DARK,
+                COLOR_ICE_STEEL
+            },
+            {   // Смуга 2: Дзеркально
+                COLOR_ICE_STEEL,
+                COLOR_ICE_BLUE_DARK,
+                COLOR_ICE_BLUE_DIM,
+                COLOR_ICE_BLUE_LIGHT,
+                COLOR_ICE_BLUE,
+                COLOR_ICE_SOFT,
+                COLOR_ICE_LIGHT,
+                COLOR_ICE_WHITE
+            }
+        }
+    },
+    // 12 mode
+    {
+        .selectable = true,
+        .type = MODE_ANIMATED,
+        .brightness = 40,
+        .animated = {
+            .baseModeIndex = 8, // будь-який гарний per-pixel base
+            .anim = {
+                .type = ANIM_PULSE,
+                .speedMs = 80,        // швидкість дихання
+                .syncStrips = true,
+                .invertSecond = false,
+                .intensity = 4,       // сила пульсу
+                .invertEffect = false
+            }
+        }
+    },
+    // 13 mode
+    {
+        .selectable = true,
+        .type = MODE_ANIMATED,
+        .brightness = 40,
+        .animated = {
+            .baseModeIndex = 11, // будь-який гарний per-pixel base
+            .anim = {
+                .type = ANIM_PULSE,
+                .speedMs = 80,        // швидкість дихання
+                .syncStrips = true,
+                .invertSecond = false,
+                .intensity = 4,       // сила пульсу
+                .invertEffect = false
+            }
+        }
+    },
+    // 13 mode
+    {
+        .selectable = true,
+        .type = MODE_ANIMATED,
+        .brightness = 45,
+        .animated = {
+            .baseModeIndex = 9,   // градієнт
+            .anim = {
+                .type = ANIM_WAVE,
+                .speedMs = 90,
+                .syncStrips = true,
+                .invertSecond = true,
+                .intensity = 6,   // сила хвилі
+                .invertEffect = false
+            }
+        }
+    },
+    // 14 mode
+    {
+        .selectable = true,
+        .type = MODE_ANIMATED,
+        .brightness = 45,
+        .animated = {
+            .baseModeIndex = 11,   // градієнт
+            .anim = {
+                .type = ANIM_WAVE,
+                .speedMs = 90,
+                .syncStrips = true,
+                .invertSecond = true,
+                .intensity = 6,   // сила хвилі
+                .invertEffect = false
+            }
+        }
+    },
+    // 14 mode
+    {
+        .selectable = true,
+        .type = MODE_ANIMATED,
+        .brightness = 35,
+        .animated = {
+            .baseModeIndex = 10, // градієнт або теплий base
+            .anim = {
+                .type = ANIM_NOISE,
+                .speedMs = 120,
+                .syncStrips = false,
+                .invertSecond = false,
+                .intensity = 3,   // дуже важливо: low–mid
+                .invertEffect = false
+            }
+        }
+    },
+    
 };
 
 // ========================================================================
