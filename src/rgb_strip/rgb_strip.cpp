@@ -3,21 +3,8 @@
 #include "rgb_strip/rgb_strip.h"
 #include "rgb_strip/rgb_modes.h"
 #include "rgb_strip/animation_engine.h"
+#include "controls/controls.h"
 
-/* =========================================================
-   ВНУТРІШНІ ТИПИ ДАНИХ
-   ========================================================= */
-
-/**
- * Перелік подій дотиків для обробки користувацького вводу.
- * Використовується для визначення типу натискання кнопки.
- */
-enum TouchEvent
-{
-    TOUCH_NONE,  // Немає події (кнопка не натиснута)
-    TOUCH_TAP,   // Коротке натискання (тап)
-    TOUCH_LONG   // Довге натискання (long press)
-};
 
 /* =========================================================
    ОБ'ЄКТИ СВІТЛОДІОДНИХ СМУГ
@@ -68,52 +55,6 @@ static uint8_t findNextSelectable(uint8_t from)
     } while (!RGB_modes_Get(i).selectable); // Повторювати, поки не знайдемо selectable режим
 
     return i; // Повернення знайденого індексу
-}
-
-/* =========================================================
-   ОБРОБКА ДОТИКІВ (ТОРКАНЬ ДО КНОПКИ)
-   ========================================================= */
-
-/**
- * Обробляє стан сенсорної кнопки та визначає тип події.
- * Відстежує час натискання для розрізнення короткого та довгого натискання.
- *
- * @return TouchEvent Тип події дотиків (TAP, LONG або NONE)
- */
-static TouchEvent handleTouch()
-{
-    bool pressed = digitalRead(TOUCH_PIN); // Поточний стан кнопки (true - натиснута)
-
-    // Статичні змінні для збереження стану між викликами функції
-    static bool lastPressed = false;       // Стан кнопки на попередньому кроці
-    static unsigned long pressStart = 0;   // Час початку натискання
-    static bool longDone = false;          // Чи вже оброблено довге натискання
-
-    TouchEvent ev = TOUCH_NONE;            // Тип події за замовчуванням
-    unsigned long now = millis();          // Поточний час
-
-    // Початок нового натискання
-    if (pressed && !lastPressed)
-    {
-        pressStart = now;  // Запис часу початку
-        longDone = false;  // Скидання прапорця довгого натискання
-    }
-
-    // Перевірка на довге натискання (якщо час перевищує поріг)
-    if (pressed && !longDone && now - pressStart >= LONG_PRESS_TIME)
-    {
-        ev = TOUCH_LONG;   // Подія: довге натискання
-        longDone = true;   // Позначити, що довге натискання оброблено
-    }
-
-    // Кінець короткого натискання (відпускання кнопки без довгого натискання)
-    if (!pressed && lastPressed && !longDone)
-    {
-        ev = TOUCH_TAP;    // Подія: коротке натискання
-    }
-
-    lastPressed = pressed; // Оновлення стану для наступного виклику
-    return ev;             // Повернення типу події
 }
 
 /* =========================================================
@@ -225,9 +166,6 @@ void RGB_strip_Init()
     strip_1.begin();
     strip_2.begin();
 
-    // Налаштування піна сенсорної кнопки як вхід
-    pinMode(TOUCH_PIN, INPUT);
-
     // Ініціалізація станів анімацій для всіх режимів
     for (uint8_t i = 0; i < RGB_modes_Count(); i++)
     {
@@ -246,18 +184,20 @@ void RGB_strip_Init()
  */
 void RGB_strip_Update()
 {
-    TouchEvent ev = handleTouch(); // Отримання події від сенсорної кнопки
+    ControlEvent ev = Controls_Update();
 
-    // Обробка довгого натискання: перемикання увімкнення/вимкнення світлодіодів
-    if (ev == TOUCH_LONG)
+    switch (ev)
     {
-        ledsEnabled = !ledsEnabled; // Інверсія стану
-    }
+        case CTRL_TOGGLE_POWER:
+            ledsEnabled = !ledsEnabled;
+            break;
 
-    // Обробка короткого натискання: перемикання на наступний режим
-    if (ev == TOUCH_TAP)
-    {
-        currentMode = findNextSelectable(currentMode); // Знаходження наступного режиму
+        case CTRL_NEXT_MODE:
+            currentMode = findNextSelectable(currentMode);
+            break;
+
+        default:
+            break;
     }
 
     // Відображення поточного режиму з урахуванням нових змін
