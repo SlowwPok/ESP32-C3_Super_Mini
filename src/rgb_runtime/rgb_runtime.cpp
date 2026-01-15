@@ -23,6 +23,15 @@ static bool    animated   = false;
 static AnimationState animState1;
 static AnimationState animState2;
 
+static inline RGB applyBrightness(const RGB& c, uint8_t brightness)
+{
+    RGB out;
+    out.r = (uint16_t)c.r * brightness / 255;
+    out.g = (uint16_t)c.g * brightness / 255;
+    out.b = (uint16_t)c.b * brightness / 255;
+    return out;
+}
+
 void RGB_Runtime_Init()
 {
     memset(runtimeStrip1, 0, sizeof(runtimeStrip1));
@@ -61,7 +70,7 @@ void RGB_Runtime_Update(const SystemState& state)
 
         for (int i = 0; i < RGB_STRIP_LENGTH; i++)
         {
-            runtimeStrip1[i] = Animation_Apply(
+            RGB c1 = Animation_Apply(
                 animState1,
                 mode.animated.anim,
                 base.perPixel.strip1[i],
@@ -69,13 +78,16 @@ void RGB_Runtime_Update(const SystemState& state)
                 false
             );
 
-            runtimeStrip2[i] = Animation_Apply(
+            RGB c2 = Animation_Apply(
                 animState2,
                 mode.animated.anim,
                 base.perPixel.strip2[i],
                 i,
                 true
             );
+
+            runtimeStrip1[i] = applyBrightness(c1, brightness);
+            runtimeStrip2[i] = applyBrightness(c2, brightness);
         }
     }
     else
@@ -87,13 +99,13 @@ void RGB_Runtime_Update(const SystemState& state)
         {
             if (mode.type == MODE_SOLID)
             {
-                runtimeStrip1[i] = mode.solid.strip1;
-                runtimeStrip2[i] = mode.solid.strip2;
+                runtimeStrip1[i] = applyBrightness(mode.solid.strip1, brightness);
+                runtimeStrip2[i] = applyBrightness(mode.solid.strip2, brightness);
             }
             else // MODE_PER_PIXEL
             {
-                runtimeStrip1[i] = mode.perPixel.strip1[i];
-                runtimeStrip2[i] = mode.perPixel.strip2[i];
+                runtimeStrip1[i] = applyBrightness(mode.perPixel.strip1[i], brightness);
+                runtimeStrip2[i] = applyBrightness(mode.perPixel.strip2[i], brightness);
             }
         }
     }

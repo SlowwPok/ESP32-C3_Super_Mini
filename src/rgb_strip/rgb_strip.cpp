@@ -15,15 +15,8 @@ void RGB_strip_Init()
     strip2.show();
 }
 
-void RGB_strip_Render(
-    const RGB* s1,
-    const RGB* s2,
-    uint8_t brightness
-)
+void RGB_strip_Render(const RGB* s1, const RGB* s2)
 {
-    strip1.setBrightness(brightness);
-    strip2.setBrightness(brightness);
-
     for (int i = 0; i < RGB_STRIP_LENGTH; i++)
     {
         strip1.setPixelColor(i, strip1.Color(s1[i].r, s1[i].g, s1[i].b));
