@@ -5,6 +5,10 @@
 #include "rgb_runtime/rgb_runtime.h"
 #include "rgb_strip/rgb_config.h"   // RGB_STRIP_LENGTH
 
+static bool     lastPowerOn   = false;
+static uint8_t  lastMode      = 0xFF;
+static bool     lastAnimated  = false;
+
 // ===== Layout =====
 static const int PADDING   = 10;
 static const int COLOR_BOX = 14;
@@ -30,6 +34,21 @@ static void drawStripColors(int y, const RGB* colors)
 // ===== Main UI =====
 void DisplayUI_Render(const SystemState& state)
 {
+    uint8_t activeMode = RGB_Runtime_GetActiveMode();
+    bool animated      = RGB_Runtime_IsAnimated();
+
+    bool needRedraw =
+        state.powerOn != lastPowerOn ||
+        activeMode    != lastMode    ||
+        animated      != lastAnimated;
+
+    if (!needRedraw)
+        return;
+
+    lastPowerOn  = state.powerOn;
+    lastMode     = activeMode;
+    lastAnimated = animated;
+
     Display_Clear(COLOR_BLACK);
 
     if (!state.powerOn)
@@ -46,9 +65,6 @@ void DisplayUI_Render(const SystemState& state)
 
     const RGB* strip1 = RGB_Runtime_GetStrip1();
     const RGB* strip2 = RGB_Runtime_GetStrip2();
-
-    uint8_t activeMode = RGB_Runtime_GetActiveMode();
-    bool animated      = RGB_Runtime_IsAnimated();
 
     char title[32];
     snprintf(title, sizeof(title),

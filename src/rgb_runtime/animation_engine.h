@@ -1,6 +1,5 @@
 #pragma once
 #include <Arduino.h>
-#include "rgb_strip/rgb_strip.h"
 #include "rgb_strip/rgb_types.h"
 
 /* =========================================================

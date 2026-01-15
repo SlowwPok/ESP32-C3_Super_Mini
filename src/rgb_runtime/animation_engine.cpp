@@ -1,4 +1,4 @@
-#include "rgb_strip/animation_engine.h"
+#include "rgb_runtime/animation_engine.h"
 #include "rgb_strip/rgb_types.h"
 #include "rgb_strip/rgb_config.h"
 
