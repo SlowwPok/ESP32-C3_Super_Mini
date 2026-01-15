@@ -32,7 +32,6 @@ void DisplayUI_Render(const SystemState& state)
 {
     Display_Clear(COLOR_BLACK);
 
-    // ---- Power OFF ----
     if (!state.powerOn)
     {
         Display_DrawText(
@@ -45,34 +44,27 @@ void DisplayUI_Render(const SystemState& state)
         return;
     }
 
-    // ---- Runtime state ----
     const RGB* strip1 = RGB_Runtime_GetStrip1();
     const RGB* strip2 = RGB_Runtime_GetStrip2();
 
-    bool animated      = RGB_Runtime_IsAnimated();
     uint8_t activeMode = RGB_Runtime_GetActiveMode();
-    uint8_t baseMode   = RGB_Runtime_GetBaseMode();
+    bool animated      = RGB_Runtime_IsAnimated();
 
-    // ---- Title ----
     char title[32];
-    if (animated)
-        snprintf(title, sizeof(title), "ANIM %d (BASE %d)", activeMode, baseMode);
-    else
-        snprintf(title, sizeof(title), "MODE %d", activeMode);
+    snprintf(title, sizeof(title),
+             animated ? "ANIM %d" : "MODE %d",
+             activeMode);
 
     Display_DrawText(PADDING, PADDING, 2, title, COLOR_WHITE);
 
-    int y = PADDING + 32;
+    int y = PADDING + 30;
 
-    // ---- Strip 1 ----
     Display_DrawText(PADDING, y, 1, "STRIP 1", COLOR_WHITE);
     y += 12;
-    drawStripColors(y, strip1);
+    drawStripColors(y, strip1, RGB_STRIP_LENGTH);
 
-    y += COLOR_BOX + 10;
-
-    // ---- Strip 2 ----
+    y += COLOR_BOX + 8;
     Display_DrawText(PADDING, y, 1, "STRIP 2", COLOR_WHITE);
     y += 12;
-    drawStripColors(y, strip2);
+    drawStripColors(y, strip2, RGB_STRIP_LENGTH);
 }
