@@ -1,9 +1,9 @@
 #include <Arduino.h>
 #include <Adafruit_NeoPixel.h>
+#include "system/system_state.h"
 #include "rgb_strip/rgb_strip.h"
 #include "rgb_strip/rgb_modes.h"
 #include "rgb_strip/animation_engine.h"
-#include "controls/controls.h"
 
 
 /* =========================================================
@@ -19,12 +19,6 @@ Adafruit_NeoPixel strip_2(NUMPIXELS, LED_2_PIN, NEO_GRB + NEO_KHZ800);
 /* =========================================================
    ГЛОБАЛЬНИЙ СТАН ПРОГРАМИ
    ========================================================= */
-
-// Чи увімкнені світлодіоди (true - увімкнені, false - вимкнені)
-static bool ledsEnabled = false;
-
-// Поточний вибраний режим освітлення (індекс з rgb_modes)
-static uint8_t currentMode = 0;
 
 // Стани анімацій для кожного режиму
 // [режим][смуга] - кожен режим має 2 стани для синхронізованих та окремих смуг
@@ -69,6 +63,8 @@ static uint8_t findNextSelectable(uint8_t from)
  */
 static void renderMode(const RGBMode& m)
 {
+    const SystemState& sys = System_Get();
+
     // Встановлення яскравості для обох смуг
     strip_1.setBrightness(m.brightness);
     strip_2.setBrightness(m.brightness);
@@ -79,13 +75,13 @@ static void renderMode(const RGBMode& m)
             if (m.animated.anim.syncStrips)
             {
                 // Синхронізовані смуги: використовуємо один стан для обох
-                Animation_Update(animStates[currentMode][0], m.animated.anim);
+                Animation_Update(animStates[sys.currentMode][0], m.animated.anim);
             }
             else
             {
                 // Окремі смуги: оновлюємо стан для кожної смуги окремо
-                Animation_Update(animStates[currentMode][0], m.animated.anim);
-                Animation_Update(animStates[currentMode][1], m.animated.anim);
+                Animation_Update(animStates[sys.currentMode][0], m.animated.anim);
+                Animation_Update(animStates[sys.currentMode][1], m.animated.anim);
             }
         }
 
@@ -95,7 +91,7 @@ static void renderMode(const RGBMode& m)
         RGB c1 = { 0, 0, 0 }; // Колір для першої смуги (за замовчуванням чорний)
         RGB c2 = { 0, 0, 0 }; // Колір для другої смуги (за замовчуванням чорний)
 
-        if (!ledsEnabled)
+        if (!sys.powerOn)
         {
             // Світлодіоди вимкнені - залишаємо чорний колір
         }
@@ -126,10 +122,10 @@ static void renderMode(const RGBMode& m)
             else
             {
                 // Отримання станів анімацій для обох смуг
-                AnimationState& s1 = animStates[currentMode][0];
+                AnimationState& s1 = animStates[sys.currentMode][0];
                 AnimationState& s2 = m.animated.anim.syncStrips
-                    ? animStates[currentMode][0] // Синхронізовані: використовуємо один стан
-                    : animStates[currentMode][1]; // Окремі: кожна смуга має свій стан
+                    ? animStates[sys.currentMode][0] // Синхронізовані: використовуємо один стан
+                    : animStates[sys.currentMode][1]; // Окремі: кожна смуга має свій стан
 
                 // Отримання базових кольорів для поточного пікселя
                 RGB base1 = base.perPixel.strip1[i];
@@ -162,6 +158,8 @@ static void renderMode(const RGBMode& m)
  */
 void RGB_strip_Init()
 {
+    const SystemState& sys = System_Get();
+
     // Ініціалізація об'єктів NeoPixel
     strip_1.begin();
     strip_2.begin();
@@ -174,7 +172,7 @@ void RGB_strip_Init()
     }
 
     // Початкове відображення поточного режиму
-    renderMode(RGB_modes_Get(currentMode));
+    renderMode(RGB_modes_Get(sys.currentMode));
 }
 
 /**
@@ -184,22 +182,16 @@ void RGB_strip_Init()
  */
 void RGB_strip_Update()
 {
-    ControlEvent ev = Controls_Update();
+    const SystemState& sys = System_Get();
 
-    switch (ev)
+    if (!sys.powerOn)
     {
-        case CTRL_TOGGLE_POWER:
-            ledsEnabled = !ledsEnabled;
-            break;
-
-        case CTRL_NEXT_MODE:
-            currentMode = findNextSelectable(currentMode);
-            break;
-
-        default:
-            break;
+        strip_1.clear();
+        strip_2.clear();
+        strip_1.show();
+        strip_2.show();
+        return;
     }
-
     // Відображення поточного режиму з урахуванням нових змін
-    renderMode(RGB_modes_Get(currentMode));
+    renderMode(RGB_modes_Get(sys.currentMode));
 }
