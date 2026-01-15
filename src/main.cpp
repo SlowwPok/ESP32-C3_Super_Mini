@@ -19,7 +19,7 @@ void setup()
     Controls_Init();
 
     Display_Init();
-    Display_DrawDebugPattern();
+    // Display_DrawDebugPattern();
 
     // Display_DebugPattern(); Альтернатива для AdafruitGFX (якщо використовуються ці бібліотеки)
 
