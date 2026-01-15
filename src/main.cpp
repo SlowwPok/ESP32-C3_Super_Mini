@@ -30,12 +30,11 @@ void loop()
     const SystemState& state = System_Get();
 
     RGB_Runtime_Update(state);
+    DisplayUI_Render(state);
 
     RGB_strip_Render(
         RGB_Runtime_GetStrip1(),
         RGB_Runtime_GetStrip2(),
         RGB_Runtime_GetBrightness()
     );
-
-    DisplayUI_Render(state);
 }

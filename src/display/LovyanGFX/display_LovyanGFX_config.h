@@ -6,6 +6,7 @@
 #define PIN_DC      7    // Data/Command
 #define PIN_CS      21   // Chip Select
 #define PIN_RST     10   // Reset
+#define PIN_BL 6      // Backlight 
 
 // ===== ПАРАМЕТРИ ДИСПЛЕЯ ST7789 =====
 #define DISP_MEMORY_WIDTH   170  // Ширина пам'яті дисплея

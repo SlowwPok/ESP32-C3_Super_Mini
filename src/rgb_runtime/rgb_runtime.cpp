@@ -65,7 +65,7 @@ void RGB_Runtime_Update(const SystemState& state)
         memset(runtimeStrip2, 0, sizeof(runtimeStrip2));
 
         animated   = false;
-        brightness = 0;
+        // brightness = 0;
         return;
     }
 

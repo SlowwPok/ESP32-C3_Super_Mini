@@ -47,6 +47,8 @@ static LGFX lcd;
 
 void Display_Init() {
   lcd.init();
+  pinMode(PIN_BL, OUTPUT);
+  digitalWrite(PIN_BL, HIGH); // увімкнути підсвітку
   lcd.setColorDepth(16); // RGB565
   lcd.setRotation(DISP_ROTATION);
   Display_Clear(COLOR_BLACK); //RGB(0, 0, 0)
@@ -140,21 +142,12 @@ void Display_DrawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint16_t c
 
 void Display_Sleep()
 {
-  // Гасимо підсвітку (якщо підтримується)
-  lcd.setBrightness(0);
-
-  // Переводимо панель у sleep
-  lcd.sleep();
+  digitalWrite(PIN_BL, LOW);  // ❗ гасимо підсвітку
+  lcd.sleep();                // опціонально, не обовʼязково
 }
 
 void Display_Wakeup()
 {
-  // Виводимо панель зі sleep
-  lcd.wakeup();
-
-  // Повертаємо підсвітку
-  lcd.setBrightness(255);
-
-  // ⚠️ Після wakeup вміст RAM дисплея може бути сміттям
-  // Тому UI ОБОВʼЯЗКОВО перемалює екран
+  lcd.wakeup();               // опціонально
+  digitalWrite(PIN_BL, HIGH); // ❗ вмикаємо підсвітку
 }

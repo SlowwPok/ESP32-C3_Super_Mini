@@ -1,5 +1,6 @@
-#include "display_LovyanGFX.h"
-#include "display_LovyanGFX_config.h"
+#include "../display_LovyanGFX.h"
+#include "../display_LovyanGFX_config.h"
+
 
 // ===== ДОПОМІЖНА ФУНКЦІЯ =====
 static void drawCross(int x, int y, uint16_t c)

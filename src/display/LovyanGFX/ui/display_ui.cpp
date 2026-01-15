@@ -15,7 +15,7 @@ static uint8_t  lastBaseMode   = 0xFF;
 static bool     displaySleeping = false;
 static uint32_t powerOffSinceMs = 0;
 
-static const uint32_t DISPLAY_SLEEP_DELAY_MS = 30000; // 30 секунд
+static const uint32_t DISPLAY_SLEEP_DELAY_MS = 5000; // 5 секунд
 
 
 // ===== Layout =====
