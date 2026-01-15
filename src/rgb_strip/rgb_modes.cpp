@@ -200,7 +200,7 @@ static const RGBMode modes[] = {
     // ═════════════════════════════════════════════════════════════════════
     {
         .name = "Warm Ambient",
-        .selectable = true,         // База для PULSE/NOISE анімацій
+        .selectable = false,         // База для PULSE/NOISE анімацій
         .type = MODE_PER_PIXEL,
         .brightness = 30,            // Яскравість: 30%
         .perPixel = {
@@ -232,7 +232,7 @@ static const RGBMode modes[] = {
     // ═════════════════════════════════════════════════════════════════════
     {
         .name = "Cyber Wave",
-        .selectable = true,         // База для WAVE анімацій
+        .selectable = false,         // База для WAVE анімацій
         .type = MODE_PER_PIXEL,
         .brightness = 45,            // Яскравість: 45%
         .perPixel = {
@@ -264,7 +264,7 @@ static const RGBMode modes[] = {
     // ═════════════════════════════════════════════════════════════════════
     {
         .name = "Forest Organic",
-        .selectable = true,         // База для NOISE анімацій
+        .selectable = false,         // База для NOISE анімацій
         .type = MODE_PER_PIXEL,
         .brightness = 35,            // Яскравість: 35%
         .perPixel = {
@@ -296,7 +296,7 @@ static const RGBMode modes[] = {
     // ═════════════════════════════════════════════════════════════════════
     {
         .name = "Ice Glass",
-        .selectable = true,         // База для PULSE/WAVE анімацій
+        .selectable = false,         // База для PULSE/WAVE анімацій
         .type = MODE_PER_PIXEL,
         .brightness = 40,            // Яскравість: 40%
         .perPixel = {

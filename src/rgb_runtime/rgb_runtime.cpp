@@ -59,7 +59,7 @@ void RGB_Runtime_Init()
 
 void RGB_Runtime_Update(const SystemState& state)
 {
-    if (!state.powerOn)
+     if (!state.powerOn)
     {
         memset(runtimeStrip1, 0, sizeof(runtimeStrip1));
         memset(runtimeStrip2, 0, sizeof(runtimeStrip2));
@@ -82,6 +82,13 @@ void RGB_Runtime_Update(const SystemState& state)
         animIntensity = mode.animated.anim.intensity;
 
         const RGBMode& base = RGB_modes_Get(baseMode);
+        if (base.type != MODE_PER_PIXEL)
+        {
+            // захист від неправильного base
+            memset(runtimeStrip1, 0, sizeof(runtimeStrip1));
+            memset(runtimeStrip2, 0, sizeof(runtimeStrip2));
+            return;
+        }
 
         Animation_Update(animState1, mode.animated.anim);
         Animation_Update(animState2, mode.animated.anim);
