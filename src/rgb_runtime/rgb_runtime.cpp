@@ -39,14 +39,14 @@ const char* RGB_Runtime_GetBaseModeName()
     return "UNKNOWN";
 }
 
-static inline RGB applyBrightness(const RGB& c, uint8_t brightness)
-{
-    RGB out;
-    out.r = (uint16_t)c.r * brightness / 255;
-    out.g = (uint16_t)c.g * brightness / 255;
-    out.b = (uint16_t)c.b * brightness / 255;
-    return out;
-}
+// static inline RGB applyBrightness(const RGB& c, uint8_t brightness)
+// {
+//     RGB out;
+//     out.r = (uint16_t)c.r * brightness / 255;
+//     out.g = (uint16_t)c.g * brightness / 255;
+//     out.b = (uint16_t)c.b * brightness / 255;
+//     return out;
+// }
 
 void RGB_Runtime_Init()
 {
@@ -110,9 +110,9 @@ void RGB_Runtime_Update(const SystemState& state)
                 i,
                 true
             );
-
-            runtimeStrip1[i] = applyBrightness(c1, brightness);
-            runtimeStrip2[i] = applyBrightness(c2, brightness);
+            
+                runtimeStrip1[i] = c1;
+                runtimeStrip2[i] = c2;
         }
     }
     else
@@ -126,13 +126,13 @@ void RGB_Runtime_Update(const SystemState& state)
         {
             if (mode.type == MODE_SOLID)
             {
-                runtimeStrip1[i] = applyBrightness(mode.solid.strip1, brightness);
-                runtimeStrip2[i] = applyBrightness(mode.solid.strip2, brightness);
+                runtimeStrip1[i] = mode.solid.strip1;
+                runtimeStrip2[i] = mode.solid.strip2;
             }
             else // MODE_PER_PIXEL
             {
-                runtimeStrip1[i] = applyBrightness(mode.perPixel.strip1[i], brightness);
-                runtimeStrip2[i] = applyBrightness(mode.perPixel.strip2[i], brightness);
+                runtimeStrip1[i] = mode.perPixel.strip1[i];
+                runtimeStrip2[i] = mode.perPixel.strip2[i];
             }
         }
     }
