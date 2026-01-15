@@ -16,12 +16,28 @@ static RGB runtimeStrip2[RGB_STRIP_LENGTH];
 static uint8_t activeMode = 0;
 static uint8_t baseMode   = 0;
 static uint8_t brightness = 0;
+static uint16_t animSpeedMs = 0;
+static uint8_t  animIntensity = 0;
 static bool    animated   = false;
 
 // ===== ANIMATION STATE =====
 
 static AnimationState animState1;
 static AnimationState animState2;
+
+const char* RGB_Runtime_GetActiveModeName()
+{
+    if (activeMode < RGB_modes_Count())
+        return RGB_modes_Get(activeMode).name;
+    return "UNKNOWN";
+}
+
+const char* RGB_Runtime_GetBaseModeName()
+{
+    if (baseMode < RGB_modes_Count())
+        return RGB_modes_Get(baseMode).name;
+    return "UNKNOWN";
+}
 
 static inline RGB applyBrightness(const RGB& c, uint8_t brightness)
 {
@@ -62,6 +78,8 @@ void RGB_Runtime_Update(const SystemState& state)
     {
         animated = true;
         baseMode = mode.animated.baseModeIndex;
+        animSpeedMs   = mode.animated.anim.speedMs;
+        animIntensity = mode.animated.anim.intensity;
 
         const RGBMode& base = RGB_modes_Get(baseMode);
 
@@ -94,6 +112,8 @@ void RGB_Runtime_Update(const SystemState& state)
     {
         animated = false;
         baseMode = activeMode;
+        animSpeedMs   = 0;
+        animIntensity = 0;
 
         for (int i = 0; i < RGB_STRIP_LENGTH; i++)
         {
@@ -113,10 +133,42 @@ void RGB_Runtime_Update(const SystemState& state)
 
 // ===== GETTERS =====
 
-const RGB* RGB_Runtime_GetStrip1() { return runtimeStrip1; }
-const RGB* RGB_Runtime_GetStrip2() { return runtimeStrip2; }
+const RGB* RGB_Runtime_GetStrip1() 
+{ 
+    return runtimeStrip1; 
+}
 
-uint8_t RGB_Runtime_GetActiveMode() { return activeMode; }
-uint8_t RGB_Runtime_GetBaseMode()   { return baseMode; }
-uint8_t RGB_Runtime_GetBrightness() { return brightness; }
-bool    RGB_Runtime_IsAnimated()    { return animated; }
+const RGB* RGB_Runtime_GetStrip2() 
+{ 
+    return runtimeStrip2;
+}
+
+uint8_t RGB_Runtime_GetActiveMode() 
+{ 
+    return activeMode; 
+}
+
+uint8_t RGB_Runtime_GetBaseMode()   
+{ 
+    return baseMode; 
+}
+
+uint8_t RGB_Runtime_GetBrightness() 
+{ 
+    return brightness; 
+}
+
+bool    RGB_Runtime_IsAnimated()    
+{ 
+    return animated; 
+}
+
+uint16_t RGB_Runtime_GetAnimSpeedMs()
+{
+    return animSpeedMs;
+}
+
+uint8_t RGB_Runtime_GetAnimIntensity()
+{
+    return animIntensity;
+}

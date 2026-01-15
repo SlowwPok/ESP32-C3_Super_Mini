@@ -12,6 +12,7 @@ static const RGBMode modes[] = {
     // РЕЖИМ 0: Теплий вечір (Warm Evening)
     // ═════════════════════════════════════════════════════════════════════
     {
+        .name = "Warm Evening",
         .selectable = true,          // Доступний користувачеві (кнопка TAP)
         .type = MODE_SOLID,          // Одноколірний режим
         .brightness = 35,            // Яскравість: 35% (затишно для очей)
@@ -25,6 +26,7 @@ static const RGBMode modes[] = {
     // РЕЖИМ 1: Ніч (Night)
     // ═════════════════════════════════════════════════════════════════════
     {
+        .name = "Night",
         .selectable = true,          // Доступний користувачеві
         .type = MODE_SOLID,          // Одноколірний режим
         .brightness = 18,            // Яскравість: 18% (мінімальна)
@@ -38,6 +40,7 @@ static const RGBMode modes[] = {
     // РЕЖИМ 2: Базовий веселковий градієнт (Base Rainbow) - СЛУЖБОВИЙ
     // ═════════════════════════════════════════════════════════════════════
     {
+        .name = "Base Rainbow",
         .selectable = false,         // Тільки для анімацій (режим 3)
         .type = MODE_PER_PIXEL,      // Окремий колір на піксель
         .brightness = 40,            // Яскравість: 40%
@@ -69,6 +72,7 @@ static const RGBMode modes[] = {
     // РЕЖИМ 3: Ходячий піксель по веселці (Walking Pixel)
     // ═════════════════════════════════════════════════════════════════════
     {
+        .name = "Walking Pixel",
         .selectable = true,
         .type = MODE_ANIMATED,
         .brightness = 40,            // Яскравість: 40%
@@ -89,6 +93,7 @@ static const RGBMode modes[] = {
     // РЕЖИМ 4: Неоновий кіберпанк (Cyberpunk Neon Gradient)
     // ═════════════════════════════════════════════════════════════════════
     {
+        .name = "Cyberpunk Neon",
         .selectable = true,
         .type = MODE_PER_PIXEL,
         .brightness = 60,            // Яскравість: 60% (висока для неону)
@@ -120,6 +125,7 @@ static const RGBMode modes[] = {
     // РЕЖИМ 5: Неон + Гліч база (Neon Glitch Base) - СЛУЖБОВИЙ
     // ═════════════════════════════════════════════════════════════════════
     {
+        .name = "Neon Base",
         .selectable = false,         // Тільки для анімацій (режим 6)
         .type = MODE_PER_PIXEL,
         .brightness = 35,            // Яскравість: 35%
@@ -151,6 +157,7 @@ static const RGBMode modes[] = {
     // РЕЖИМ 6: Гліч над неоном (Glitch over Neon)
     // ═════════════════════════════════════════════════════════════════════
     {
+        .name = "Glitch over Neon",
         .selectable = true,
         .type = MODE_ANIMATED,
         .brightness = 35,            // Яскравість: 35%
@@ -171,6 +178,7 @@ static const RGBMode modes[] = {
     // РЕЖИМ 7: Дзеркальна стрічка (Mirror Running)
     // ═════════════════════════════════════════════════════════════════════
     {
+        .name = "Mirror Running",
         .selectable = true,
         .type = MODE_ANIMATED,
         .brightness = 40,            // Яскравість: 40%
@@ -191,6 +199,7 @@ static const RGBMode modes[] = {
     // РЕЖИМ 8: Теплий бурштин (Warm Ambient) - СЛУЖБОВИЙ
     // ═════════════════════════════════════════════════════════════════════
     {
+        .name = "Warm Ambient",
         .selectable = true,         // База для PULSE/NOISE анімацій
         .type = MODE_PER_PIXEL,
         .brightness = 30,            // Яскравість: 30%
@@ -222,6 +231,7 @@ static const RGBMode modes[] = {
     // РЕЖИМ 9: Неон WAVE (Cyber Wave Base) - СЛУЖБОВИЙ
     // ═════════════════════════════════════════════════════════════════════
     {
+        .name = "Cyber Wave",
         .selectable = true,         // База для WAVE анімацій
         .type = MODE_PER_PIXEL,
         .brightness = 45,            // Яскравість: 45%
@@ -253,6 +263,7 @@ static const RGBMode modes[] = {
     // РЕЖИМ 10: Лісовий зелений (Forest Organic) - СЛУЖБОВИЙ
     // ═════════════════════════════════════════════════════════════════════
     {
+        .name = "Forest Organic",
         .selectable = true,         // База для NOISE анімацій
         .type = MODE_PER_PIXEL,
         .brightness = 35,            // Яскравість: 35%
@@ -284,6 +295,7 @@ static const RGBMode modes[] = {
     // РЕЖИМ 11: Лід / Скло (Ice Glass) - СЛУЖБОВИЙ
     // ═════════════════════════════════════════════════════════════════════
     {
+        .name = "Ice Glass",
         .selectable = true,         // База для PULSE/WAVE анімацій
         .type = MODE_PER_PIXEL,
         .brightness = 40,            // Яскравість: 40%
@@ -315,6 +327,7 @@ static const RGBMode modes[] = {
     // РЕЖИМ 12: Пульс (Warm Pulse)
     // ═════════════════════════════════════════════════════════════════════
     {
+        .name = "Warm Pulse",
         .selectable = true,
         .type = MODE_ANIMATED,
         .brightness = 35,            // Яскравість: 40%
@@ -335,6 +348,7 @@ static const RGBMode modes[] = {
     // РЕЖИМ 13: Пульс льоду (Ice Pulse)
     // ═════════════════════════════════════════════════════════════════════
     {
+        .name = "Ice Pulse",
         .selectable = true,
         .type = MODE_ANIMATED,
         .brightness = 28,            // Яскравість: 40%
@@ -355,6 +369,7 @@ static const RGBMode modes[] = {
     // РЕЖИМ 14: Хвиля неону (Neon Wave)
     // ═════════════════════════════════════════════════════════════════════
     {
+        .name = "Neon Wave",
         .selectable = true,
         .type = MODE_ANIMATED,
         .brightness = 45,            // Яскравість: 45%
@@ -375,6 +390,7 @@ static const RGBMode modes[] = {
     // РЕЖИМ 15: Хвиля льоду (Ice Wave)
     // ═════════════════════════════════════════════════════════════════════
     {
+        .name = "Ice Wave",
         .selectable = true,
         .type = MODE_ANIMATED,
         .brightness = 40,            // Яскравість: 45%
@@ -395,6 +411,7 @@ static const RGBMode modes[] = {
     // РЕЖИМ 16: Шум (Organic Noise)
     // ═════════════════════════════════════════════════════════════════════
     {
+        .name = "Organic Noise",
         .selectable = true,
         .type = MODE_ANIMATED,
         .brightness = 30,            // Яскравість: 35%

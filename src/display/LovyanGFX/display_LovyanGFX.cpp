@@ -137,3 +137,24 @@ int Display_Height() { return lcd.height(); }
 void Display_DrawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint16_t color) {
   lcd.drawLine(x0, y0, x1, y1, color);
 }
+
+void Display_Sleep()
+{
+  // Гасимо підсвітку (якщо підтримується)
+  lcd.setBrightness(0);
+
+  // Переводимо панель у sleep
+  lcd.sleep();
+}
+
+void Display_Wakeup()
+{
+  // Виводимо панель зі sleep
+  lcd.wakeup();
+
+  // Повертаємо підсвітку
+  lcd.setBrightness(255);
+
+  // ⚠️ Після wakeup вміст RAM дисплея може бути сміттям
+  // Тому UI ОБОВʼЯЗКОВО перемалює екран
+}

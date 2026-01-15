@@ -14,6 +14,8 @@ enum RGBModeType
 
 struct RGBMode
 {
+    const char* name;
+    
     bool selectable;
     RGBModeType type;
     uint8_t brightness;

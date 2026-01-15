@@ -12,3 +12,8 @@ uint8_t RGB_Runtime_GetActiveMode();
 uint8_t RGB_Runtime_GetBaseMode();
 uint8_t RGB_Runtime_GetBrightness();
 bool    RGB_Runtime_IsAnimated();
+
+const char* RGB_Runtime_GetActiveModeName();
+const char* RGB_Runtime_GetBaseModeName();
+uint16_t RGB_Runtime_GetAnimSpeedMs();
+uint8_t  RGB_Runtime_GetAnimIntensity();

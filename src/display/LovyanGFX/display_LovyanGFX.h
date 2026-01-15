@@ -34,5 +34,9 @@ void Display_DrawTextEx(
   uint8_t size
 );
 
+// ===== POWER =====
+void Display_Sleep();
+void Display_Wakeup();
+
 // ===== ДЕБАГ =====
 void Display_DrawGrid();
