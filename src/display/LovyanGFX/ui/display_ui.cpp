@@ -2,21 +2,19 @@
 
 #include "display/LovyanGFX/display_LovyanGFX.h"
 #include "display/LovyanGFX/display_LovyanGFX_config.h"
-#include "rgb_strip/rgb_modes.h"
+#include "rgb_runtime/rgb_runtime.h"
+#include "rgb_strip/rgb_config.h"   // RGB_STRIP_LENGTH
 
-// layout constants
-static const int PADDING = 10;
+// ===== Layout =====
+static const int PADDING   = 10;
 static const int COLOR_BOX = 14;
 
-static void drawStripColors(
-    int y,
-    const RGB* colors,
-    int count
-)
+// ===== Helpers =====
+static void drawStripColors(int y, const RGB* colors)
 {
     int x = PADDING;
 
-    for (int i = 0; i < count; i++)
+    for (int i = 0; i < RGB_STRIP_LENGTH; i++)
     {
         uint16_t c565 =
             ((colors[i].r & 0xF8) << 8) |
@@ -29,10 +27,12 @@ static void drawStripColors(
     }
 }
 
+// ===== Main UI =====
 void DisplayUI_Render(const SystemState& state)
 {
     Display_Clear(COLOR_BLACK);
 
+    // ---- Power OFF ----
     if (!state.powerOn)
     {
         Display_DrawText(
@@ -45,40 +45,34 @@ void DisplayUI_Render(const SystemState& state)
         return;
     }
 
-    const RGBMode& mode = RGB_modes_Get(state.currentMode);
+    // ---- Runtime state ----
+    const RGB* strip1 = RGB_Runtime_GetStrip1();
+    const RGB* strip2 = RGB_Runtime_GetStrip2();
 
+    bool animated      = RGB_Runtime_IsAnimated();
+    uint8_t activeMode = RGB_Runtime_GetActiveMode();
+    uint8_t baseMode   = RGB_Runtime_GetBaseMode();
+
+    // ---- Title ----
     char title[32];
-    snprintf(title, sizeof(title), "MODE %d", state.currentMode);
+    if (animated)
+        snprintf(title, sizeof(title), "ANIM %d (BASE %d)", activeMode, baseMode);
+    else
+        snprintf(title, sizeof(title), "MODE %d", activeMode);
 
     Display_DrawText(PADDING, PADDING, 2, title, COLOR_WHITE);
 
-    int y = PADDING + 30;
+    int y = PADDING + 32;
 
-    if (mode.type == MODE_ANIMATED)
-    {
-        Display_DrawText(PADDING, y, 1, "ANIMATED", COLOR_GRAY);
-        y += 16;
+    // ---- Strip 1 ----
+    Display_DrawText(PADDING, y, 1, "STRIP 1", COLOR_WHITE);
+    y += 12;
+    drawStripColors(y, strip1);
 
-        const RGBMode& base = RGB_modes_Get(mode.animated.baseModeIndex);
+    y += COLOR_BOX + 10;
 
-        Display_DrawText(PADDING, y, 1, "STRIP 1", COLOR_WHITE);
-        y += 12;
-        drawStripColors(y, base.perPixel.strip1, NUMPIXELS);
-
-        y += COLOR_BOX + 8;
-        Display_DrawText(PADDING, y, 1, "STRIP 2", COLOR_WHITE);
-        y += 12;
-        drawStripColors(y, base.perPixel.strip2, NUMPIXELS);
-    }
-    else
-    {
-        Display_DrawText(PADDING, y, 1, "STRIP 1", COLOR_WHITE);
-        y += 12;
-        drawStripColors(y, mode.perPixel.strip1, NUMPIXELS);
-
-        y += COLOR_BOX + 8;
-        Display_DrawText(PADDING, y, 1, "STRIP 2", COLOR_WHITE);
-        y += 12;
-        drawStripColors(y, mode.perPixel.strip2, NUMPIXELS);
-    }
+    // ---- Strip 2 ----
+    Display_DrawText(PADDING, y, 1, "STRIP 2", COLOR_WHITE);
+    y += 12;
+    drawStripColors(y, strip2);
 }

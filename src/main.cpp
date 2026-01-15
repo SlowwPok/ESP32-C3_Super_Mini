@@ -1,29 +1,21 @@
-#include <Arduino.h>
-
 #include "system/system_state.h"
 #include "controls/controls.h"
-#include "display/LovyanGFX/ui/display_ui.h"
 
-#include "display/LovyanGFX/display_LovyanGFX.h"
-#include "display/LovyanGFX/display_LovyanGFX_debug.h"
-
-// #include "display/AdafruitGFX/display_adafruit.h"              // Бібліотека в папці _disabled
-// #include "display/AdafruitGFX/display_adafruit_debug.h"        // Бібліотека в папці _disabled
-
+#include "rgb_runtime/rgb_runtime.h"
 #include "rgb_strip/rgb_strip.h"
 
+#include "display/LovyanGFX/ui/display_ui.h"
+#include "display/LovyanGFX/display_LovyanGFX.h"
 
 void setup()
 {
     System_Init();
     Controls_Init();
 
-    Display_Init();
-    // Display_DrawDebugPattern();
-
-    // Display_DebugPattern(); Альтернатива для AdafruitGFX (якщо використовуються ці бібліотеки)
-
+    RGB_Runtime_Init();
     RGB_strip_Init();
+
+    Display_Init();
 }
 
 void loop()
@@ -37,6 +29,13 @@ void loop()
 
     const SystemState& state = System_Get();
 
+    RGB_Runtime_Update(state);
+
+    RGB_strip_Render(
+        RGB_Runtime_GetStrip1(),
+        RGB_Runtime_GetStrip2(),
+        RGB_Runtime_GetBrightness()
+    );
+
     DisplayUI_Render(state);
-    RGB_strip_Update();
 }

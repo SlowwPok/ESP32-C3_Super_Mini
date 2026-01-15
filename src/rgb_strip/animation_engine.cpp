@@ -1,4 +1,6 @@
 #include "rgb_strip/animation_engine.h"
+#include "rgb_strip/rgb_types.h"
+#include "rgb_strip/rgb_config.h"
 
 /* =========================================================
    ВНУТРІШНІ ДОПОМІЖНІ ФУНКЦІЇ
@@ -246,7 +248,7 @@ void Animation_Update(AnimationState& s, const AnimationParams& p)
     s.lastStep = now; // Оновлення часу останнього кроку
 
     // Стандартний рух: зміна індексу пікселя та фази
-    s.index = (s.index + 1) % NUMPIXELS; // Циклічний рух по пікселях
+    s.index = (s.index + 1) % RGB_STRIP_LENGTH; // Циклічний рух по пікселях
     s.phase += 0.1f;                     // Плавне збільшення фази
 
     /* ---------- ЛОГІКА ПАРНИХ/НЕПАРНИХ АНІМАЦІЙ ---------- */
@@ -270,7 +272,7 @@ void Animation_Update(AnimationState& s, const AnimationParams& p)
         if (!s.glitchActive && random(100) < 15)
         {
             s.glitchActive = true;
-            s.glitchPixel = random(NUMPIXELS);         // Випадковий піксель для початку глічу
+            s.glitchPixel = random(RGB_STRIP_LENGTH);         // Випадковий піксель для початку глічу
             s.glitchCount = random(1, 2);              // 1-2 пікселі будуть у глічі
             s.glitchUntil = now + random(50, 100);     // Тривалість глічу: 50-100 мс
         }
@@ -306,7 +308,7 @@ RGB Animation_Apply(const AnimationState& s, const AnimationParams& p, const RGB
             // Інверсія напрямку для другої стрічки (якщо потрібна асиметрія)
             if (sp.invertSecond && isSecondStrip)
             {
-                pos = (NUMPIXELS - 1) - pos; // Обернений напрямок руху
+                pos = (RGB_STRIP_LENGTH - 1) - pos; // Обернений напрямок руху
             }
 
             // Обчислення відстані від поточного пікселя до позиції голови
@@ -419,7 +421,7 @@ RGB Animation_Apply(const AnimationState& s, const AnimationParams& p, const RGB
             // Дзеркалення центру для другої стрічки (асиметрія)
             if (sp.invertSecond && isSecondStrip)
             {
-                center = (NUMPIXELS - 1) - center;
+                center = (RGB_STRIP_LENGTH - 1) - center;
             }
 
             // Обчислення відстані від центру хвилі
