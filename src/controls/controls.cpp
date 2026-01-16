@@ -1,75 +1,74 @@
 #include "controls.h"
 
-/* =========================================================
-   КОНФІГУРАЦІЯ
-   ========================================================= */
-
 #define TOUCH_PIN 4
 #define LONG_PRESS_TIME 800
-#define DEBOUNCE_DELAY 50 // 50 мс
+#define DEBOUNCE_DELAY 50
 
-/* =========================================================
-   ВНУТРІШНІ ТИПИ
-   ========================================================= */
-
-enum TouchState
+struct ButtonFSM
 {
-    TOUCH_IDLE,
-    TOUCH_PRESSED,
+    uint8_t pin;
+    bool lastReading;
+    bool stableState;
+    unsigned long lastDebounce;
+    unsigned long pressStart;
+    bool longDone;
 };
 
-/* =========================================================
-   СТАН
-   ========================================================= */
-static unsigned long lastDebounceTime = 0;
-static bool lastStableState = false;
-static bool lastPressed = false;
-static unsigned long pressStart = 0;
-static bool longDone = false;
-
-/* =========================================================
-   API
-   ========================================================= */
+static ButtonFSM btn1;
 
 void Controls_Init()
 {
-    pinMode(TOUCH_PIN, INPUT);
+    btn1 = {
+        .pin = TOUCH_PIN,
+        .lastReading = false,
+        .stableState = false,
+        .lastDebounce = 0,
+        .pressStart = 0,
+        .longDone = false
+    };
+
+    pinMode(btn1.pin, INPUT);
 }
 
-ControlEvent Controls_Update()
+static ControlEvent Button_Update(ButtonFSM& b)
 {
-    bool reading = digitalRead(TOUCH_PIN);
+    bool reading = digitalRead(b.pin);
     unsigned long now = millis();
-    
     ControlEvent ev = CTRL_NONE;
 
-    // Дебаунсинг
-    if (reading != lastPressed) {
-        lastDebounceTime = now;
-    }
+    if (reading != b.lastReading)
+        b.lastDebounce = now;
 
-    if ((now - lastDebounceTime) > DEBOUNCE_DELAY) {
-        if (reading != lastStableState) {
-            lastStableState = reading;
-            
-            if (lastStableState) {
-                // Натиснуто (стабільно)
-                pressStart = now;
-                longDone = false;
-            } else if (!longDone) {
-                // Відпущено (короткий тап)
+    if ((now - b.lastDebounce) > DEBOUNCE_DELAY)
+    {
+        if (reading != b.stableState)
+        {
+            b.stableState = reading;
+
+            if (b.stableState)
+            {
+                b.pressStart = now;
+                b.longDone = false;
+            }
+            else if (!b.longDone)
+            {
                 ev = CTRL_BTN1_TAP;
             }
         }
     }
 
-    // Довге натискання
-    if (lastStableState && !longDone && 
-        now - pressStart >= LONG_PRESS_TIME) {
+    if (b.stableState && !b.longDone &&
+        now - b.pressStart >= LONG_PRESS_TIME)
+    {
         ev = CTRL_BTN1_HOLD;
-        longDone = true;
+        b.longDone = true;
     }
 
-    lastPressed = reading;
+    b.lastReading = reading;
     return ev;
+}
+
+ControlEvent Controls_Update()
+{
+    return Button_Update(btn1);
 }
