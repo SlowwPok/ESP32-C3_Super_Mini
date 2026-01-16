@@ -155,19 +155,24 @@ void Display_Wakeup()
 
 uint16_t Display_ColorFromRGB_ForPreview(const RGB& c)
 {
-    // якщо реально чорний — чорний
-    if (c.r == 0 && c.g == 0 && c.b == 0)
-        return COLOR_BLACK;
-
     uint8_t r = c.r;
     uint8_t g = c.g;
     uint8_t b = c.b;
 
-    // мінімальна видимість ТІЛЬКИ ДЛЯ ПРЕВʼЮ
-    uint8_t minVis = 8;
-    if (r && r < minVis) r = minVis;
-    if (g && g < minVis) g = minVis;
-    if (b && b < minVis) b = minVis;
+    uint8_t maxc = max(r, max(g, b));
+
+    // якщо дуже темно — піднімаємо для візуалізації
+    if (maxc > 0 && maxc < 20)
+    {
+        float k = 20.0f / maxc;
+        uint16_t rr = r * k;
+        uint16_t gg = g * k;
+        uint16_t bb = b * k;
+
+        r = rr > 255 ? 255 : rr;
+        g = gg > 255 ? 255 : gg;
+        b = bb > 255 ? 255 : bb;
+    }
 
     return
         ((r & 0xF8) << 8) |

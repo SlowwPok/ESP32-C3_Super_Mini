@@ -238,28 +238,27 @@ void Animation_Update(AnimationState& s, const AnimationParams& p)
 {
     unsigned long now = millis();
 
-    /* ---------- FRAME TIME (плавність) ---------- */
-    float frameDt = (now - s.lastFrameTime) * 0.001f;
+    // ---------- FRAME TIME ----------
+    float dt = (now - s.lastFrameTime) * 0.001f;
     s.lastFrameTime = now;
 
-    // фаза завжди оновлюється
-    s.phase += frameDt * 2.0f;
-
-    /* ---------- STEP TIME (логіка) ---------- */
-    if (now - s.lastStepTime < p.speedMs)
-        return;
-
+    // position ЗАВЖДИ рухається
     float speedPxPerSec = 1.0f + p.intensity * 0.5f;
-    s.position += speedPxPerSec * frameDt;
+    s.position += speedPxPerSec * dt;
 
     while (s.position >= RGB_STRIP_LENGTH)
         s.position -= RGB_STRIP_LENGTH;
 
-    // even / odd
+    // фаза теж завжди
+    s.phase += dt * 2.0f;
+
+    // ---------- STEP TIME (логіка) ----------
+    if (now - s.lastStepTime < p.speedMs)
+        return;
+
     if (p.type == ANIM_EVEN_ODD)
         s.evenPhase = !s.evenPhase;
 
-    // glitch
     if (p.type == ANIM_GLITCH)
     {
         if (s.glitchActive && now > s.glitchUntil)
