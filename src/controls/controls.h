@@ -9,9 +9,9 @@ enum ControlEvent
 {
     CTRL_NONE,
 
-    // кнопка 1 (та, що вже є)
-    CTRL_BTN1_TAP,
-    CTRL_BTN1_HOLD,
+    // кнопка живлення / RGB (є зараз)
+    CTRL_BTN_POWER_TAP,
+    CTRL_BTN_POWER_HOLD,
 };
 
 /* =========================================================

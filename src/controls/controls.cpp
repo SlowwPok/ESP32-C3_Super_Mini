@@ -1,8 +1,8 @@
 #include "controls.h"
 
-#define TOUCH_PIN 4
-#define LONG_PRESS_TIME 800
-#define DEBOUNCE_DELAY 50
+#define BTN_POWER_PIN      4
+#define LONG_PRESS_TIME    800
+#define DEBOUNCE_DELAY     50
 
 struct ButtonFSM
 {
@@ -14,12 +14,12 @@ struct ButtonFSM
     bool longDone;
 };
 
-static ButtonFSM btn1;
+static ButtonFSM btnPower;
 
 void Controls_Init()
 {
-    btn1 = {
-        .pin = TOUCH_PIN,
+    btnPower = {
+        .pin = BTN_POWER_PIN,
         .lastReading = false,
         .stableState = false,
         .lastDebounce = 0,
@@ -27,14 +27,34 @@ void Controls_Init()
         .longDone = false
     };
 
-    pinMode(btn1.pin, INPUT);
+    pinMode(btnPower.pin, INPUT);
 }
 
-static ControlEvent Button_Update(ButtonFSM& b)
+enum ButtonId
+{
+    BTN_ID_POWER,
+    BTN_ID_UI,   // на майбутнє
+};
+
+enum ButtonEventType
+{
+    BTN_EVENT_NONE,
+    BTN_EVENT_TAP,
+    BTN_EVENT_HOLD
+};
+
+struct ButtonEvent
+{
+    ButtonId id;
+    ButtonEventType type;
+};
+
+static ButtonEvent Button_Update(ButtonFSM& b, ButtonId id)
 {
     bool reading = digitalRead(b.pin);
     unsigned long now = millis();
-    ControlEvent ev = CTRL_NONE;
+
+    ButtonEvent ev = { id, BTN_EVENT_NONE };
 
     if (reading != b.lastReading)
         b.lastDebounce = now;
@@ -52,7 +72,7 @@ static ControlEvent Button_Update(ButtonFSM& b)
             }
             else if (!b.longDone)
             {
-                ev = CTRL_BTN1_TAP;
+                ev.type = BTN_EVENT_TAP;
             }
         }
     }
@@ -60,7 +80,7 @@ static ControlEvent Button_Update(ButtonFSM& b)
     if (b.stableState && !b.longDone &&
         now - b.pressStart >= LONG_PRESS_TIME)
     {
-        ev = CTRL_BTN1_HOLD;
+        ev.type = BTN_EVENT_HOLD;
         b.longDone = true;
     }
 
@@ -70,5 +90,19 @@ static ControlEvent Button_Update(ButtonFSM& b)
 
 ControlEvent Controls_Update()
 {
-    return Button_Update(btn1);
+    ButtonEvent bev = Button_Update(btnPower, BTN_ID_POWER);
+
+    if (bev.type == BTN_EVENT_NONE)
+        return CTRL_NONE;
+
+    if (bev.id == BTN_ID_POWER)
+    {
+        if (bev.type == BTN_EVENT_TAP)
+            return CTRL_BTN_POWER_TAP;
+
+        if (bev.type == BTN_EVENT_HOLD)
+            return CTRL_BTN_POWER_HOLD;
+    }
+
+    return CTRL_NONE;
 }

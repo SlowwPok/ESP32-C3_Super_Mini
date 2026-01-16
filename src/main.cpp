@@ -26,11 +26,11 @@ void loop()
 
     switch (ev)
     {
-        case CTRL_BTN1_HOLD:
+        case CTRL_BTN_POWER_HOLD:
             System_TogglePower();
             break;
 
-        case CTRL_BTN1_TAP:
+        case CTRL_BTN_POWER_TAP:
             System_NextMode();
             break;
 
