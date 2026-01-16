@@ -1,5 +1,6 @@
 #pragma once
 #include <Arduino.h>
+#include "system/system_pin_setup.h"
 
 // ===== ПАРАМЕТРИ ДИСПЛЕЯ =====
 #define DISP_WIDTH   320  // Ширина дисплея в пікселях
@@ -9,13 +10,13 @@
 #define DISP_ROTATION 3   // Обертання дисплея (3 = landscape, пінси праворуч)
 
 // ===== ПІНИ (ЗАМІНИТЬ НА СВОЇ РЕАЛЬНІ) =====
-#define TFT_CS   21      // Chip Select
-#define TFT_DC   7       // Data/Command
-#define TFT_RST  20      // Reset
+#define TFT_CS   PIN_TFT_CS      // Chip Select
+#define TFT_DC   PIN_TFT_DC       // Data/Command
+#define TFT_RST  PIN_TFT_RST      // Reset
 
 // ===== SPI ПІНИ =====
-#define TFT_SCK   9      // SPI Clock
-#define TFT_MOSI  8      // SPI MOSI
+#define TFT_SCK   PIN_I2C_SCL      // SPI Clock
+#define TFT_MOSI  PIN_I2C_SDA      // SPI MOSI
 
 // ===== КОЛЬОРИ (ФОРМАТ RGB565) =====
 #define COLOR_BLACK   0x0000 //RGB(0, 0, 0)

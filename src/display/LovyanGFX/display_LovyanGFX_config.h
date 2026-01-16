@@ -1,12 +1,13 @@
 #pragma once
+#include "system/system_pin_setup.h"
 
 // ===== ПІН-КОНФІГУРАЦІЯ (SPI ДЛЯ ST7789) =====
-#define PIN_SCLK    9    // SPI Clock (SCLK)
-#define PIN_MOSI    8    // SPI MOSI (SI)
-#define PIN_DC      7    // Data/Command
-#define PIN_CS      21   // Chip Select
-#define PIN_RST     10   // Reset
-#define PIN_BL 6      // Backlight 
+#define PIN_SCLK    PIN_I2C_SCL    // SPI Clock (SCLK)
+#define PIN_MOSI    PIN_I2C_SDA    // SPI MOSI (SI)
+#define PIN_DC      PIN_TFT_DC     // Data/Command
+#define PIN_CS      PIN_TFT_CS     // Chip Select
+#define PIN_RST     PIN_TFT_RST    // Reset
+#define PIN_BL      PIN_TFT_BL     // Backlight 
 
 // ===== ПАРАМЕТРИ ДИСПЛЕЯ ST7789 =====
 #define DISP_MEMORY_WIDTH   170  // Ширина пам'яті дисплея

@@ -1,6 +1,9 @@
 #include "controls.h"
+#include "system/system_pin_setup.h"
 
-#define BTN_POWER_PIN      4
+#define BTN_POWER_PIN      PIN_BTN_POWER_UI
+//#define BTN_UI_PIN         PIN_BTN_UI    // ❗ недійсний пін (поки немає кнопки UI)
+
 #define LONG_PRESS_TIME    800
 #define DEBOUNCE_DELAY     50
 
