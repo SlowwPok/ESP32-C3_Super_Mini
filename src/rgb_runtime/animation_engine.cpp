@@ -214,9 +214,13 @@ static AnimationParams sanitizeParams(const AnimationParams& in)
  */
 void Animation_Init(AnimationState& s)
 {
-    s.index = 0;           // Початковий індекс пікселя
+    s.position  = 0;           // Початковий індекс пікселя
     s.phase = 0.0f;        // Початкова фаза (для плавних переходів)
-    s.lastStep = 0;        // Час останнього кроку анімації
+
+    unsigned long now = millis();
+    s.lastFrameTime = now;
+    s.lastStepTime  = now;
+
     s.evenPhase = true;    // Початкова фаза для парних/непарних анімацій
 
     // Параметри гліч-ефекту
@@ -230,53 +234,47 @@ void Animation_Init(AnimationState& s)
    ОНОВЛЕННЯ СТАНУ АНІМАЦІЇ
    ========================================================= */
 
-/**
- * Оновлює стан анімації на основі поточного часу та параметрів.
- * Обробляє рух пікселів та логіку гліч-ефекту.
- *
- * @param s Посилання на стан анімації для оновлення
- * @param p Параметри анімації (тип, швидкість тощо)
- */
 void Animation_Update(AnimationState& s, const AnimationParams& p)
 {
-    unsigned long now = millis(); // Поточний час у мілісекундах
+    unsigned long now = millis();
 
-    // Перевірка, чи минув достатньо часу для наступного кроку
-    if (now - s.lastStep < p.speedMs)
+    /* ---------- FRAME TIME (плавність) ---------- */
+    float frameDt = (now - s.lastFrameTime) * 0.001f;
+    s.lastFrameTime = now;
+
+    // фаза завжди оновлюється
+    s.phase += frameDt * 2.0f;
+
+    /* ---------- STEP TIME (логіка) ---------- */
+    if (now - s.lastStepTime < p.speedMs)
         return;
 
-    s.lastStep = now; // Оновлення часу останнього кроку
+    float speedPxPerSec = 1.0f + p.intensity * 0.5f;
+    s.position += speedPxPerSec * frameDt;
 
-    // Стандартний рух: зміна індексу пікселя та фази
-    s.index = (s.index + 1) % RGB_STRIP_LENGTH; // Циклічний рух по пікселях
-    s.phase += 0.1f;                     // Плавне збільшення фази
+    while (s.position >= RGB_STRIP_LENGTH)
+        s.position -= RGB_STRIP_LENGTH;
 
-    /* ---------- ЛОГІКА ПАРНИХ/НЕПАРНИХ АНІМАЦІЙ ---------- */
+    // even / odd
     if (p.type == ANIM_EVEN_ODD)
-    {
-        // Перемикання фази для чергування парних/непарних пікселів
         s.evenPhase = !s.evenPhase;
-        return;
-    }
 
-    /* ---------- ЛОГІКА ГЛІЧ-ЕФЕКТУ ---------- */
+    // glitch
     if (p.type == ANIM_GLITCH)
     {
-        // Завершення активного глічу, якщо час минув
         if (s.glitchActive && now > s.glitchUntil)
-        {
-            s.glitchActive = false; // Деактивація глічу
-        }
+            s.glitchActive = false;
 
-        // Випадковий старт нового глічу (~15% шанс на кожному кроці)
         if (!s.glitchActive && random(100) < 15)
         {
             s.glitchActive = true;
-            s.glitchPixel = random(RGB_STRIP_LENGTH);         // Випадковий піксель для початку глічу
-            s.glitchCount = random(1, 2);              // 1-2 пікселі будуть у глічі
-            s.glitchUntil = now + random(50, 100);     // Тривалість глічу: 50-100 мс
+            s.glitchPixel = random(RGB_STRIP_LENGTH);
+            s.glitchCount = random(1, 2);
+            s.glitchUntil = now + random(50, 100);
         }
     }
+
+    s.lastStepTime = now;
 }
 
 /* =========================================================
@@ -303,32 +301,50 @@ RGB Animation_Apply(const AnimationState& s, const AnimationParams& p, const RGB
         // інші пікселі приглушені
         case ANIM_WALKING_PIXEL:
         {
-            uint8_t pos = s.index;
+            float posf = s.position;
+            int pos0 = int(posf);
+            int pos1 = (pos0 + 1) % RGB_STRIP_LENGTH;
+            float t = posf - pos0; // 0..1
 
-            // Інверсія напрямку для другої стрічки (якщо потрібна асиметрія)
+            // інверсія напрямку для другої стрічки
             if (sp.invertSecond && isSecondStrip)
             {
-                pos = (RGB_STRIP_LENGTH - 1) - pos; // Обернений напрямок руху
+                pos0 = (RGB_STRIP_LENGTH - 1) - pos0;
+                pos1 = (RGB_STRIP_LENGTH - 1) - pos1;
             }
 
-            // Обчислення відстані від поточного пікселя до позиції голови
-            uint8_t dist = (i > pos) ? (i - pos) : (pos - i);
+            int d0 = abs(i - pos0);
+            int d1 = abs(i - pos1);
 
-            // Розрахунок кольорів для головної та хвостової частини
+            int dist0 = d0;
+            int dist1 = d1;
+
             AnimColors colors = resolveWalkingPixelColors(base, sp);
+            uint8_t range = resolveRange(sp);
 
-            RGB out = colors.background; // За замовчуванням фон
+            RGB out = colors.background;
 
-            uint8_t range = resolveRange(sp); // Діапазон хвоста
-
-            // Визначення, які пікселі належать до голови чи хвоста
-            if (dist == 0)
+            // ---- ГОЛОВА (плавна) ----
+            if (dist0 == 0)
             {
-                out = colors.head;  // Поточна позиція: яскрава голова
+                // pos0 → (1 - t)
+                out.r = clampAdd(out.r, uint8_t(colors.head.r * (1.0f - t)));
+                out.g = clampAdd(out.g, uint8_t(colors.head.g * (1.0f - t)));
+                out.b = clampAdd(out.b, uint8_t(colors.head.b * (1.0f - t)));
             }
-            else if (dist <= range)
+            else if (dist1 == 0)
             {
-                out = colors.tail;  // Близько до голови: хвіст (згасання)
+                out.r = clampAdd(out.r, uint8_t(colors.head.r * t));
+                out.g = clampAdd(out.g, uint8_t(colors.head.g * t));
+                out.b = clampAdd(out.b, uint8_t(colors.head.b * t));
+            }
+            // ---- ХВІСТ ----
+            else if (dist0 <= range)
+            {
+                float k = 1.0f - (float(dist0) / float(range + 1));
+                out.r = clampAdd(out.r, uint8_t(colors.tail.r * k));
+                out.g = clampAdd(out.g, uint8_t(colors.tail.g * k));
+                out.b = clampAdd(out.b, uint8_t(colors.tail.b * k));
             }
 
             return out;
@@ -357,23 +373,28 @@ RGB Animation_Apply(const AnimationState& s, const AnimationParams& p, const RGB
         // Імітує цифровий збій з контрастними спалахами
         case ANIM_GLITCH:
         {
-            // Базовий колір завжди присутній як основа
             RGB out = base;
 
-            // Перевірка, чи піксель у зоні активного глічу
             if (s.glitchActive &&
                 i >= s.glitchPixel &&
                 i < s.glitchPixel + s.glitchCount)
             {
                 if (!sp.invertEffect)
                 {
-                    // Нормальний режим: підсвітити (освітліть глітч)
-                    out = boost(base, resolveIntensity(sp));
+                    // контрастний кольоровий глітч
+                    uint8_t ch = random(3);
+                    out = base;
+
+                    if (ch == 0) { out.r = 255; out.g /= 4; out.b /= 4; }
+                    else if (ch == 1) { out.g = 255; out.r /= 4; out.b /= 4; }
+                    else { out.b = 255; out.r /= 4; out.g /= 4; }
                 }
                 else
                 {
-                    // Інвертований режим: затемнити (темний глітч на світлому фоні)
-                    out = dim(base, 4); // Приглушення для контрасту
+                    // інверсний глітч
+                    out.r = 255 - base.r;
+                    out.g = 255 - base.g;
+                    out.b = 255 - base.b;
                 }
             }
 
@@ -385,28 +406,12 @@ RGB Animation_Apply(const AnimationState& s, const AnimationParams& p, const RGB
         // Створює ритмічний пульсуючий ефект
         case ANIM_PULSE:
         {
-            // Базовий колір як основа
-            RGB out = base;
+            float pulse = 0.5f - 0.5f * cos(s.phase);
 
-            // Конвертація фази в плавну хвилю від 0 до 1
-            float pulse = (sin(s.phase) + 1.0f) * 0.5f;
-
-            uint8_t power = resolvePower(sp);
-
-            // Масштабування яскравості кожного каналу за фазою
-            out.r = clampAdd(0, uint8_t(base.r * pulse));
-            out.g = clampAdd(0, uint8_t(base.g * pulse));
-            out.b = clampAdd(0, uint8_t(base.b * pulse));
-
-            // Додатковий контраст через інтенсивність
-            if (!sp.invertEffect)
-            {
-                out = boost(out, power / 2); // Посилення яскравих піків
-            }
-            else
-            {
-                out = dim(out, 2);            // Приглушення темних долин
-            }
+            RGB out;
+            out.r = uint8_t(base.r * pulse);
+            out.g = uint8_t(base.g * pulse);
+            out.b = uint8_t(base.b * pulse);
 
             return out;
         }
@@ -416,7 +421,7 @@ RGB Animation_Apply(const AnimationState& s, const AnimationParams& p, const RGB
         // Створює ефект хвилі, що розповсюджується
         case ANIM_WAVE:
         {
-            uint8_t center = s.index; // Центр хвилі
+            uint8_t center = s.position; // Центр хвилі
 
             // Дзеркалення центру для другої стрічки (асиметрія)
             if (sp.invertSecond && isSecondStrip)
@@ -478,7 +483,9 @@ RGB Animation_Apply(const AnimationState& s, const AnimationParams& p, const RGB
 
             if (!sp.invertEffect)
             {
-                out = boost(out, power);
+                out.r = clampAdd(0, uint8_t(out.r + power * noise));
+                out.g = clampAdd(0, uint8_t(out.g + power * noise));
+                out.b = clampAdd(0, uint8_t(out.b + power * noise));
             }
             else
             {

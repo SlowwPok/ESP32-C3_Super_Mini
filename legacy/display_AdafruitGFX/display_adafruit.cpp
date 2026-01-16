@@ -3,6 +3,9 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_ST7789.h>
 
+// // для роботи треба додати     ;adafruit/Adafruit GFX Library                  //бібліотека в _disabled
+//     ;adafruit/Adafruit ST7735 and ST7789 Library    //бібліотека в _disabled
+
 // ===== СИНГЛТОН ЕКЗЕМПЛЯР ДИСПЛЕЯ =====
 static Adafruit_ST7789 tft(TFT_CS, TFT_DC, TFT_RST);
 

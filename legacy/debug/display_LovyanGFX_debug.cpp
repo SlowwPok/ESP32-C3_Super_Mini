@@ -1,6 +1,6 @@
-#include "../display_LovyanGFX.h"
-#include "../display_LovyanGFX_config.h"
-
+#include "../../src/display/LovyanGFX/display_LovyanGFX.h"
+#include "../../src/display/LovyanGFX/display_LovyanGFX_config.h"
+//потрібно змінити шлях, бо цей файл у legacy/debug кол ивикористовувати
 
 // ===== ДОПОМІЖНА ФУНКЦІЯ =====
 static void drawCross(int x, int y, uint16_t c)

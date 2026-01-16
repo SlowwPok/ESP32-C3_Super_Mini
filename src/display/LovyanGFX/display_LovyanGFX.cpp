@@ -1,5 +1,6 @@
 #include "display_LovyanGFX_config.h"
 #include "display_LovyanGFX.h"
+#include "rgb_strip/rgb_types.h"
 #include <LovyanGFX.hpp>
 
 // ===== КЛАС ДЛЯ ІНІЦІАЛІЗАЦІЇ ДИСПЛЕЯ LOVYANGFX =====
@@ -150,4 +151,26 @@ void Display_Wakeup()
 {
   lcd.wakeup();               // опціонально
   digitalWrite(PIN_BL, HIGH); // ❗ вмикаємо підсвітку
+}
+
+uint16_t Display_ColorFromRGB_ForPreview(const RGB& c)
+{
+    // якщо реально чорний — чорний
+    if (c.r == 0 && c.g == 0 && c.b == 0)
+        return COLOR_BLACK;
+
+    uint8_t r = c.r;
+    uint8_t g = c.g;
+    uint8_t b = c.b;
+
+    // мінімальна видимість ТІЛЬКИ ДЛЯ ПРЕВʼЮ
+    uint8_t minVis = 8;
+    if (r && r < minVis) r = minVis;
+    if (g && g < minVis) g = minVis;
+    if (b && b < minVis) b = minVis;
+
+    return
+        ((r & 0xF8) << 8) |
+        ((g & 0xFC) << 3) |
+        (b >> 3);
 }

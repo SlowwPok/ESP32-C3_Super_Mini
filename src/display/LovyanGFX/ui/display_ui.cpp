@@ -29,10 +29,7 @@ static void drawStripColors(int y, const RGB* colors)
 
     for (int i = 0; i < RGB_STRIP_LENGTH; i++)
     {
-        uint16_t c565 =
-            ((colors[i].r & 0xF8) << 8) |
-            ((colors[i].g & 0xFC) << 3) |
-            (colors[i].b >> 3);
+        uint16_t c565 = Display_ColorFromRGB_ForPreview(colors[i]);
 
         Display_FillRect(x, y, COLOR_BOX, COLOR_BOX, c565);
         Display_DrawRect(x, y, COLOR_BOX, COLOR_BOX, COLOR_WHITE);

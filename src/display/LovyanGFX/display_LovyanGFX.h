@@ -2,6 +2,7 @@
 #include <Arduino.h>
 #include <stdint.h>
 #include <LovyanGFX.hpp>
+#include "rgb_strip/rgb_types.h"
 
 // ===== ІНІЦІАЛІЗАЦІЯ / ОЧИСТКА =====
 void Display_Init();
@@ -10,6 +11,9 @@ void Display_Clear(uint16_t color = 0x0000); //RGB(0, 0, 0)
 // ===== ГЕОМЕТРІЯ =====
 int Display_Width();
 int Display_Height();
+
+// ===== КОЛЬОРИ =====
+uint16_t Display_ColorFromRGB_ForPreview(const RGB& c);
 
 // ===== ПРИМІТИВИ МАЛЮВАННЯ =====
 void Display_DrawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint16_t color);
