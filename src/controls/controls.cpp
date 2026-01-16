@@ -58,7 +58,7 @@ ControlEvent Controls_Update()
                 longDone = false;
             } else if (!longDone) {
                 // Відпущено (короткий тап)
-                ev = CTRL_NEXT_MODE;
+                ev = CTRL_BTN1_TAP;
             }
         }
     }
@@ -66,7 +66,7 @@ ControlEvent Controls_Update()
     // Довге натискання
     if (lastStableState && !longDone && 
         now - pressStart >= LONG_PRESS_TIME) {
-        ev = CTRL_TOGGLE_POWER;
+        ev = CTRL_BTN1_HOLD;
         longDone = true;
     }
 

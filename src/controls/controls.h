@@ -8,8 +8,10 @@
 enum ControlEvent
 {
     CTRL_NONE,
-    CTRL_NEXT_MODE,
-    CTRL_TOGGLE_POWER
+
+    // кнопка 1 (та, що вже є)
+    CTRL_BTN1_TAP,
+    CTRL_BTN1_HOLD,
 };
 
 /* =========================================================

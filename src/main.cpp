@@ -1,4 +1,6 @@
 #include "system/system_state.h"
+#include "system/system_control.h"
+
 #include "controls/controls.h"
 
 #include "rgb/runtime/rgb_runtime.h"
@@ -22,10 +24,19 @@ void loop()
 {
     ControlEvent ev = Controls_Update();
 
-    if (ev == CTRL_TOGGLE_POWER)
-        System_TogglePower();
-    else if (ev == CTRL_NEXT_MODE)
-        System_NextMode();
+    switch (ev)
+    {
+        case CTRL_BTN1_HOLD:
+            System_TogglePower();
+            break;
+
+        case CTRL_BTN1_TAP:
+            System_NextMode();
+            break;
+
+        default:
+            break;
+    }
 
     const SystemState& state = System_Get();
 
