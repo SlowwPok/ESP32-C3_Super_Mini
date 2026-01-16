@@ -238,24 +238,27 @@ void Animation_Update(AnimationState& s, const AnimationParams& p)
 {
     unsigned long now = millis();
 
-    // ---------- FRAME TIME ----------
+    // ✅ ВИПРАВЛЕНО: dt і phase оновлюються ЗАВЖДИ
     float dt = (now - s.lastFrameTime) * 0.001f;
     s.lastFrameTime = now;
 
-    // position ЗАВЖДИ рухається
+    // Фаза завжди рухається (для PULSE, WAVE, NOISE)
+    s.phase += dt * 2.0f;
+
+    // ✅ Position теж рухається плавно
     float speedPxPerSec = 1.0f + p.intensity * 0.5f;
     s.position += speedPxPerSec * dt;
-
+    
     while (s.position >= RGB_STRIP_LENGTH)
         s.position -= RGB_STRIP_LENGTH;
 
-    // фаза теж завжди
-    s.phase += dt * 2.0f;
-
-    // ---------- STEP TIME (логіка) ----------
+    // ✅ Логічні кроки (для EVEN_ODD, GLITCH)
     if (now - s.lastStepTime < p.speedMs)
         return;
 
+    s.lastStepTime = now;
+
+    // Логіка, що залежить від кроків
     if (p.type == ANIM_EVEN_ODD)
         s.evenPhase = !s.evenPhase;
 
@@ -268,12 +271,10 @@ void Animation_Update(AnimationState& s, const AnimationParams& p)
         {
             s.glitchActive = true;
             s.glitchPixel = random(RGB_STRIP_LENGTH);
-            s.glitchCount = random(1, 2);
-            s.glitchUntil = now + random(50, 100);
+            s.glitchCount = random(1, 3); // ← ВИПРАВЛЕНО: було random(1,2)
+            s.glitchUntil = now + random(50, 150);
         }
     }
-
-    s.lastStepTime = now;
 }
 
 /* =========================================================

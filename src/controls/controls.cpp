@@ -6,6 +6,7 @@
 
 #define TOUCH_PIN 4
 #define LONG_PRESS_TIME 800
+#define DEBOUNCE_DELAY 50 // 50 мс
 
 /* =========================================================
    ВНУТРІШНІ ТИПИ
@@ -20,7 +21,8 @@ enum TouchState
 /* =========================================================
    СТАН
    ========================================================= */
-
+static unsigned long lastDebounceTime = 0;
+static bool lastStableState = false;
 static bool lastPressed = false;
 static unsigned long pressStart = 0;
 static bool longDone = false;
@@ -36,28 +38,38 @@ void Controls_Init()
 
 ControlEvent Controls_Update()
 {
-    bool pressed = digitalRead(TOUCH_PIN);
+    bool reading = digitalRead(TOUCH_PIN);
     unsigned long now = millis();
-
+    
     ControlEvent ev = CTRL_NONE;
 
-    if (pressed && !lastPressed)
-    {
-        pressStart = now;
-        longDone = false;
+    // Дебаунсинг
+    if (reading != lastPressed) {
+        lastDebounceTime = now;
     }
 
-    if (pressed && !longDone && now - pressStart >= LONG_PRESS_TIME)
-    {
+    if ((now - lastDebounceTime) > DEBOUNCE_DELAY) {
+        if (reading != lastStableState) {
+            lastStableState = reading;
+            
+            if (lastStableState) {
+                // Натиснуто (стабільно)
+                pressStart = now;
+                longDone = false;
+            } else if (!longDone) {
+                // Відпущено (короткий тап)
+                ev = CTRL_NEXT_MODE;
+            }
+        }
+    }
+
+    // Довге натискання
+    if (lastStableState && !longDone && 
+        now - pressStart >= LONG_PRESS_TIME) {
         ev = CTRL_TOGGLE_POWER;
         longDone = true;
     }
 
-    if (!pressed && lastPressed && !longDone)
-    {
-        ev = CTRL_NEXT_MODE;
-    }
-
-    lastPressed = pressed;
+    lastPressed = reading;
     return ev;
 }
