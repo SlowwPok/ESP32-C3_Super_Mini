@@ -18,7 +18,7 @@
  *   for (uint8_t i = 0; i < RGB_modes_Count(); i++) {
  *       const RGBMode& mode = RGB_modes_Get(i);
  *       if (mode.selectable) { ... }
- *   }
+ *   } 
  * @endcode
  *
  * @return uint8_t Кількість режимів у бібліотеці (включаючи службові режими)
