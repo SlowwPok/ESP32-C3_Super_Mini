@@ -2,7 +2,7 @@
 #include <Arduino.h>
 #include <stdint.h>
 #include <LovyanGFX.hpp>
-#include "rgb_strip/rgb_types.h"
+#include "rgb/strip/rgb_types.h"
 
 // ===== ІНІЦІАЛІЗАЦІЯ / ОЧИСТКА =====
 void Display_Init();

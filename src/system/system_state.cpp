@@ -1,5 +1,5 @@
-#include "system_state.h"
-#include "rgb_strip/rgb_modes.h"
+#include "system/system_state.h"
+#include "rgb/modes/rgb_modes.h"
 
 static SystemState state;
 

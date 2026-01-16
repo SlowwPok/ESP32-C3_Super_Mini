@@ -1,9 +1,9 @@
 #pragma once
 
 #include <stdint.h>
-#include "rgb_strip/rgb_types.h"
-#include "rgb_runtime/animation_engine.h"
-#include "rgb_strip/rgb_config.h"
+#include "rgb/strip/rgb_types.h"
+#include "rgb/runtime/animation_engine.h"
+#include "rgb/strip/rgb_config.h"
 
 enum RGBModeType
 {

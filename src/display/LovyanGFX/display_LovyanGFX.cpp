@@ -1,6 +1,6 @@
-#include "display_LovyanGFX_config.h"
-#include "display_LovyanGFX.h"
-#include "rgb_strip/rgb_types.h"
+#include "display/LovyanGFX/display_LovyanGFX_config.h"
+#include "display/LovyanGFX/display_LovyanGFX.h"
+#include "rgb/strip/rgb_types.h"
 #include <LovyanGFX.hpp>
 
 // ===== КЛАС ДЛЯ ІНІЦІАЛІЗАЦІЇ ДИСПЛЕЯ LOVYANGFX =====

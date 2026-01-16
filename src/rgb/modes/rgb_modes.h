@@ -1,7 +1,7 @@
 #pragma once
-#include "rgb_strip/rgb_types.h"
-#include "rgb_runtime/animation_engine.h"
-#include "rgb_strip/rgb_mode.h"
+#include "rgb/strip/rgb_types.h"
+#include "rgb/runtime/animation_engine.h"
+#include "rgb/modes/rgb_mode.h"
 
 /* =========================================================
    БІБЛІОТЕКА РЕЖИМІВ RGB СВІТЛОДІОДІВ

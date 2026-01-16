@@ -1,6 +1,6 @@
 #pragma once
 #include "system/system_state.h"
-#include "rgb_strip/rgb_types.h"
+#include "rgb/strip/rgb_types.h"
 
 void RGB_Runtime_Init();
 void RGB_Runtime_Update(const SystemState& state);

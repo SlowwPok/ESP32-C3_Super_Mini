@@ -1,8 +1,8 @@
 #include "rgb_runtime.h"
 
-#include "rgb_strip/rgb_modes.h"
-#include "rgb_runtime/animation_engine.h"
-#include "rgb_strip/rgb_config.h"
+#include "rgb/modes/rgb_modes.h"
+#include "rgb/runtime/animation_engine.h"
+#include "rgb/strip/rgb_config.h"
 
 #include <string.h>
 

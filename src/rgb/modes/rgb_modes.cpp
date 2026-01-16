@@ -1,5 +1,5 @@
-#include "rgb_strip/rgb_modes.h"
-#include "rgb_strip/color_palette.h"
+#include "rgb/modes/rgb_modes.h"
+#include "rgb/modes/color_palette.h"
 
 /* =========================================================
    БІБЛІОТЕКА РЕЖИМІВ RGB СВІТЛОДІОДІВ

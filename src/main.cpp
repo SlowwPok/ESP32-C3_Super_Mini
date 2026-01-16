@@ -1,8 +1,8 @@
 #include "system/system_state.h"
 #include "controls/controls.h"
 
-#include "rgb_runtime/rgb_runtime.h"
-#include "rgb_strip/rgb_strip.h"
+#include "rgb/runtime/rgb_runtime.h"
+#include "rgb/strip/rgb_strip.h"
 
 #include "display/LovyanGFX/ui/display_ui.h"
 #include "display/LovyanGFX/display_LovyanGFX.h"

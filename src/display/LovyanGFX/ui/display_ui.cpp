@@ -2,8 +2,8 @@
 
 #include "display/LovyanGFX/display_LovyanGFX.h"
 #include "display/LovyanGFX/display_LovyanGFX_config.h"
-#include "rgb_runtime/rgb_runtime.h"
-#include "rgb_strip/rgb_config.h"   // RGB_STRIP_LENGTH
+#include "rgb/runtime/rgb_runtime.h"
+#include "rgb/strip/rgb_config.h"   // RGB_STRIP_LENGTH
 
 static bool     lastPowerOn   = false;
 static uint8_t  lastMode      = 0xFF;

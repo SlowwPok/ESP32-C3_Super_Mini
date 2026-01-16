@@ -1,6 +1,6 @@
-#include "rgb_strip/rgb_strip.h"
 #include <Adafruit_NeoPixel.h>
-#include "rgb_strip/rgb_config.h"
+#include "rgb/strip/rgb_strip.h"
+#include "rgb/strip/rgb_config.h"
 
 static Adafruit_NeoPixel strip1(RGB_STRIP_LENGTH, LED_1_PIN, NEO_GRB + NEO_KHZ800);
 static Adafruit_NeoPixel strip2(RGB_STRIP_LENGTH, LED_2_PIN, NEO_GRB + NEO_KHZ800);
