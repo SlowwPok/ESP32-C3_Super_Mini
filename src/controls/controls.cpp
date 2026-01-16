@@ -15,6 +15,7 @@ struct ButtonFSM
 };
 
 static ButtonFSM btnPower;
+static ButtonFSM btnUI;
 
 void Controls_Init()
 {
@@ -28,6 +29,16 @@ void Controls_Init()
     };
 
     pinMode(btnPower.pin, INPUT);
+
+    // ---- UI BUTTON (ЗАГЛУШКА) ----
+    btnUI = {
+        .pin = 0xFF,           // ❗ недійсний пін
+        .lastReading = false,
+        .stableState = false,
+        .lastDebounce = 0,
+        .pressStart = 0,
+        .longDone = false
+    };
 }
 
 enum ButtonId
@@ -51,6 +62,9 @@ struct ButtonEvent
 
 static ButtonEvent Button_Update(ButtonFSM& b, ButtonId id)
 {
+    if (b.pin == 0xFF)
+    return { id, BTN_EVENT_NONE };
+
     bool reading = digitalRead(b.pin);
     unsigned long now = millis();
 
@@ -90,18 +104,24 @@ static ButtonEvent Button_Update(ButtonFSM& b, ButtonId id)
 
 ControlEvent Controls_Update()
 {
-    ButtonEvent bev = Button_Update(btnPower, BTN_ID_POWER);
-
-    if (bev.type == BTN_EVENT_NONE)
-        return CTRL_NONE;
-
-    if (bev.id == BTN_ID_POWER)
+    // 1️⃣ POWER button
+    ButtonEvent ev = Button_Update(btnPower, BTN_ID_POWER);
+    if (ev.type != BTN_EVENT_NONE)
     {
-        if (bev.type == BTN_EVENT_TAP)
+        if (ev.type == BTN_EVENT_TAP)
             return CTRL_BTN_POWER_TAP;
-
-        if (bev.type == BTN_EVENT_HOLD)
+        if (ev.type == BTN_EVENT_HOLD)
             return CTRL_BTN_POWER_HOLD;
+    }
+
+    // 2️⃣ UI button (поки завжди NONE)
+    ev = Button_Update(btnUI, BTN_ID_UI);
+    if (ev.type != BTN_EVENT_NONE)
+    {
+        if (ev.type == BTN_EVENT_TAP)
+            return CTRL_BTN_UI_TAP;
+        if (ev.type == BTN_EVENT_HOLD)
+            return CTRL_BTN_UI_HOLD;
     }
 
     return CTRL_NONE;

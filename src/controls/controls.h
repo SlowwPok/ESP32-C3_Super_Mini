@@ -12,6 +12,10 @@ enum ControlEvent
     // кнопка живлення / RGB (є зараз)
     CTRL_BTN_POWER_TAP,
     CTRL_BTN_POWER_HOLD,
+    
+    // кнопка UI (екрани) — ПОКИ НЕ ВИКОРИСТОВУЄТЬСЯ
+    CTRL_BTN_UI_TAP,
+    CTRL_BTN_UI_HOLD,
 };
 
 /* =========================================================
