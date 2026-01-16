@@ -22,3 +22,11 @@ void System_NextMode()
 
     s.currentMode = i;
 }
+
+void System_NextScreen()
+{
+    SystemState& s = System_GetMutable();
+
+    s.activeScreen =
+        static_cast<ScreenId>((s.activeScreen + 1) % SCREEN_COUNT);
+}

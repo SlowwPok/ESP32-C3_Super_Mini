@@ -5,18 +5,17 @@
 #include "rgb/runtime/rgb_runtime.h"
 #include "rgb/strip/rgb_config.h"   // RGB_STRIP_LENGTH
 
-static bool     lastPowerOn   = false;
+static void DisplayUI_RenderRGB(const SystemState& state);
+static void DisplayUI_RenderSystem(const SystemState& state);
+static void handlePowerAndSleep(const SystemState& state);
+
 static uint8_t  lastMode      = 0xFF;
 static bool     lastAnimated  = false;
 
 static uint8_t  lastBrightness = 0xFF;
 static uint8_t  lastBaseMode   = 0xFF;
 
-static bool     displaySleeping = false;
-static uint32_t powerOffSinceMs = 0;
-
 static const uint32_t DISPLAY_SLEEP_DELAY_MS = 5000; // 5 секунд
-
 
 // ===== Layout =====
 static const int PADDING   = 10;
@@ -38,11 +37,58 @@ static void drawStripColors(int y, const RGB* colors)
 }
 
 // ===== Main UI =====
+
+static void handlePowerAndSleep(const SystemState& state)
+{
+    static bool lastPower = false;
+    static bool sleeping = false;
+    static uint32_t offSince = 0;
+
+    if (!state.powerOn)
+    {
+        if (lastPower)
+        {
+            offSince = millis();
+            sleeping = false;
+        }
+
+        if (!sleeping &&
+            (millis() - offSince) > DISPLAY_SLEEP_DELAY_MS)
+        {
+            Display_Sleep();
+            sleeping = true;
+        }
+    }
+    else if (sleeping)
+    {
+        Display_Wakeup();
+        sleeping = false;
+    }
+
+    lastPower = state.powerOn;
+}
+
 void DisplayUI_Render(const SystemState& state)
 {
-    bool prevPower = lastPowerOn;
-    lastPowerOn = state.powerOn;
-    
+    handlePowerAndSleep(state);
+
+    if (!state.powerOn)
+        return;
+
+    switch (state.activeScreen)
+    {
+        case SCREEN_RGB:
+            DisplayUI_RenderRGB(state);
+            break;
+
+        case SCREEN_SYSTEM:
+            DisplayUI_RenderSystem(state);
+            break;
+    }
+}
+
+static void DisplayUI_RenderRGB(const SystemState& state)
+{    
     uint8_t activeMode = RGB_Runtime_GetActiveMode();
     bool animated      = RGB_Runtime_IsAnimated();
     uint16_t animSpeed = RGB_Runtime_GetAnimSpeedMs();
@@ -50,37 +96,7 @@ void DisplayUI_Render(const SystemState& state)
     uint8_t brightness = RGB_Runtime_GetBrightness();
     uint8_t baseMode   = RGB_Runtime_GetBaseMode();
 
-    // --- handle power off timing ---
-    if (!state.powerOn)
-    {
-        if (prevPower) // щойно вимкнули
-        {
-            powerOffSinceMs = millis();
-            displaySleeping = false;
-        }
-
-        // якщо вже OFF і пройшло 30 сек → гасимо дисплей
-        if (!displaySleeping &&
-            (millis() - powerOffSinceMs) > DISPLAY_SLEEP_DELAY_MS)
-        {
-            Display_Sleep();     // ← має бути у твоєму драйвері
-            displaySleeping = true;
-            return;
-        }
-    }
-
-    // --- wake up display on power on ---
-    if (state.powerOn && displaySleeping)
-    {
-        Display_Wakeup();   // ← вмикає підсвітку + дисплей
-        displaySleeping = false;
-
-        // примусово оновимо UI
-        lastMode = 0xFF;
-    }
-
     bool needRedraw =
-        state.powerOn != prevPower ||
         activeMode    != lastMode    ||
         animated      != lastAnimated ||
         brightness    != lastBrightness ||
@@ -168,4 +184,26 @@ void DisplayUI_Render(const SystemState& state)
     Display_DrawText(PADDING, y, 1, "STRIP 2", COLOR_WHITE);
     y += 12;
     drawStripColors(y, strip2);
+}
+
+static void DisplayUI_RenderSystem(const SystemState& state)
+{
+    Display_Clear(COLOR_BLACK);
+
+    Display_DrawText(
+        PADDING,
+        PADDING,
+        2,
+        "SYSTEM",
+        COLOR_WHITE
+    );
+
+    // тимчасово, щоб екран не був пустий
+    Display_DrawText(
+        PADDING,
+        PADDING + 20,
+        1,
+        "System screen placeholder",
+        COLOR_GRAY
+    );
 }

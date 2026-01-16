@@ -1,12 +1,12 @@
 #include "system_state.h"
 
-SystemState state;
+static SystemState state;
 
 void System_Init()
 {
     state.powerOn = true;
     state.currentMode = 0;
-    state.activeScreen = 0;
+    state.activeScreen = SCREEN_RGB;
     state.uptimeSec = 0;
 }
 

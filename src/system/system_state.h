@@ -6,13 +6,20 @@
   де зберігається стан пристрою
 */
 
+enum ScreenId
+{
+    SCREEN_RGB = 0,   // поточний екран RGB
+    SCREEN_SYSTEM,    // системна інфа (uptime, датчики і т.д.)
+    SCREEN_COUNT
+};
+
 struct SystemState
 {
     bool powerOn;
     uint8_t currentMode;
 
-    uint8_t activeScreen;   // для UI
-    uint32_t uptimeSec;     // для RTC / system info
+    ScreenId activeScreen;
+    uint32_t uptimeSec;
 };
 
 // ініціалізація (один раз в setup)
