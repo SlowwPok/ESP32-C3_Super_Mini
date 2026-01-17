@@ -202,6 +202,16 @@ static AnimationParams sanitizeParams(const AnimationParams& in)
     return p;
 }
 
+/** * Підготовка параметрів анімації перед використанням.
+ * Виконує санітизацію та корекцію параметрів.
+ * @param in Оригінальні параметри анімації
+ * @return AnimationParams Підготовлені параметри, готові до використання
+ */
+AnimationParams Animation_PrepareParams(const AnimationParams& in)
+{
+    return sanitizeParams(in);
+}
+
 /* =========================================================
    ІНІЦІАЛІЗАЦІЯ АНІМАЦІЙ
    ========================================================= */
@@ -238,44 +248,43 @@ void Animation_Update(AnimationState& s, const AnimationParams& p)
 {
     unsigned long now = millis();
 
-    // ✅ ВИПРАВЛЕНО: dt і phase оновлюються ЗАВЖДИ
     float dt = (now - s.lastFrameTime) * 0.001f;
     s.lastFrameTime = now;
 
-    // Фаза завжди рухається (для PULSE, WAVE, NOISE)
-    s.phase += dt * 2.0f;
+    // 1️⃣ Фаза — завжди
+    s.phase += dt * (0.5f + p.intensity * 0.15f);
 
-    // ✅ Position теж рухається плавно
-    float speedPxPerSec = 1.0f + p.intensity * 0.5f;
-    s.position += speedPxPerSec * dt;
-    
-    while (s.position >= RGB_STRIP_LENGTH)
-        s.position -= RGB_STRIP_LENGTH;
+    // 2️⃣ Позиція — тільки як часова змінна
+    s.position += dt;
 
-    // ✅ Логічні кроки (для EVEN_ODD, GLITCH)
-    if (now - s.lastStepTime < p.speedMs)
-        return;
+    if (s.position > 1000.0f)
+        s.position = 0.0f;
 
-    s.lastStepTime = now;
+    // 3️⃣ Stepped tick
+    if (now - s.lastStepTime >= p.speedMs)
+    {
+        s.lastStepTime = now;
 
-    // Логіка, що залежить від кроків
-    if (p.type == ANIM_EVEN_ODD)
+        // toggle even/odd
         s.evenPhase = !s.evenPhase;
 
-    if (p.type == ANIM_GLITCH)
-    {
-        if (s.glitchActive && now > s.glitchUntil)
-            s.glitchActive = false;
-
-        if (!s.glitchActive && random(100) < 15)
+        // glitch lifecycle
+        if (p.type == ANIM_GLITCH)
         {
-            s.glitchActive = true;
-            s.glitchPixel = random(RGB_STRIP_LENGTH);
-            s.glitchCount = random(1, 3); // ← ВИПРАВЛЕНО: було random(1,2)
-            s.glitchUntil = now + random(50, 150);
+            if (!s.glitchActive && random(100) < 15)
+            {
+                s.glitchActive = true;
+                s.glitchPixel = random(RGB_STRIP_LENGTH);
+                s.glitchCount = random(1, 3);
+                s.glitchUntil = now + random(60, 180);
+            }
         }
     }
+
+    if (s.glitchActive && now > s.glitchUntil)
+        s.glitchActive = false;
 }
+
 
 /* =========================================================
    ЗАСТОСУВАННЯ АНІМАЦІЇ ДО КОЛЬОРУ
@@ -293,21 +302,25 @@ void Animation_Update(AnimationState& s, const AnimationParams& p)
  */
 RGB Animation_Apply(const AnimationState& s, const AnimationParams& p, const RGB& base, uint8_t i, bool isSecondStrip)
 {
-    AnimationParams sp = sanitizeParams(p);
-    switch (sp.type)
+
+    switch (p.type)
     {
         /* ===== ХОДЯЧИЙ ПІКСЕЛЬ ===== */
         // Опис: Один яскравий піксель "ходить" вздовж смуги,
         // інші пікселі приглушені
         case ANIM_WALKING_PIXEL:
         {
-            float posf = s.position;
+            float posf = fmod(
+                (s.position * 1000.0f) / p.speedMs,
+                RGB_STRIP_LENGTH
+            );
+            
             int pos0 = int(posf);
             int pos1 = (pos0 + 1) % RGB_STRIP_LENGTH;
             float t = posf - pos0; // 0..1
 
             // інверсія напрямку для другої стрічки
-            if (sp.invertSecond && isSecondStrip)
+            if (p.invertSecond && isSecondStrip)
             {
                 pos0 = (RGB_STRIP_LENGTH - 1) - pos0;
                 pos1 = (RGB_STRIP_LENGTH - 1) - pos1;
@@ -319,8 +332,8 @@ RGB Animation_Apply(const AnimationState& s, const AnimationParams& p, const RGB
             int dist0 = d0;
             int dist1 = d1;
 
-            AnimColors colors = resolveWalkingPixelColors(base, sp);
-            uint8_t range = resolveRange(sp);
+            AnimColors colors = resolveWalkingPixelColors(base, p);
+            uint8_t range = resolveRange(p);
 
             RGB out = colors.background;
 
@@ -360,11 +373,11 @@ RGB Animation_Apply(const AnimationState& s, const AnimationParams& p, const RGB
             bool lit = s.evenPhase ? isEvenPixel : !isEvenPixel;
 
             // Інверсія режиму для другої стрічки (чередування парних/непарних)
-            if (sp.invertSecond && isSecondStrip)
+            if (p.invertSecond && isSecondStrip)
                 lit = !lit;
 
             // Світлі пікселі мають інтенсивність, темні - чорні
-            RGB on = boost(base, resolveIntensity(sp));
+            RGB on = boost(base, resolveIntensity(p));
 
             return lit ? on : RGB{0, 0, 0}; // Світло або чорний
         }
@@ -379,7 +392,7 @@ RGB Animation_Apply(const AnimationState& s, const AnimationParams& p, const RGB
                 i >= s.glitchPixel &&
                 i < s.glitchPixel + s.glitchCount)
             {
-                if (!sp.invertEffect)
+                if (!p.invertEffect)
                 {
                     // контрастний кольоровий глітч
                     uint8_t ch = random(3);
@@ -424,14 +437,14 @@ RGB Animation_Apply(const AnimationState& s, const AnimationParams& p, const RGB
             uint8_t center = s.position; // Центр хвилі
 
             // Дзеркалення центру для другої стрічки (асиметрія)
-            if (sp.invertSecond && isSecondStrip)
+            if (p.invertSecond && isSecondStrip)
             {
                 center = (RGB_STRIP_LENGTH - 1) - center;
             }
 
             // Обчислення відстані від центру хвилі
             uint8_t dist = (i > center) ? (i - center) : (center - i);
-            uint8_t range = resolveRange(sp);
+            uint8_t range = resolveRange(p);
 
             // За межами хвилі повертаємо базовий колір
             if (dist > range)
@@ -441,7 +454,7 @@ RGB Animation_Apply(const AnimationState& s, const AnimationParams& p, const RGB
             float norm = 1.0f - (float(dist) / float(range + 1));
             float wave = cos(norm * (PI / 2.0f)); // М'яка косинусна крива
 
-            uint8_t power = resolvePower(sp);
+            uint8_t power = resolvePower(p);
 
             // Масштабування кольору за хвилею
             RGB out;
@@ -450,7 +463,7 @@ RGB Animation_Apply(const AnimationState& s, const AnimationParams& p, const RGB
             out.b = clampAdd(0, uint8_t(base.b * wave));
 
             // Підсилення хвилі інтенсивністю
-            if (!sp.invertEffect)
+            if (!p.invertEffect)
             {
                 out = boost(out, power); // Посилення хвилі
             }
@@ -466,7 +479,7 @@ RGB Animation_Apply(const AnimationState& s, const AnimationParams& p, const RGB
             // базовий колір завжди є
             RGB out = base;
 
-            uint8_t power = resolvePower(sp);
+            uint8_t power = resolvePower(p);
 
             // унікальна фаза для кожного пікселя
             float n =
@@ -481,7 +494,7 @@ RGB Animation_Apply(const AnimationState& s, const AnimationParams& p, const RGB
             out.g = uint8_t(base.g * noise);
             out.b = uint8_t(base.b * noise);
 
-            if (!sp.invertEffect)
+            if (!p.invertEffect)
             {
                 out.r = clampAdd(0, uint8_t(out.r + power * noise));
                 out.g = clampAdd(0, uint8_t(out.g + power * noise));

@@ -97,3 +97,14 @@ RGB Animation_Apply(
   uint8_t pixelIndex,
   bool isSecondStrip
 );
+
+
+/**
+ * Підготовка та санітизація параметрів анімації перед використанням.
+ * Переконується, що всі параметри мають розумні значення,
+ * та коригує конфліктні комбінації параметрів.
+ *
+ * @param in Оригінальні параметри анімації
+ * @return AnimationParams Сантивизовані параметри, готові до використання
+ */
+AnimationParams Animation_PrepareParams(const AnimationParams& in);

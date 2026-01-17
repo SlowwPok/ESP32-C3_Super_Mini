@@ -90,29 +90,28 @@ void RGB_Runtime_Update(const SystemState& state)
             return;
         }
 
-        Animation_Update(animState1, mode.animated.anim);
-        Animation_Update(animState2, mode.animated.anim);
+        AnimationParams safe = Animation_PrepareParams(mode.animated.anim);
+
+        Animation_Update(animState1, safe);
+        Animation_Update(animState2, safe);
 
         for (int i = 0; i < RGB_STRIP_LENGTH; i++)
         {
-            RGB c1 = Animation_Apply(
+            runtimeStrip1[i] = Animation_Apply(
                 animState1,
-                mode.animated.anim,
+                safe,
                 base.perPixel.strip1[i],
                 i,
                 false
             );
 
-            RGB c2 = Animation_Apply(
+            runtimeStrip2[i] = Animation_Apply(
                 animState2,
-                mode.animated.anim,
+                safe,
                 base.perPixel.strip2[i],
                 i,
                 true
             );
-            
-                runtimeStrip1[i] = c1;
-                runtimeStrip2[i] = c2;
         }
     }
     else

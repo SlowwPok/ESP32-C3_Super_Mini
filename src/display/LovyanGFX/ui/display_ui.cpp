@@ -2,8 +2,14 @@
 
 #include "display/LovyanGFX/display_LovyanGFX.h"
 #include "display/LovyanGFX/display_LovyanGFX_config.h"
+
 #include "rgb/runtime/rgb_runtime.h"
-#include "rgb/strip/rgb_config.h"   // RGB_STRIP_LENGTH
+#include "rgb/strip/rgb_config.h" 
+#include "rgb/modes/rgb_modes.h"
+
+
+static RGB previewStrip1[RGB_STRIP_LENGTH];
+static RGB previewStrip2[RGB_STRIP_LENGTH];
 
 static void DisplayUI_RenderRGB(const SystemState& state);
 static void DisplayUI_RenderSystem(const SystemState& state);
@@ -112,6 +118,50 @@ static void DisplayUI_RenderRGB(const SystemState& state)
     lastBrightness = brightness;
     lastBaseMode   = baseMode;
 
+    const RGBMode& mode = RGB_modes_Get(activeMode);
+
+    // ===== BUILD PREVIEW (UI ONLY, NO RUNTIME) =====
+
+    if (mode.type == MODE_SOLID)
+    {
+        for (int i = 0; i < RGB_STRIP_LENGTH; i++)
+        {
+            previewStrip1[i] = mode.solid.strip1;
+            previewStrip2[i] = mode.solid.strip2;
+        }
+    }
+    else if (mode.type == MODE_PER_PIXEL)
+    {
+        for (int i = 0; i < RGB_STRIP_LENGTH; i++)
+        {
+            previewStrip1[i] = mode.perPixel.strip1[i];
+            previewStrip2[i] = mode.perPixel.strip2[i];
+        }
+    }
+    else if (mode.type == MODE_ANIMATED)
+    {
+        const RGBMode& base = RGB_modes_Get(mode.animated.baseModeIndex);
+
+        if (base.type == MODE_SOLID)
+        {
+            for (int i = 0; i < RGB_STRIP_LENGTH; i++)
+            {
+                previewStrip1[i] = base.solid.strip1;
+                previewStrip2[i] = base.solid.strip2;
+            }
+        }
+        else if (base.type == MODE_PER_PIXEL)
+        {
+            for (int i = 0; i < RGB_STRIP_LENGTH; i++)
+            {
+                previewStrip1[i] = base.perPixel.strip1[i];
+                previewStrip2[i] = base.perPixel.strip2[i];
+            }
+        }
+    }
+
+    // ===== RENDER UI =====
+
     Display_Clear(COLOR_BLACK);
 
     if (!state.powerOn)
@@ -125,9 +175,6 @@ static void DisplayUI_RenderRGB(const SystemState& state)
         );
         return;
     }
-
-    const RGB* strip1 = RGB_Runtime_GetStrip1();
-    const RGB* strip2 = RGB_Runtime_GetStrip2();
 
     char title[40];
 
@@ -178,12 +225,14 @@ static void DisplayUI_RenderRGB(const SystemState& state)
 
     Display_DrawText(PADDING, y, 1, "STRIP 1", COLOR_WHITE);
     y += 12;
-    drawStripColors(y, strip1);
+
+    drawStripColors(y, previewStrip1);
 
     y += COLOR_BOX + 8;
     Display_DrawText(PADDING, y, 1, "STRIP 2", COLOR_WHITE);
     y += 12;
-    drawStripColors(y, strip2);
+
+    drawStripColors(y, previewStrip2);
 }
 
 static void DisplayUI_RenderSystem(const SystemState& state)
