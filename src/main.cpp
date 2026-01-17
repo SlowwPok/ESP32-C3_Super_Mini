@@ -6,7 +6,7 @@
 #include "rgb/runtime/rgb_runtime.h"
 #include "rgb/strip/rgb_strip.h"
 
-#include "display/LovyanGFX/ui/display_ui.h"
+#include "display/display_ui.h"
 #include "display/LovyanGFX/display_LovyanGFX.h"
 
 void setup()

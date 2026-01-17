@@ -2,24 +2,28 @@
 #include <Arduino.h>
 #include <stdint.h>
 #include <LovyanGFX.hpp>
+
+#include "display/LovyanGFX/display_LovyanGFX_config.h"
 #include "rgb/strip/rgb_types.h"
 #include "rgb/modes/rgb_modes.h"
 
-// ===== ІНІЦІАЛІЗАЦІЯ / ОЧИСТКА =====
-void Display_Init();
-void Display_Clear(uint16_t color = 0x0000); //RGB(0, 0, 0)
 
-// ===== ГЕОМЕТРІЯ =====
+// ===== INIT / CLEAR =====
+void Display_Init();
+void Display_Clear(uint16_t color = 0x0000);
+
+// ===== GEOMETRY =====
 int Display_Width();
 int Display_Height();
 
-// ===== КОЛЬОРИ =====
+// ===== COLORS =====
 uint16_t Display_ColorFromRGB_ForPreview(const RGB& c);
 
-// ===== ПРИМІТИВИ МАЛЮВАННЯ =====
+// ===== DRAW PRIMITIVES =====
 void Display_DrawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint16_t color);
 void Display_DrawRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color);
 void Display_FillRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color);
+
 void Display_DrawText(
   int16_t x,
   int16_t y,
@@ -42,23 +46,3 @@ void Display_DrawTextEx(
 // ===== POWER =====
 void Display_Sleep();
 void Display_Wakeup();
-
-// ===== ДЕБАГ =====
-void Display_DrawGrid();
-
-// Побудова preview для UI (БЕЗ runtime / анімацій)
-void Display_BuildRGBPreview(
-    const RGBMode& mode,
-    RGB* outStrip1,
-    RGB* outStrip2
-);
-
-// Малювання preview смуги
-void Display_DrawRGBPreview(
-    int x,
-    int y,
-    const RGB* strip,
-    int count,
-    int boxSize,
-    int gap
-);
