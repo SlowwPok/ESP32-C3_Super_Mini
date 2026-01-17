@@ -1,6 +1,10 @@
 #pragma once
 #include "rgb/strip/rgb_types.h"
 
+// ONLY RGB888 COLORS FORMAT
+// ONLY RGB888 COLORS FORMAT
+// ONLY RGB888 COLORS FORMAT
+
 /* =========================================================
    БАЗОВА ПАЛІТРА КОЛЬОРІВ ДЛЯ RGB СТРІЧКИ
    ========================================================= */

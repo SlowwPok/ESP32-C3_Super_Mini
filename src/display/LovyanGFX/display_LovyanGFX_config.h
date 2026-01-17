@@ -19,14 +19,3 @@
 #define DISP_ROTATION       3    // Орієнтація: landscape, штифти з правого боку
 #define DISP_INVERT         true // Інверсія кольорів
 #define DISP_RGB_ORDER      false // Порядок кольорів: BGR
-
-// ===== КОЛЬОРИ (ФОРМАТ RGB565) =====
-#define COLOR_BLACK    0x0000 //RGB(0, 0, 0)
-#define COLOR_WHITE    0xFFFF //RGB(255, 255, 255)
-#define COLOR_RED      0xF800 //RGB(255, 0, 0)
-#define COLOR_GREEN    0x07E0 //RGB(0, 255, 0)
-#define COLOR_BLUE     0x001F //RGB(0, 0, 255)
-#define COLOR_YELLOW   0xFFE0 //RGB(255, 255, 0)
-#define COLOR_MAGENTA  0xF81F //RGB(255, 0, 255)
-#define COLOR_GRAY     0x8410 //RGB(128, 64, 128)  // Приблизний сірий
-#define COLOR_CYAN     0x07FF //RGB(0, 255, 255)

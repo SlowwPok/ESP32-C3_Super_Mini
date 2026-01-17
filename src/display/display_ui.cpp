@@ -1,32 +1,50 @@
 #include "display_ui.h"
 
+#include "display/widgets/ui_widget.h"
 #include "display/LovyanGFX/display_LovyanGFX.h"
 #include "display/widgets/screens/ui_rgb_screen.h"
 
-static const int HEADER_HEIGHT = 24;
-static const int FOOTER_HEIGHT = 20;
+#include "res/ui_color_palette.h"
 
 static void DrawHeader()
 {
     Display_DrawText(
-        10,
-        4,
+        UI_PADDING,
+        6,
         1,
         "тут буде header",
-        COLOR_GRAY
+        UI_COLOR_TEXT
+    );
+
+    // нижня межа header
+    Display_DrawLine(
+        0,
+        UI_HEADER_HEIGHT - 1,
+        Display_Width(),
+        UI_HEADER_HEIGHT - 1,
+        UI_COLOR_BOUNDARY
     );
 }
 
 static void DrawFooter()
 {
-    int y = Display_Height() - FOOTER_HEIGHT + 4;
+    int y = UI_FooterTop();
+
+    // верхня межа footer
+    Display_DrawLine(
+        0,
+        y,
+        Display_Width(),
+        y,
+        UI_COLOR_BOUNDARY
+    );
 
     Display_DrawText(
-        10,
-        y,
+        UI_PADDING,
+        y + 4,
         1,
         "тут буде footer",
-        COLOR_GRAY
+        UI_COLOR_TEXT
     );
 }
 
@@ -35,7 +53,7 @@ void DisplayUI_Render(const SystemState& state)
     if (!state.powerOn)
         return;
 
-    Display_Clear(COLOR_BLACK);
+    Display_Clear(UI_COLOR_BG);
 
     // ===== HEADER =====
     DrawHeader();

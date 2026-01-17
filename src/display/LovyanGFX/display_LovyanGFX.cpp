@@ -52,7 +52,6 @@ void Display_Init() {
   digitalWrite(PIN_BL, HIGH); // увімкнути підсвітку
   lcd.setColorDepth(16); // RGB565
   lcd.setRotation(DISP_ROTATION);
-  Display_Clear(COLOR_BLACK); //RGB(0, 0, 0)
 }
 
 void Display_Clear(uint16_t color) {
