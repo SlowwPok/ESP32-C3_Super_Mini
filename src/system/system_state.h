@@ -1,3 +1,4 @@
+// path: src/system/system_state.h
 #pragma once
 #include <stdint.h>
 

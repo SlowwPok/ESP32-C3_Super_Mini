@@ -1,10 +1,26 @@
+// path: src/display/display_ui.cpp
 #include "display_ui.h"
 
 #include "display/widgets/ui_widget.h"
 #include "display/LovyanGFX/display_LovyanGFX.h"
 #include "display/widgets/screens/ui_rgb_screen.h"
-
+#include "system/system_state.h"
 #include "res/ui_color_palette.h"
+
+static void handlePowerAndSleep(const SystemState& state)
+{
+    static bool lastPower = true;
+
+    if (state.powerOn != lastPower)
+    {
+        if (!state.powerOn)
+            Display_Sleep();
+        else
+            Display_Wakeup();
+
+        lastPower = state.powerOn;
+    }
+}
 
 static void DrawHeader()
 {
@@ -50,27 +66,38 @@ static void DrawFooter()
 
 void DisplayUI_Render(const SystemState& state)
 {
+    static ScreenId lastScreen = SCREEN_RGB;
+
+    handlePowerAndSleep(state);
     if (!state.powerOn)
         return;
 
-    Display_Clear(UI_COLOR_BG);
+    if (state.activeScreen != lastScreen)
+    {
+        Display_Clear(UI_COLOR_BG); 
 
-    // ===== HEADER =====
+        switch (state.activeScreen)
+        {
+            case SCREEN_RGB:
+                UI_RGBScreen_Init();
+                break;
+
+            case SCREEN_SYSTEM:
+                // UI_SystemScreen_Init();
+                break;
+        }
+        lastScreen = state.activeScreen;
+    }
+
     DrawHeader();
+    DrawFooter();
 
-    // ===== BODY =====
     switch (state.activeScreen)
     {
         case SCREEN_RGB:
             UI_RGBScreen_Update(state);
             UI_RGBScreen_Render();
             break;
-
-        case SCREEN_SYSTEM:
-            // пізніше
-            break;
     }
-
-    // ===== FOOTER =====
-    DrawFooter();
 }
+
