@@ -27,20 +27,6 @@ static const uint32_t DISPLAY_SLEEP_DELAY_MS = 5000; // 5 секунд
 static const int PADDING   = 10;
 static const int COLOR_BOX = 14;
 
-// ===== Helpers =====
-static void drawStripColors(int y, const RGB* colors)
-{
-    int x = PADDING;
-
-    for (int i = 0; i < RGB_STRIP_LENGTH; i++)
-    {
-        uint16_t c565 = Display_ColorFromRGB_ForPreview(colors[i]);
-
-        Display_FillRect(x, y, COLOR_BOX, COLOR_BOX, c565);
-        Display_DrawRect(x, y, COLOR_BOX, COLOR_BOX, COLOR_WHITE);
-        x += COLOR_BOX + 4;
-    }
-}
 
 // ===== Main UI =====
 
@@ -120,45 +106,8 @@ static void DisplayUI_RenderRGB(const SystemState& state)
 
     const RGBMode& mode = RGB_modes_Get(activeMode);
 
-    // ===== BUILD PREVIEW (UI ONLY, NO RUNTIME) =====
+    Display_BuildRGBPreview(mode, previewStrip1, previewStrip2);
 
-    if (mode.type == MODE_SOLID)
-    {
-        for (int i = 0; i < RGB_STRIP_LENGTH; i++)
-        {
-            previewStrip1[i] = mode.solid.strip1;
-            previewStrip2[i] = mode.solid.strip2;
-        }
-    }
-    else if (mode.type == MODE_PER_PIXEL)
-    {
-        for (int i = 0; i < RGB_STRIP_LENGTH; i++)
-        {
-            previewStrip1[i] = mode.perPixel.strip1[i];
-            previewStrip2[i] = mode.perPixel.strip2[i];
-        }
-    }
-    else if (mode.type == MODE_ANIMATED)
-    {
-        const RGBMode& base = RGB_modes_Get(mode.animated.baseModeIndex);
-
-        if (base.type == MODE_SOLID)
-        {
-            for (int i = 0; i < RGB_STRIP_LENGTH; i++)
-            {
-                previewStrip1[i] = base.solid.strip1;
-                previewStrip2[i] = base.solid.strip2;
-            }
-        }
-        else if (base.type == MODE_PER_PIXEL)
-        {
-            for (int i = 0; i < RGB_STRIP_LENGTH; i++)
-            {
-                previewStrip1[i] = base.perPixel.strip1[i];
-                previewStrip2[i] = base.perPixel.strip2[i];
-            }
-        }
-    }
 
     // ===== RENDER UI =====
 
@@ -226,13 +175,27 @@ static void DisplayUI_RenderRGB(const SystemState& state)
     Display_DrawText(PADDING, y, 1, "STRIP 1", COLOR_WHITE);
     y += 12;
 
-    drawStripColors(y, previewStrip1);
+    Display_DrawRGBPreview(
+        PADDING,
+        y,
+        previewStrip1,
+        RGB_STRIP_LENGTH,
+        COLOR_BOX,
+        4
+    );
 
     y += COLOR_BOX + 8;
     Display_DrawText(PADDING, y, 1, "STRIP 2", COLOR_WHITE);
     y += 12;
 
-    drawStripColors(y, previewStrip2);
+    Display_DrawRGBPreview(
+        PADDING,
+        y,
+        previewStrip2,
+        RGB_STRIP_LENGTH,
+        COLOR_BOX,
+        4
+    );
 }
 
 static void DisplayUI_RenderSystem(const SystemState& state)

@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <LovyanGFX.hpp>
 #include "rgb/strip/rgb_types.h"
+#include "rgb/modes/rgb_modes.h"
 
 // ===== ІНІЦІАЛІЗАЦІЯ / ОЧИСТКА =====
 void Display_Init();
@@ -44,3 +45,20 @@ void Display_Wakeup();
 
 // ===== ДЕБАГ =====
 void Display_DrawGrid();
+
+// Побудова preview для UI (БЕЗ runtime / анімацій)
+void Display_BuildRGBPreview(
+    const RGBMode& mode,
+    RGB* outStrip1,
+    RGB* outStrip2
+);
+
+// Малювання preview смуги
+void Display_DrawRGBPreview(
+    int x,
+    int y,
+    const RGB* strip,
+    int count,
+    int boxSize,
+    int gap
+);
