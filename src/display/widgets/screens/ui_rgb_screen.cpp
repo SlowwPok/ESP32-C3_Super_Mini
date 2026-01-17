@@ -23,6 +23,7 @@ static bool dirty = true;
 
 static constexpr int COLOR_BOX = 14;
 static constexpr int COLOR_GAP = 4;
+static constexpr uint8_t UI_PREVIEW_BRIGHTNESS = 255;
 
 static RGB ApplyBrightness(const RGB& c, uint8_t brightness)
 {
@@ -91,14 +92,14 @@ static void BuildRGBPreview(
 void UI_RGBScreen_Update(const SystemState&)
 {
     uint8_t activeMode = RGB_Runtime_GetActiveMode();
-    bool animated      = RGB_Runtime_IsAnimated();
     uint8_t brightness = RGB_Runtime_GetBrightness();
     uint8_t baseMode   = RGB_Runtime_GetBaseMode();
-    uint8_t uiBrightness = 180;
+    const RGBMode& mode = RGB_modes_Get(activeMode);
+    bool animated = (mode.type == MODE_ANIMATED);
+    uint8_t uiBrightness = UI_PREVIEW_BRIGHTNESS;
 
     if (activeMode != lastMode ||
         animated   != lastAnimated ||
-        brightness != lastBrightness ||
         baseMode   != lastBaseMode)
     {
         lastMode       = activeMode;
@@ -161,14 +162,11 @@ void UI_RGBScreen_Render()
     // ---- MODE DETAILS ----
     char buf[32];
 
-    if (RGB_Runtime_IsAnimated())
+    const RGBMode& mode = RGB_modes_Get(RGB_Runtime_GetActiveMode());
+
+    if (mode.type == MODE_ANIMATED)
     {
-        snprintf(
-            buf,
-            sizeof(buf),
-            "Animated | Base: %s",
-            RGB_Runtime_GetBaseModeName()
-        );
+        snprintf(buf, sizeof(buf), "Animated | Base: %s", RGB_Runtime_GetBaseModeName());
     }
     else
     {
