@@ -1,3 +1,4 @@
+//path: src/rgb/runtime/rgb_runtime.h
 #pragma once
 #include "system/system_state.h"
 #include "rgb/strip/rgb_types.h"

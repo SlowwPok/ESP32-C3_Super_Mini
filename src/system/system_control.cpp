@@ -1,4 +1,5 @@
-#include "system_state.h"
+//path: src/system/system_control.cpp
+#include "system/system_state.h"
 #include "rgb/modes/rgb_modes.h"
 
 void System_TogglePower()

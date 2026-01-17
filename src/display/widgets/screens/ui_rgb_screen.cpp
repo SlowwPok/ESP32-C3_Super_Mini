@@ -1,3 +1,4 @@
+//path: src/display/widgets/screens/ui_rgb_screen.cpp
 #include "ui_rgb_screen.h"
 
 #include "display/LovyanGFX/display_LovyanGFX.h"
@@ -23,6 +24,15 @@ static bool dirty = true;
 static constexpr int COLOR_BOX = 14;
 static constexpr int COLOR_GAP = 4;
 
+static RGB ApplyBrightness(const RGB& c, uint8_t brightness)
+{
+    RGB out;
+    out.r = (uint16_t)c.r * brightness / 255;
+    out.g = (uint16_t)c.g * brightness / 255;
+    out.b = (uint16_t)c.b * brightness / 255;
+    return out;
+}
+
 void UI_RGBScreen_Init()
 {
     dirty = true;
@@ -30,6 +40,7 @@ void UI_RGBScreen_Init()
 
 static void BuildRGBPreview(
     const RGBMode& mode,
+    uint8_t uiBrightness,
     RGB* outStrip1,
     RGB* outStrip2
 )
@@ -38,8 +49,8 @@ static void BuildRGBPreview(
     {
         for (int i = 0; i < RGB_STRIP_LENGTH; i++)
         {
-            outStrip1[i] = mode.solid.strip1;
-            outStrip2[i] = mode.solid.strip2;
+            outStrip1[i] = ApplyBrightness(mode.solid.strip1, uiBrightness);
+            outStrip2[i] = ApplyBrightness(mode.solid.strip2, uiBrightness);
         }
         return;
     }
@@ -48,8 +59,8 @@ static void BuildRGBPreview(
     {
         for (int i = 0; i < RGB_STRIP_LENGTH; i++)
         {
-            outStrip1[i] = mode.perPixel.strip1[i];
-            outStrip2[i] = mode.perPixel.strip2[i];
+            outStrip1[i] = ApplyBrightness(mode.perPixel.strip1[i], uiBrightness);
+            outStrip2[i] = ApplyBrightness(mode.perPixel.strip2[i], uiBrightness);
         }
         return;
     }
@@ -62,16 +73,16 @@ static void BuildRGBPreview(
         {
             for (int i = 0; i < RGB_STRIP_LENGTH; i++)
             {
-                outStrip1[i] = base.solid.strip1;
-                outStrip2[i] = base.solid.strip2;
+                outStrip1[i] = ApplyBrightness(base.solid.strip1, uiBrightness);
+                outStrip2[i] = ApplyBrightness(base.solid.strip2, uiBrightness);
             }
         }
         else if (base.type == MODE_PER_PIXEL)
         {
             for (int i = 0; i < RGB_STRIP_LENGTH; i++)
             {
-                outStrip1[i] = base.perPixel.strip1[i];
-                outStrip2[i] = base.perPixel.strip2[i];
+                outStrip1[i] = ApplyBrightness(base.perPixel.strip1[i], uiBrightness);
+                outStrip2[i] = ApplyBrightness(base.perPixel.strip2[i], uiBrightness);
             }
         }
     }
@@ -83,6 +94,7 @@ void UI_RGBScreen_Update(const SystemState&)
     bool animated      = RGB_Runtime_IsAnimated();
     uint8_t brightness = RGB_Runtime_GetBrightness();
     uint8_t baseMode   = RGB_Runtime_GetBaseMode();
+    uint8_t uiBrightness = 180;
 
     if (activeMode != lastMode ||
         animated   != lastAnimated ||
@@ -95,8 +107,7 @@ void UI_RGBScreen_Update(const SystemState&)
         lastBaseMode   = baseMode;
 
         const RGBMode& mode = RGB_modes_Get(activeMode);
-        BuildRGBPreview(mode, previewStrip1, previewStrip2);
-
+        BuildRGBPreview(mode, uiBrightness, previewStrip1, previewStrip2);
 
         dirty = true;
     }
@@ -126,6 +137,69 @@ void UI_RGBScreen_Render()
         return;
 
     int y = UI_BodyTop() + UI_PADDING;
+    int bodyTop    = UI_BodyTop();
+    int bodyBottom = UI_BodyBottom();
+
+    Display_FillRect(
+        0,
+        bodyTop,
+        Display_Width(),
+        bodyBottom - bodyTop,
+        UI_COLOR_BG
+    );
+
+    // ---- MODE TITLE ----
+    Display_DrawText(
+        UI_PADDING,
+        y,
+        1,
+        RGB_Runtime_GetActiveModeName(),
+        UI_COLOR_TEXT
+    );
+    y += 12;
+
+    // ---- MODE DETAILS ----
+    char buf[32];
+
+    if (RGB_Runtime_IsAnimated())
+    {
+        snprintf(
+            buf,
+            sizeof(buf),
+            "Animated | Base: %s",
+            RGB_Runtime_GetBaseModeName()
+        );
+    }
+    else
+    {
+        snprintf(buf, sizeof(buf), "Static");
+    }
+
+    Display_DrawText(
+        UI_PADDING,
+        y,
+        1,
+        buf,
+        UI_COLOR_DIM_TEXT
+    );
+    y += 12;
+
+    // ---- BRIGHTNESS ----
+    snprintf(
+        buf,
+        sizeof(buf),
+        "Brightness: %d",
+        RGB_Runtime_GetBrightness()
+    );
+
+    Display_DrawText(
+        UI_PADDING,
+        y,
+        1,
+        buf,
+        UI_COLOR_DIM_TEXT
+    );
+    y += 16;
 
     Display_DrawText(UI_PADDING, y, 1, "STRIP 1", UI_COLOR_TEXT);
     y += 12;
