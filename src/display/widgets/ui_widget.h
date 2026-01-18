@@ -1,3 +1,4 @@
+//path: src/display/widgets/ui_widget.h
 #pragma once
 #include "display/LovyanGFX/display_LovyanGFX.h"
 
