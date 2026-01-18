@@ -134,6 +134,8 @@ static void DrawRGBPreview(
 void UI_RGBScreen_Render()
 {
     const auto& theme = UI_GetTheme();
+    uint8_t activeMode = RGB_Runtime_GetActiveMode();
+    const RGBMode& mode = RGB_modes_Get(activeMode);
 
     if (!dirty)
         return;
@@ -157,8 +159,8 @@ void UI_RGBScreen_Render()
         title,
         sizeof(title),
         "[%02d] %s",
-        RGB_Runtime_GetActiveMode(),
-        RGB_Runtime_GetActiveModeName()
+        activeMode,
+        mode.name
     );
 
     Display_DrawTextEx(
@@ -176,8 +178,6 @@ void UI_RGBScreen_Render()
 
     // ---- MODE DETAILS ----
     char buf[32];
-
-    const RGBMode& mode = RGB_modes_Get(RGB_Runtime_GetActiveMode());
 
     if (mode.type == MODE_ANIMATED)
     {
