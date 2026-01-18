@@ -9,6 +9,7 @@
 #include "rgb/strip/rgb_config.h"
 
 #include "res/ui_color_palette.h"
+#include "res/fonts/ui_fonts.h"
 
 static RGB previewStrip1[RGB_STRIP_LENGTH];
 static RGB previewStrip2[RGB_STRIP_LENGTH];
@@ -150,13 +151,27 @@ void UI_RGBScreen_Render()
     );
 
     // ---- MODE TITLE ----
-    Display_DrawText(
+    char title[32];
+
+    snprintf(
+        title,
+        sizeof(title),
+        "[%02d] %s",
+        RGB_Runtime_GetActiveMode(),
+        RGB_Runtime_GetActiveModeName()
+    );
+
+    Display_DrawTextEx(
         UI_PADDING,
         y,
-        1,
-        RGB_Runtime_GetActiveModeName(),
-        UI_COLOR_TEXT
+        title,
+        UI_COLOR_TEXT,
+        UI_COLOR_BG,
+        false,
+        UIFonts::Title(),
+        0
     );
+
     y += 12;
 
     // ---- MODE DETAILS ----
@@ -166,20 +181,37 @@ void UI_RGBScreen_Render()
 
     if (mode.type == MODE_ANIMATED)
     {
-        snprintf(buf, sizeof(buf), "Animated | Base: %s", RGB_Runtime_GetBaseModeName());
+        const RGBMode& base = RGB_modes_Get(mode.animated.baseModeIndex);
+
+        snprintf(
+            buf,
+            sizeof(buf),
+            "%s | Base: %s",
+            mode.name,
+            base.name
+        );
     }
     else
     {
-        snprintf(buf, sizeof(buf), "Static");
+        snprintf(
+            buf,
+            sizeof(buf),
+            "%s",
+            mode.name
+        );
     }
 
-    Display_DrawText(
+    Display_DrawTextEx(
         UI_PADDING,
         y,
-        1,
         buf,
-        UI_COLOR_DIM_TEXT
+        UI_COLOR_DIM_TEXT,
+        UI_COLOR_BG,
+        false,
+        UIFonts::Body(),
+        0
     );
+
     y += 12;
 
     // ---- BRIGHTNESS ----
@@ -190,16 +222,29 @@ void UI_RGBScreen_Render()
         RGB_Runtime_GetBrightness()
     );
 
-    Display_DrawText(
+    Display_DrawTextEx(
         UI_PADDING,
         y,
-        1,
         buf,
-        UI_COLOR_DIM_TEXT
+        UI_COLOR_DIM_TEXT,
+        UI_COLOR_BG,
+        false,
+        UIFonts::Small(),
+        0
     );
+    
     y += 16;
 
-    Display_DrawText(UI_PADDING, y, 1, "STRIP 1", UI_COLOR_TEXT);
+    Display_DrawTextEx(
+        UI_PADDING,
+        y,
+        "STRIP 1",
+        UI_COLOR_TEXT,
+        UI_COLOR_BG,
+        false,
+        UIFonts::Small(),
+        0
+    );
     y += 12;
 
     DrawRGBPreview(
@@ -212,7 +257,16 @@ void UI_RGBScreen_Render()
     );
 
     y += COLOR_BOX + 8;
-    Display_DrawText(UI_PADDING, y, 1, "STRIP 2", UI_COLOR_TEXT);
+    Display_DrawTextEx(
+        UI_PADDING,
+        y,
+        "STRIP 2",
+        UI_COLOR_TEXT,
+        UI_COLOR_BG,
+        false,
+        UIFonts::Small(),
+        0
+    );
     y += 12;
 
     DrawRGBPreview(
