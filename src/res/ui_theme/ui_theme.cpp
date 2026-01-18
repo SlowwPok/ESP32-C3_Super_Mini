@@ -12,14 +12,14 @@ static UITheme defaultTheme = {
     UI_COLOR_BOUNDARY,
 
     // fonts
-    UIFonts::Title_16pt7b(),
-    UIFonts::Body_10pt7b(),
-    UIFonts::Small_8pt7b(),
+    UIFonts::Body_10pt7b(), // title font
+    UIFonts::Small_8pt7b(), // body font
+    UIFonts::Small_8pt7b(), // small font
 
     // layout
     10,   // padding
-    24,   // header height
-    20    // footer height
+    22,   // header height
+    18    // footer height
 };
 
 const UITheme& UI_GetTheme()

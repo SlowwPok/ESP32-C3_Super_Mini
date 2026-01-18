@@ -9,8 +9,24 @@
 
 static FooterTextWidget textWidget;
 
+static bool dirty = true;
+
+void FooterContainer_MarkDirty()
+{
+    dirty = true;
+}
+
+void FooterContainer_SetText(const char* text)
+{
+    textWidget.SetText(text);
+    dirty = true;
+}
+
 void FooterContainer_Draw()
 {
+    if (!dirty)
+        return;
+
     const auto& theme = UI_GetTheme();
     int yTop = UI_FooterTop();
 
@@ -31,6 +47,8 @@ void FooterContainer_Draw()
     );
 
     int x = theme.padding;
-    textWidget.SetText("Hold: Power | Tap: Mode");
+    FooterContainer_SetText("Hold: Power | Tap: Mode");
     textWidget.Draw(x, yTop, theme.footer_height);
+
+    dirty = false;
 }

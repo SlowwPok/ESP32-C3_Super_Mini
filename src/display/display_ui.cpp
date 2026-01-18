@@ -35,6 +35,8 @@ void DisplayUI_Render(const SystemState& state)
     if (state.activeScreen != lastScreen)
     {
         Display_Clear(UI_COLOR_BG);
+        HeaderContainer_MarkDirty();
+        FooterContainer_MarkDirty();
 
         if (state.activeScreen == SCREEN_RGB)
             UI_RGBScreen_Init();

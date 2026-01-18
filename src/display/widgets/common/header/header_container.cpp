@@ -8,9 +8,18 @@
 #include "widgets/header_text_widget.h"
 
 static HeaderTextWidget textWidget;
+static bool dirty = true;
+
+void HeaderContainer_MarkDirty()
+{
+    dirty = true;
+}
 
 void HeaderContainer_Draw()
 {
+    if (!dirty)
+    return;
+
     const auto& theme = UI_GetTheme();
     const int h = theme.header_height;
 
@@ -34,4 +43,6 @@ void HeaderContainer_Draw()
 
     int x = theme.padding;
     textWidget.Draw(x, UI_HeaderTop(), h);
+
+    dirty = false;
 }

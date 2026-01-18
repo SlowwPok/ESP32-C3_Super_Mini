@@ -91,7 +91,6 @@ static void BuildRGBPreview(
 void UI_RGBScreen_Update(const SystemState&)
 {
     uint8_t activeMode = RGB_Runtime_GetActiveMode();
-    uint8_t brightness = RGB_Runtime_GetBrightness();
     uint8_t baseMode   = RGB_Runtime_GetBaseMode();
     const RGBMode& mode = RGB_modes_Get(activeMode);
     bool animated = (mode.type == MODE_ANIMATED);
@@ -140,7 +139,7 @@ void UI_RGBScreen_Render()
     if (!dirty)
         return;
 
-    int y = UI_BodyTop() + UI_Padding();
+    int y = UI_BodyTop() + UI_Padding() - 2;
     int bodyTop    = UI_BodyTop();
     int bodyBottom = UI_BodyBottom();
 
@@ -174,7 +173,7 @@ void UI_RGBScreen_Render()
         0
     );
 
-    y += 12;
+    y += Display_GetFontHeight(theme.font_title);
 
     // ---- MODE DETAILS ----
     char buf[32];
@@ -212,7 +211,7 @@ void UI_RGBScreen_Render()
         0
     );
 
-    y += 12;
+    y += Display_GetFontHeight(theme.font_body) + 1;
 
     // ---- BRIGHTNESS ----
     snprintf(
@@ -233,7 +232,7 @@ void UI_RGBScreen_Render()
         0
     );
     
-    y += 16;
+    y += Display_GetFontHeight(theme.font_small) + 1;
 
     Display_DrawTextEx(
         UI_Padding(),
@@ -245,7 +244,7 @@ void UI_RGBScreen_Render()
         theme.font_small,
         0
     );
-    y += 12;
+    y += Display_GetFontHeight(theme.font_small) + 1;
 
     DrawRGBPreview(
         UI_Padding(),
@@ -258,6 +257,19 @@ void UI_RGBScreen_Render()
     );
 
     y += COLOR_BOX + 8;
+
+    int previewHeight =
+    Display_GetFontHeight(theme.font_small) + // "STRIP 2"
+    4 +
+    COLOR_BOX;                                // квадрати
+
+    if (y + previewHeight > bodyBottom)
+    {
+        // немає місця — НЕ малюємо strip 2
+        dirty = false;
+        return;
+    }
+
     Display_DrawTextEx(
         UI_Padding(),
         y,
@@ -268,7 +280,7 @@ void UI_RGBScreen_Render()
         theme.font_small,
         0
     );
-    y += 12;
+    y += Display_GetFontHeight(theme.font_small) + 1;
 
     DrawRGBPreview(
         UI_Padding(),

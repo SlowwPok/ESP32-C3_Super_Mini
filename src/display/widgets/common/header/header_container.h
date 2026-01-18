@@ -2,3 +2,4 @@
 #pragma once
 
 void HeaderContainer_Draw();
+void HeaderContainer_MarkDirty();
