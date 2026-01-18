@@ -168,7 +168,7 @@ void UI_RGBScreen_Render()
         UI_COLOR_TEXT,
         UI_COLOR_BG,
         false,
-        UIFonts::Title(),
+        UIFonts::Title_16pt7b(),
         0
     );
 
@@ -208,7 +208,7 @@ void UI_RGBScreen_Render()
         UI_COLOR_DIM_TEXT,
         UI_COLOR_BG,
         false,
-        UIFonts::Body(),
+        UIFonts::Body_10pt7b(),
         0
     );
 
@@ -229,7 +229,7 @@ void UI_RGBScreen_Render()
         UI_COLOR_DIM_TEXT,
         UI_COLOR_BG,
         false,
-        UIFonts::Small(),
+        UIFonts::Small_8pt7b(),
         0
     );
     
@@ -242,7 +242,7 @@ void UI_RGBScreen_Render()
         UI_COLOR_TEXT,
         UI_COLOR_BG,
         false,
-        UIFonts::Small(),
+        UIFonts::Small_8pt7b(),
         0
     );
     y += 12;
@@ -264,7 +264,7 @@ void UI_RGBScreen_Render()
         UI_COLOR_TEXT,
         UI_COLOR_BG,
         false,
-        UIFonts::Small(),
+        UIFonts::Small_8pt7b(),
         0
     );
     y += 12;

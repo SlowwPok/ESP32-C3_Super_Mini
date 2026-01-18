@@ -1,3 +1,4 @@
+//path: src/display/LovyanGFX/display_LovyanGFX.cpp
 #include "display/LovyanGFX/display_LovyanGFX_config.h"
 #include "display/LovyanGFX/display_LovyanGFX.h"
 #include "rgb/strip/rgb_types.h"
@@ -66,6 +67,11 @@ void Display_FillRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color
   lcd.fillRect(x, y, w, h, color);
 }
 
+int Display_GetFontHeight(const lgfx::v1::IFont* font)
+{
+    lcd.setFont(font ? font : &lgfx::fonts::Font0);
+    return lcd.fontHeight();
+}
 
 /** Просте малювання тексту (bitmap font).
  *

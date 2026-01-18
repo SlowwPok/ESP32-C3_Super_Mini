@@ -1,3 +1,4 @@
+//path src/display/LovyanGFX/display_LovyanGFX.h
 #pragma once
 #include <Arduino.h>
 #include <stdint.h>
@@ -23,6 +24,10 @@ uint16_t Display_ColorFromRGB_ForPreview(const RGB& c);
 void Display_DrawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint16_t color);
 void Display_DrawRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color);
 void Display_FillRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color);
+
+int Display_GetFontHeight(
+  const lgfx::v1::IFont* font
+);
 
 void Display_DrawText(
   int16_t x,
