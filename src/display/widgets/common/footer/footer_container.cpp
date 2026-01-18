@@ -1,5 +1,6 @@
 // path: src/display/widgets/common/footer/footer_container.cpp
 #include "footer_container.h"
+
 #include "display/widgets/ui_widget.h"
 #include "display/LovyanGFX/display_LovyanGFX.h"
 #include "res/ui_color_palette.h"
@@ -10,14 +11,26 @@ static FooterTextWidget textWidget;
 
 void FooterContainer_Draw()
 {
-    const int h = UI_FOOTER_HEIGHT;
+    const auto& theme = UI_GetTheme();
+    int yTop = UI_FooterTop();
 
-    // фон
-    Display_FillRect(0, 0, Display_Width(), h, UI_COLOR_BG);
+    Display_FillRect(
+        0,
+        yTop,
+        Display_Width(),
+        theme.footer_height,
+        theme.bg
+    );
 
-    // межа
-    Display_DrawLine(0, h - 1, Display_Width(), h - 1, UI_COLOR_DIM_TEXT);
+    Display_DrawLine(
+        0,
+        yTop,
+        Display_Width(),
+        yTop,
+        theme.boundary
+    );
 
-    int x = UI_PADDING;
-    textWidget.Draw(x, 0, h);
+    int x = theme.padding;
+    textWidget.SetText("Hold: Power | Tap: Mode");
+    textWidget.Draw(x, yTop, theme.footer_height);
 }

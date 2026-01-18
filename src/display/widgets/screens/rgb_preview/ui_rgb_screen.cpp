@@ -8,8 +8,7 @@
 #include "rgb/modes/rgb_modes.h"
 #include "rgb/strip/rgb_config.h"
 
-#include "res/ui_color_palette.h"
-#include "res/fonts/ui_fonts.h"
+#include "res/ui_theme/ui_theme.h"
 
 static RGB previewStrip1[RGB_STRIP_LENGTH];
 static RGB previewStrip2[RGB_STRIP_LENGTH];
@@ -17,7 +16,6 @@ static RGB previewStrip2[RGB_STRIP_LENGTH];
 // dirty state
 static uint8_t lastMode       = 0xFF;
 static bool    lastAnimated   = false;
-static uint8_t lastBrightness = 0xFF;
 static uint8_t lastBaseMode   = 0xFF;
 
 static bool dirty = true;
@@ -105,7 +103,6 @@ void UI_RGBScreen_Update(const SystemState&)
     {
         lastMode       = activeMode;
         lastAnimated   = animated;
-        lastBrightness = brightness;
         lastBaseMode   = baseMode;
 
         const RGBMode& mode = RGB_modes_Get(activeMode);
@@ -121,24 +118,27 @@ static void DrawRGBPreview(
     const RGB* strip,
     int count,
     int boxSize,
-    int gap
+    int gap,
+    uint16_t borderColor
 )
 {
     for (int i = 0; i < count; i++)
     {
         uint16_t c565 = Display_ColorFromRGB_ForPreview(strip[i]);
         Display_FillRect(x, y, boxSize, boxSize, c565);
-        Display_DrawRect(x, y, boxSize, boxSize, UI_COLOR_TEXT);
+        Display_DrawRect(x, y, boxSize, boxSize, borderColor);
         x += boxSize + gap;
     }
 }
 
 void UI_RGBScreen_Render()
 {
+    const auto& theme = UI_GetTheme();
+
     if (!dirty)
         return;
 
-    int y = UI_BodyTop() + UI_PADDING;
+    int y = UI_BodyTop() + UI_Padding();
     int bodyTop    = UI_BodyTop();
     int bodyBottom = UI_BodyBottom();
 
@@ -147,7 +147,7 @@ void UI_RGBScreen_Render()
         bodyTop,
         Display_Width(),
         bodyBottom - bodyTop,
-        UI_COLOR_BG
+        theme.bg
     );
 
     // ---- MODE TITLE ----
@@ -162,13 +162,13 @@ void UI_RGBScreen_Render()
     );
 
     Display_DrawTextEx(
-        UI_PADDING,
+        UI_Padding(),
         y,
         title,
-        UI_COLOR_TEXT,
-        UI_COLOR_BG,
+        theme.text,
+        theme.bg,
         false,
-        UIFonts::Title_16pt7b(),
+        theme.font_title,
         0
     );
 
@@ -202,13 +202,13 @@ void UI_RGBScreen_Render()
     }
 
     Display_DrawTextEx(
-        UI_PADDING,
+        UI_Padding(),
         y,
         buf,
-        UI_COLOR_DIM_TEXT,
-        UI_COLOR_BG,
+        theme.text_dim,
+        theme.bg,
         false,
-        UIFonts::Body_10pt7b(),
+        theme.font_body,
         0
     );
 
@@ -223,59 +223,61 @@ void UI_RGBScreen_Render()
     );
 
     Display_DrawTextEx(
-        UI_PADDING,
+        UI_Padding(),
         y,
         buf,
-        UI_COLOR_DIM_TEXT,
-        UI_COLOR_BG,
+        theme.text_dim,
+        theme.bg,
         false,
-        UIFonts::Small_8pt7b(),
+        theme.font_small,
         0
     );
     
     y += 16;
 
     Display_DrawTextEx(
-        UI_PADDING,
+        UI_Padding(),
         y,
         "STRIP 1",
-        UI_COLOR_TEXT,
-        UI_COLOR_BG,
+        theme.text,
+        theme.bg,
         false,
-        UIFonts::Small_8pt7b(),
+        theme.font_small,
         0
     );
     y += 12;
 
     DrawRGBPreview(
-        UI_PADDING,
+        UI_Padding(),
         y,
         previewStrip1,
         RGB_STRIP_LENGTH,
         COLOR_BOX,
-        4
+        4,
+        theme.text
     );
 
     y += COLOR_BOX + 8;
     Display_DrawTextEx(
-        UI_PADDING,
+        UI_Padding(),
         y,
         "STRIP 2",
-        UI_COLOR_TEXT,
-        UI_COLOR_BG,
+        theme.text,
+        theme.bg,
         false,
-        UIFonts::Small_8pt7b(),
+        theme.font_small,
         0
     );
     y += 12;
 
     DrawRGBPreview(
-        UI_PADDING,
+        UI_Padding(),
         y,
         previewStrip2,
         RGB_STRIP_LENGTH,
         COLOR_BOX,
-        4
+        4,
+        theme.text
     );
 
     dirty = false;

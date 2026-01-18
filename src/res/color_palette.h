@@ -1,3 +1,4 @@
+// path: src/res/color_palette.h
 #pragma once
 #include "rgb/strip/rgb_types.h"
 

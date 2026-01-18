@@ -1,25 +1,31 @@
 // path: src/display/widgets/common/footer/widgets/footer_text_widget.cpp
 #include "footer_text_widget.h"
+
 #include "display/LovyanGFX/display_LovyanGFX.h"
 #include "res/fonts/ui_fonts.h"
+#include "res/ui_theme/ui_theme.h"
 #include "res/ui_color_palette.h"
 
-static const char* TEXT = "ESP32-C3 Super Mini";
+void FooterTextWidget::SetText(const char* text)
+{
+    _text = text ? text : "";
+}
 
 void FooterTextWidget::Draw(int x, int y, int h)
 {
-    auto font = UIFonts::Small_8pt7b();
-    int textH = Display_GetFontHeight(font);
+    const auto& theme = UI_GetTheme();
+
+    int textH = Display_GetFontHeight(theme.font_small);
     int ty = y + (h - textH) / 2;
 
     Display_DrawTextEx(
         x,
         ty,
-        TEXT,
-        UI_COLOR_DIM_TEXT,
-        UI_COLOR_BG,
+        _text,
+        theme.text_dim,
+        theme.bg,
         false,
-        font,
+        theme.font_small,
         0
     );
 }

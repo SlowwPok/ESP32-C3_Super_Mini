@@ -1,3 +1,4 @@
+// path: src/res/ui_color_palette.h
 #pragma once
 #include <stdint.h>
 
