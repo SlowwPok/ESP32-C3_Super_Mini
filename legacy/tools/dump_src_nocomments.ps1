@@ -13,6 +13,12 @@
 
   The script intentionally avoids changing the working directory
   to prevent PowerShell path resolution issues.
+
+  FAST COMAND TO RUN SCIPT MANUALLY: 
+  cd "D:\DIY\ESP32-C3 Super Mini [VS CODE]\ESP32-C3 Super Mini Main"
+  .\legacy\tools\dump_src_nocomments.ps1
+    OR
+  & "D:\DIY\ESP32-C3 Super Mini [VS CODE]\ESP32-C3 Super Mini Main\legacy\tools\dump_src_nocomments.ps1"
 #>
 
 # --- configuration ---
