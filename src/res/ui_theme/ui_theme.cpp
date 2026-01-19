@@ -14,7 +14,7 @@ static UITheme defaultTheme = {
     UI_COLOR_LINES,
 
     // fonts
-    UIFonts::Ubuntu_Medium_10(), // title font
+    UIFonts::Ubuntu_Bold_10(), // title font
     UIFonts::Ubuntu_Medium_8(), // body font
     UIFonts::Ubuntu_Bold_6(), // small font
 

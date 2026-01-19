@@ -4,6 +4,8 @@
 
 namespace UIFonts
 {
+    const lgfx::v1::IFont* Ubuntu_Regular_8();
+
     const lgfx::v1::IFont* Ubuntu_Medium_8();
     const lgfx::v1::IFont* Ubuntu_Medium_10();
 

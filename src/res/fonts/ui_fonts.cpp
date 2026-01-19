@@ -2,6 +2,8 @@
 #include "ui_fonts.h"
 
 // generated fonts
+#include "res/fonts/Ubuntu/Ubuntu_Regular8pt7b.h"
+
 #include "res/fonts/Ubuntu/Ubuntu_Medium8pt7b.h"
 #include "res/fonts/Ubuntu/Ubuntu_Medium10pt7b.h"
 
@@ -19,6 +21,8 @@
 
 namespace UIFonts
 {
+    const lgfx::v1::IFont* Ubuntu_Regular_8()  { return &Ubuntu_Regular8pt7b;  }
+
     const lgfx::v1::IFont* Ubuntu_Medium_8()  { return &Ubuntu_Medium8pt7b;  }
     const lgfx::v1::IFont* Ubuntu_Medium_10()  { return &Ubuntu_Medium10pt7b;  }
 
