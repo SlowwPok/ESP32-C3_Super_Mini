@@ -22,7 +22,7 @@ void FooterTextWidget::Draw(int x, int y, int h)
         x,
         ty,
         _text,
-        theme.text_dim,
+        theme.footer_text,
         theme.bg,
         false,
         theme.font_small,

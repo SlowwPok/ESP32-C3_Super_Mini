@@ -252,7 +252,7 @@ void UI_RGBScreen_Render()
         previewStrip1,
         RGB_STRIP_LENGTH,
         COLOR_BOX,
-        4,
+        COLOR_GAP,
         theme.text
     );
 
@@ -288,7 +288,7 @@ void UI_RGBScreen_Render()
         previewStrip2,
         RGB_STRIP_LENGTH,
         COLOR_BOX,
-        4,
+        COLOR_GAP,
         theme.text
     );
 

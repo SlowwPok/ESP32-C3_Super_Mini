@@ -9,6 +9,8 @@ struct UITheme
     uint16_t bg;
     uint16_t text;
     uint16_t text_dim;
+    uint16_t header_text;
+    uint16_t footer_text;
     uint16_t boundary;
 
     // ===== FONTS =====

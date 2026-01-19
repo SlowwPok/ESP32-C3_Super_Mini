@@ -16,6 +16,9 @@ constexpr uint16_t UI_COLOR_BG        = 0x0000; // чорний фон
 constexpr uint16_t UI_COLOR_TEXT      = 0xFFFF; // основний текст
 constexpr uint16_t UI_COLOR_DIM_TEXT  = 0x8410; // приглушений текст
 
+constexpr uint16_t UI_COLOR_HEADER_TEXT  = 0xda3a; // #de45d6
+constexpr uint16_t UI_COLOR_FOOTER_TEXT  = 0xfbcf; // #ff797b
+
 // ===== DEBUG / LAYOUT =====
 constexpr uint16_t UI_COLOR_BOUNDARY  = 0xF81F; // рожево-червоні межі
 

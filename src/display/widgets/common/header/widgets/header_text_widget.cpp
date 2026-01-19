@@ -17,7 +17,7 @@ void HeaderTextWidget::Draw(int x, int y, int h)
         x,
         ty,
         TEXT,
-        theme.text,
+        theme.header_text,
         theme.bg,
         false,
         theme.font_small,

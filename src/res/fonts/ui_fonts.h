@@ -4,10 +4,18 @@
 
 namespace UIFonts
 {
-    const lgfx::v1::IFont* Title_16pt7b();
-    const lgfx::v1::IFont* Title_20pt7b();
-    const lgfx::v1::IFont* Title_24pt7b();
-    const lgfx::v1::IFont* Body_10pt7b();
-    const lgfx::v1::IFont* Body_12pt7b();
-    const lgfx::v1::IFont* Small_8pt7b();
+    const lgfx::v1::IFont* Ubuntu_Medium_8();
+    const lgfx::v1::IFont* Ubuntu_Medium_10();
+
+    const lgfx::v1::IFont* Ubuntu_Bold_6();
+    const lgfx::v1::IFont* Ubuntu_Bold_8();
+    const lgfx::v1::IFont* Ubuntu_Bold_10();
+    const lgfx::v1::IFont* Ubuntu_Bold_12();
+    const lgfx::v1::IFont* Ubuntu_Bold_16();
+    const lgfx::v1::IFont* Ubuntu_Bold_20();
+    const lgfx::v1::IFont* Ubuntu_Bold_24();
+
+    const lgfx::v1::IFont* JetBrainsMono_ExtraBold_6();
+    const lgfx::v1::IFont* JetBrainsMono_ExtraBold_10();
+    const lgfx::v1::IFont* JetBrainsMono_Bold_6();
 }

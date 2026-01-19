@@ -9,12 +9,14 @@ static UITheme defaultTheme = {
     UI_COLOR_BG,
     UI_COLOR_TEXT,
     UI_COLOR_DIM_TEXT,
+    UI_COLOR_HEADER_TEXT,
+    UI_COLOR_FOOTER_TEXT,
     UI_COLOR_BOUNDARY,
 
     // fonts
-    UIFonts::Body_10pt7b(), // title font
-    UIFonts::Small_8pt7b(), // body font
-    UIFonts::Small_8pt7b(), // small font
+    UIFonts::Ubuntu_Medium_10(), // title font
+    UIFonts::Ubuntu_Medium_8(), // body font
+    UIFonts::Ubuntu_Bold_6(), // small font
 
     // layout
     10,   // padding
