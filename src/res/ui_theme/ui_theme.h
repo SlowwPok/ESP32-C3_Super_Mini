@@ -11,7 +11,7 @@ struct UITheme
     uint16_t text_dim;
     uint16_t header_text;
     uint16_t footer_text;
-    uint16_t boundary;
+    uint16_t lines_color;
 
     // ===== FONTS =====
     const lgfx::v1::IFont* font_title;

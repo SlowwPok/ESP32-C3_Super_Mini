@@ -43,7 +43,7 @@ void FooterContainer_Draw()
         yTop,
         Display_Width(),
         yTop,
-        theme.boundary
+        theme.lines_color
     );
 
     int x = theme.padding;

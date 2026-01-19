@@ -38,7 +38,7 @@ void HeaderContainer_Draw()
         UI_HeaderBottom() - 1,
         Display_Width(),
         UI_HeaderBottom() - 1,
-        theme.boundary
+        theme.lines_color
     );
 
     int x = theme.padding;

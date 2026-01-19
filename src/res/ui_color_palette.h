@@ -20,7 +20,7 @@ constexpr uint16_t UI_COLOR_HEADER_TEXT  = 0xda3a; // #de45d6
 constexpr uint16_t UI_COLOR_FOOTER_TEXT  = 0xfbcf; // #ff797b
 
 // ===== DEBUG / LAYOUT =====
-constexpr uint16_t UI_COLOR_BOUNDARY  = 0xF81F; // рожево-червоні межі
+constexpr uint16_t UI_COLOR_LINES  = 0xF81F; // #ff00ff
 
 // ===== OPTIONAL STATUS COLORS =====
 constexpr uint16_t UI_COLOR_OK        = 0x07E0; // зелений (OK)
