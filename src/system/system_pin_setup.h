@@ -27,24 +27,11 @@
 #define PIN_TFT_DC             7   // Data/Command
 #define PIN_TFT_RST            20  // Reset
 #define PIN_TFT_BL             6   // backlight (якщо керується)
+#define PIN_SPI_SCK            8   // display - SDA
+#define PIN_SPI_MOSI           9   // display - SCL
 
 /* =========================
-   I2C BUS (Sensors, RTC, Display...)
+   I2C BUS (RTC, Modules, Conveter)
    ========================= */
-#define PIN_I2C_SDA            8
-#define PIN_I2C_SCL            9
-
-/* =========================
-   ONE-WIRE
-   ========================= */
-// #define PIN_DS18B20             2
-
-/* =========================
-   ANALOG
-   ========================= */
-// #define PIN_MQ135_ANALOG        0   // перевір, який ADC пін на C3
-
-/* =========================
-   RESERVED / FUTURE
-   ========================= */
-// #define PIN_...
+#define PIN_I2C_SDA            5
+#define PIN_I2C_SCL            1

@@ -2,8 +2,8 @@
 #include "system/system_pin_setup.h"
 
 // ===== ПІН-КОНФІГУРАЦІЯ (SPI ДЛЯ ST7789) =====
-#define PIN_SCLK    PIN_I2C_SCL    // SPI Clock (SCLK)
-#define PIN_MOSI    PIN_I2C_SDA    // SPI MOSI (SI)
+#define PIN_SCLK    PIN_SPI_SCK    // SPI Clock (SCLK)
+#define PIN_MOSI    PIN_SPI_MOSI   // SPI MOSI (SI)
 #define PIN_DC      PIN_TFT_DC     // Data/Command
 #define PIN_CS      PIN_TFT_CS     // Chip Select
 #define PIN_RST     PIN_TFT_RST    // Reset
