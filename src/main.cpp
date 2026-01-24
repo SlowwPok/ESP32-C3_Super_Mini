@@ -43,6 +43,7 @@ void loop()
     SystemState& state = System_GetMutable();
 
     RTC_Update(state);
+
     RGB_Runtime_Update(state);
     DisplayUI_Render(state);
 

@@ -46,13 +46,14 @@ void HeaderContainer_Draw()
     }
 
     int rightPadding = theme.padding;
+
     int widgetW = TimeWidget_EstimatedWidth();
 
-    int x = Display_Width() - rightPadding - widgetW;
+    int xRight = Display_Width() - theme.padding;
 
     TimeWidget_Update(System_Get());
     TimeWidget_Draw(
-        x,
+        xRight,
         UI_HeaderTop(),
         h
     );
