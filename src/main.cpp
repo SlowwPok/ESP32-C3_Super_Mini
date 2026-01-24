@@ -13,6 +13,10 @@
 
 void setup()
 {
+    Serial.begin(115200);
+    delay(500);
+    Serial.println("BOOT");
+
     System_Init();
     Controls_Init();
 
