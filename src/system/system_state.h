@@ -1,6 +1,8 @@
 // path: src/system/system_state.h
 #pragma once
 #include <stdint.h>
+#include "system/time/datetime.h"
+#include "system/time/time_delta.h"
 
 /*
   SystemState — ЄДИНЕ МІСЦЕ,
@@ -20,6 +22,11 @@ struct SystemState
     uint8_t currentMode;
 
     ScreenId activeScreen;
+
+
+    DateTime time;
+    TimeDelta timeDelta;
+
     uint32_t uptimeSec;
 };
 
