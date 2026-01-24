@@ -11,6 +11,7 @@ struct UITheme
     uint16_t text_dim;
     uint16_t header_text;
     uint16_t footer_text;
+    uint16_t time_text;
     uint16_t lines_color;
 
     // ===== FONTS =====

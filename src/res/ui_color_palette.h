@@ -19,6 +19,8 @@ constexpr uint16_t UI_COLOR_DIM_TEXT  = 0x8410; // приглушений тек
 constexpr uint16_t UI_COLOR_HEADER_TEXT  = 0xda3a; // #de45d6
 constexpr uint16_t UI_COLOR_FOOTER_TEXT  = 0xfbcf; // #ff797b
 
+constexpr uint16_t UI_COLOR_TIME_TEXT  = 0xe2c0; // #e65900
+
 // ===== DEBUG / LAYOUT =====
 constexpr uint16_t UI_COLOR_LINES  = 0xF81F; // #ff00ff
 

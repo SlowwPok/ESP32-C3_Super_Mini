@@ -1,7 +1,7 @@
 // path: src/system/system_state.h
 #pragma once
 #include <stdint.h>
-#include "system/time/datetime.h"
+#include "system/time/system_datetime.h"
 
 /*
   SystemState — ЄДИНЕ МІСЦЕ,
@@ -21,9 +21,9 @@ struct SystemState
     uint8_t currentMode;
 
     ScreenId activeScreen;
-
-    DateTime time;
     uint32_t uptimeSec;
+
+    SystemDateTime time;
 };
 
 // ініціалізація (один раз в setup)
