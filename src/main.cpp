@@ -1,5 +1,6 @@
 #include "system/system_state.h"
 #include "system/system_control.h"
+#include "system/time/time_service.h"
 
 #include "controls/controls.h"
 
@@ -17,11 +18,14 @@ void setup()
     RGB_Runtime_Init();
     RGB_strip_Init();
 
+    TimeService_Init();
     Display_Init();
 }
 
 void loop()
 {
+    TimeService_Update();
+    
     ControlEvent ev = Controls_Update();
 
     switch (ev)

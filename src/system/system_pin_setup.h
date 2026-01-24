@@ -38,6 +38,12 @@
 #define PIN_SPI_MOSI PIN_GPIO_8
 
 /* =========================
+   I2C BUS (RTC, Sensors)
+   ========================= */
+#define PIN_I2C_SDA   10
+#define PIN_I2C_SCL   5
+
+/* =========================
    ONE-WIRE
    ========================= */
 // #define PIN_DS18B20             2

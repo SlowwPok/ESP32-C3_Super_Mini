@@ -6,6 +6,7 @@
 #include "res/ui_theme/ui_theme.h"
 
 #include "widgets/header_text_widget.h"
+#include "display/widgets/parts/time/time_widget.h"
 
 static HeaderTextWidget textWidget;
 static bool dirty = true;
@@ -17,32 +18,42 @@ void HeaderContainer_MarkDirty()
 
 void HeaderContainer_Draw()
 {
-    if (!dirty)
-    return;
-
     const auto& theme = UI_GetTheme();
     const int h = theme.header_height;
 
-    // фон
-    Display_FillRect(
-        0,
+    if (dirty)
+    {
+        Display_FillRect(
+            0,
+            UI_HeaderTop(),
+            Display_Width(),
+            h,
+            theme.bg
+        );
+
+        Display_DrawLine(
+            0,
+            UI_HeaderBottom() - 1,
+            Display_Width(),
+            UI_HeaderBottom() - 1,
+            theme.lines_color
+        );
+
+        int x = theme.padding;
+        textWidget.Draw(x, UI_HeaderTop(), h);
+
+        dirty = false;
+    }
+
+    int rightPadding = theme.padding;
+    int widgetW = TimeWidget_EstimatedWidth();
+
+    int x = Display_Width() - rightPadding - widgetW;
+
+    TimeWidget_Update(System_Get());
+    TimeWidget_Draw(
+        x,
         UI_HeaderTop(),
-        Display_Width(),
-        h,
-        theme.bg
+        h
     );
-
-    // межа
-    Display_DrawLine(
-        0,
-        UI_HeaderBottom() - 1,
-        Display_Width(),
-        UI_HeaderBottom() - 1,
-        theme.lines_color
-    );
-
-    int x = theme.padding;
-    textWidget.Draw(x, UI_HeaderTop(), h);
-
-    dirty = false;
 }
