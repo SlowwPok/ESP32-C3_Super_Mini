@@ -8,6 +8,9 @@
  ============================================================
 */
 
+#define PIN_GPIO_8   8
+#define PIN_GPIO_9   9
+
 /* =========================
    КНОПКИ
    ========================= */
@@ -29,10 +32,10 @@
 #define PIN_TFT_BL             6   // backlight (якщо керується)
 
 /* =========================
-   I2C BUS (Sensors, RTC, Display...)
+   SPI BUS (Display ST7789)
    ========================= */
-#define PIN_I2C_SDA            8
-#define PIN_I2C_SCL            9
+#define PIN_SPI_SCK  PIN_GPIO_9
+#define PIN_SPI_MOSI PIN_GPIO_8
 
 /* =========================
    ONE-WIRE
