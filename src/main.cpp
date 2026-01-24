@@ -21,7 +21,7 @@ void setup()
     TimeService_Init();
 
     Display_Init();
-    Display_Clear(0xF800); // червоний
+
 }
 
 void loop()
