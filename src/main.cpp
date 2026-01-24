@@ -1,5 +1,6 @@
 #include "system/system_state.h"
 #include "system/system_control.h"
+#include "system/time/time_service.h"
 
 #include "controls/controls.h"
 
@@ -17,7 +18,10 @@ void setup()
     RGB_Runtime_Init();
     RGB_strip_Init();
 
+    TimeService_Init();
+
     Display_Init();
+    Display_Clear(0xF800); // червоний
 }
 
 void loop()
@@ -38,9 +42,13 @@ void loop()
             break;
     }
 
-    const SystemState& state = System_Get();
+    // ЄДИНЕ mutable посилання
+    SystemState& state = System_GetMutable();
 
+    TimeService_Update(state);
     RGB_Runtime_Update(state);
+
+    // UI — ТІЛЬКИ READ
     DisplayUI_Render(state);
 
     RGB_strip_Render(

@@ -47,12 +47,19 @@ static LGFX lcd;
 
 // ===== ФУНКЦІЇ API =====
 
+// void Display_Init() {
+//   lcd.init();
+//   lcd.wakeup();
+//   pinMode(PIN_BL, OUTPUT);
+//   digitalWrite(PIN_BL, HIGH); // увімкнути підсвітку
+//   lcd.setColorDepth(16); // RGB565
+//   lcd.setRotation(DISP_ROTATION);
+// }
+
 void Display_Init() {
   lcd.init();
-  pinMode(PIN_BL, OUTPUT);
-  digitalWrite(PIN_BL, HIGH); // увімкнути підсвітку
-  lcd.setColorDepth(16); // RGB565
-  lcd.setRotation(DISP_ROTATION);
+  lcd.setRotation(0);
+  lcd.fillScreen(TFT_RED);
 }
 
 void Display_Clear(uint16_t color) {

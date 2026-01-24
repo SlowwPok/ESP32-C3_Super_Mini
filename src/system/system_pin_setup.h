@@ -26,12 +26,13 @@
 #define PIN_TFT_CS             21  // Chip Select
 #define PIN_TFT_DC             7   // Data/Command
 #define PIN_TFT_RST            20  // Reset
-#define PIN_TFT_BL             6   // backlight (якщо керується)
-#define PIN_SPI_SCK            8   // display - SDA
-#define PIN_SPI_MOSI           9   // display - SCL
+#define PIN_TFT_BL             5   // backlight (якщо керується)
+// SPI
+#define PIN_SPI_SCK            10   // display - SDA
+#define PIN_SPI_MOSI           6   // display - SCL
 
 /* =========================
    I2C BUS (RTC, Modules, Conveter)
    ========================= */
-#define PIN_I2C_SDA            5
-#define PIN_I2C_SCL            1
+#define PIN_I2C_SDA            8
+#define PIN_I2C_SCL            9

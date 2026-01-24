@@ -11,7 +11,7 @@
 
 static void handlePowerAndSleep(const SystemState& state)
 {
-    static bool lastPower = true;
+    static bool lastPower = false;
 
     if (state.powerOn != lastPower)
     {
@@ -26,13 +26,14 @@ static void handlePowerAndSleep(const SystemState& state)
 
 void DisplayUI_Render(const SystemState& state)
 {
+    static bool firstFrame = true;
     static ScreenId lastScreen = SCREEN_RGB;
 
     handlePowerAndSleep(state);
     if (!state.powerOn)
         return;
 
-    if (state.activeScreen != lastScreen)
+    if (firstFrame || state.activeScreen != lastScreen)
     {
         Display_Clear(UI_COLOR_BG);
         HeaderContainer_MarkDirty();
@@ -42,6 +43,7 @@ void DisplayUI_Render(const SystemState& state)
             UI_RGBScreen_Init();
 
         lastScreen = state.activeScreen;
+        firstFrame = false;
     }
 
     HeaderContainer_Draw();
