@@ -98,3 +98,17 @@ void RTC_SetTime(int year, int month, int day, int hour, int minute, int second)
                   now.year(), now.month(), now.day(),
                   now.hour(), now.minute(), now.second());
 }
+
+// **Як користуватись:**
+
+// 1. Відкрий Serial Monitor
+// 2. Встанови "Both NL & CR" (або просто "Newline")
+// 3. Подивись на годинник - зараз **13:20:00**
+// 4. Відправ команду:
+// ```
+//    TIME 2026 01 26 13 20 00
+// ```
+// 5. Побачиш:
+// ```
+//    ✓ RTC set to: 2026-01-26 13:20:00
+//    ✓ RTC read back: 2026-01-26 13:20:00
