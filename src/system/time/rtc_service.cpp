@@ -8,7 +8,7 @@ static bool rtcOk = false;
 
 void RTC_Init()
 {
-    Wire.begin(10, 5);
+    Wire.begin(PIN_I2C_SDA, PIN_I2C_SCL);
     rtcOk = rtc.begin();
 
     
