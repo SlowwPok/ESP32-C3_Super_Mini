@@ -11,7 +11,6 @@ void RTC_Init()
     Wire.begin(PIN_I2C_SDA, PIN_I2C_SCL);
     rtcOk = rtc.begin();
 
-    
     Serial.begin(115200);
     Serial.println("RTC begin: ");
     Serial.println(rtcOk ? "OK" : "FAIL");
@@ -19,14 +18,33 @@ void RTC_Init()
     if (!rtcOk)
         return;
 
+    bool running = rtc.isrunning();
     Serial.println("RTC is running:");
-    Serial.println(rtc.isrunning() ? "YES" : "NO");
+    Serial.println(running ? "YES" : "NO");
 
-    if (!rtc.isrunning())
+    if (!running)
     {
-        Serial.println("RTC adjusted");
-        rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
+        Serial.println("RTC was STOPPED - setting compile time with offset...");
+        
+        // ✅ Додати компенсацію ~60 секунд
+        DateTime compileTime = DateTime(F(__DATE__), F(__TIME__));
+        
+        // Додаємо 60 секунд до часу компіляції
+        DateTime adjustedTime = DateTime(compileTime.unixtime() + 30);
+        
+        rtc.adjust(adjustedTime);
+        
+        Serial.println("RTC time set with +60s offset!");
     }
+    else
+    {
+        Serial.println("RTC is already running - keeping current time");
+    }
+    
+    DateTime now = rtc.now();
+    Serial.printf("Current RTC time: %04d/%02d/%02d %02d:%02d:%02d\n",
+                  now.year(), now.month(), now.day(),
+                  now.hour(), now.minute(), now.second());
 }
 
 bool RTC_IsOk()
@@ -44,7 +62,7 @@ void RTC_Update(SystemState& state)
 
     uint32_t now = millis();
 
-    if (!firstSync && now - lastRtcSync < 60000)
+    if (!firstSync && now - lastRtcSync < 10000)
         return;
 
     firstSync = false;
@@ -59,4 +77,24 @@ void RTC_Update(SystemState& state)
     state.time.minute  = t.minute();
     state.time.second  = t.second();
     state.time.weekday = t.dayOfTheWeek();
+}
+
+void RTC_SetTime(int year, int month, int day, int hour, int minute, int second)
+{
+    if (!rtcOk)
+    {
+        Serial.println("ERROR: RTC not available!");
+        return;
+    }
+    
+    rtc.adjust(DateTime(year, month, day, hour, minute, second));
+    
+    Serial.printf("✓ RTC set to: %04d-%02d-%02d %02d:%02d:%02d\n",
+                  year, month, day, hour, minute, second);
+    
+    // Перевірка
+    DateTime now = rtc.now();
+    Serial.printf("✓ RTC read back: %04d-%02d-%02d %02d:%02d:%02d\n",
+                  now.year(), now.month(), now.day(),
+                  now.hour(), now.minute(), now.second());
 }

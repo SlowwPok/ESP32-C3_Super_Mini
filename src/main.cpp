@@ -49,6 +49,37 @@ void setup()
 
 void loop()
 {
+        // ✅ ДОДАТИ: Команди через Serial
+    if (Serial.available())
+    {
+        String cmd = Serial.readStringUntil('\n');
+        cmd.trim();
+        
+        if (cmd.startsWith("TIME"))
+        {
+            // Формат: TIME 2026 01 26 13 20 00
+            int yr, mo, dy, hr, mn, sc;
+            int parsed = sscanf(cmd.c_str(), "TIME %d %d %d %d %d %d",
+                               &yr, &mo, &dy, &hr, &mn, &sc);
+            
+            if (parsed == 6)
+            {
+                RTC_SetTime(yr, mo, dy, hr, mn, sc);
+            }
+            else
+            {
+                Serial.println("Format: TIME YYYY MM DD HH MM SS");
+                Serial.println("Example: TIME 2026 01 26 13 20 00");
+            }
+        }
+        else if (cmd == "HELP")
+        {
+            Serial.println("Available commands:");
+            Serial.println("  TIME YYYY MM DD HH MM SS - Set RTC time");
+            Serial.println("  HELP - Show this help");
+        }
+    }
+
     ControlEvent ev = Controls_Update();
 
     switch (ev)
@@ -65,7 +96,7 @@ void loop()
 
     SystemState& state = System_GetMutable();
 
-    TimeService_Update();
+    RTC_Update(state);
 
     RGB_Runtime_Update(state);
     DisplayUI_Render(state);
