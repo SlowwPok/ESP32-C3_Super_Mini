@@ -10,6 +10,8 @@
 
 #define PIN_GPIO_8   8
 #define PIN_GPIO_9   9
+#define PIN_GPIO_5   5
+#define PIN_GPIO_10   10
 
 /* =========================
    КНОПКИ
@@ -40,8 +42,8 @@
 /* =========================
    I2C BUS (RTC, Sensors)
    ========================= */
-#define PIN_I2C_SDA   10
-#define PIN_I2C_SCL   5
+#define PIN_I2C_SDA   PIN_GPIO_10 //6
+#define PIN_I2C_SCL   PIN_GPIO_5  //7
 
 /* =========================
    ONE-WIRE

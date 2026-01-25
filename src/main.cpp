@@ -14,19 +14,33 @@
 void setup()
 {
     Serial.begin(115200);
-    delay(500);
+    delay(3000);   // ⬅️ ОБОВʼЯЗКОВО для ESP32-C3 + PlatformIO
+
     Serial.println("BOOT");
 
+    Serial.println("System_Init");
     System_Init();
+
+    Serial.println("Controls_Init");
     Controls_Init();
 
+    Serial.println("RTC_Init");
     RTC_Init();
+    Serial.println("RTC_Init DONE");
 
+    Serial.println("RGB_Runtime_Init");
     RGB_Runtime_Init();
-    RGB_strip_Init();
 
+    Serial.println("RGB_strip_Init");
+    RGB_strip_Init();
+    Serial.println("RGB_strip_Init DONE");
+
+    Serial.println("Display_Init");
     Display_Init();
-}
+    Serial.println("Display_Init DONE");
+
+    Serial.println("SETUP DONE");
+}   
 
 void loop()
 {
