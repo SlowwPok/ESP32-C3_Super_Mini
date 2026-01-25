@@ -34,29 +34,29 @@ bool RTC_IsOk()
     return rtcOk;
 }
 
-static bool first = true;
+static bool firstSync = true;
+static uint32_t lastRtcSync = 0;
 
 void RTC_Update(SystemState& state)
 {
     if (!rtcOk)
         return;
 
-    static uint32_t lastUpdate = 0;
     uint32_t now = millis();
 
-    if (!first && now - lastUpdate < 1000)
+    if (!firstSync && now - lastRtcSync < 60000)
         return;
 
-    first = false;
-    lastUpdate = now;
+    firstSync = false;
+    lastRtcSync = now;
 
     DateTime t = rtc.now();
 
-    state.time.second  = t.second();
-    state.time.minute  = t.minute();
-    state.time.hour    = t.hour();
-    state.time.day     = t.day();
-    state.time.month   = t.month();
     state.time.year    = t.year();
+    state.time.month   = t.month();
+    state.time.day     = t.day();
+    state.time.hour    = t.hour();
+    state.time.minute  = t.minute();
+    state.time.second  = t.second();
     state.time.weekday = t.dayOfTheWeek();
 }

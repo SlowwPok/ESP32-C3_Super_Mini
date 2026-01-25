@@ -28,6 +28,11 @@ void setup()
     RTC_Init();
     Serial.println("RTC_Init DONE");
 
+    Serial.println("RTC_Update first sync");
+    SystemState& state = System_GetMutable();
+    RTC_Update(state);   // ← ОДИН РАЗ
+    Serial.println("RTC_Update first sync = done");
+
     Serial.println("RGB_Runtime_Init");
     RGB_Runtime_Init();
 
@@ -60,7 +65,7 @@ void loop()
 
     SystemState& state = System_GetMutable();
 
-    RTC_Update(state);
+    TimeService_Update();
 
     RGB_Runtime_Update(state);
     DisplayUI_Render(state);

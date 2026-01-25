@@ -6,6 +6,7 @@
 
 // ===== STATE =====
 static bool dirty = true;
+static bool timeValid = false;
 
 // кеш часу
 static uint16_t lastYear  = 0;
@@ -24,8 +25,9 @@ static const char* MONTHS[]   = {
 
 int TimeWidget_EstimatedWidth()
 {
-    // header більше НЕ повинен покладатися на це
-    return 0;
+    const auto& theme = UI_GetTheme();
+    int h = Display_GetFontHeight(theme.font_small);
+    return h * 14; // стабільна ширина
 }
 
 void TimeWidget_MarkDirty()
@@ -36,6 +38,16 @@ void TimeWidget_MarkDirty()
 void TimeWidget_Update(const SystemState& state)
 {
     const auto& t = state.time;
+
+    bool valid =
+        t.year >= 2020 &&
+        t.month >= 1 && t.month <= 12 &&
+        t.weekday < 7;
+
+    if (!valid)
+        return;
+
+    timeValid = true;
 
     if (t.year    != lastYear  ||
         t.month   != lastMonth ||
@@ -63,37 +75,31 @@ void TimeWidget_Draw(int xRight, int y, int h)
 
     char buf[48];
 
-    // === fallback ===
-    bool valid =
-        lastYear >= 2020 &&
-        lastMonth >= 1 && lastMonth <= 12 &&
-        lastWday < 7;
+    if (!timeValid)
+{
+    strcpy(buf, "--:--");
+}
+else
+{
+    uint8_t wday  = lastWday;
+    uint8_t month = lastMonth - 1;
 
-    if (!valid)
-    {
-        strcpy(buf, "--:--");
-    }
-    else
-    {
-        uint8_t wday  = lastWday;
-        uint8_t month = lastMonth - 1;
+    uint8_t hour12 = lastHour % 12;
+    if (hour12 == 0) hour12 = 12;
+    bool pm = lastHour >= 12;
 
-        uint8_t hour12 = lastHour % 12;
-        if (hour12 == 0) hour12 = 12;
-        bool pm = lastHour >= 12;
-
-        snprintf(
-            buf,
-            sizeof(buf),
-            "%s %02d %s %04d %02d:%02d %s",
-            WEEKDAYS[wday],
-            lastDay,
-            MONTHS[month],
-            lastYear,
-            hour12,
-            lastMin,
-            pm ? "PM" : "AM"
-        );
+    snprintf(
+        buf,
+        sizeof(buf),
+        "%s %02d %s %04d %02d:%02d %s",
+        WEEKDAYS[wday],
+        lastDay,
+        MONTHS[month],
+        lastYear,
+        hour12,
+        lastMin,
+        pm ? "PM" : "AM"
+    );
     }
 
     // === вертикаль ===
@@ -119,7 +125,7 @@ void TimeWidget_Draw(int xRight, int y, int h)
         buf,
         theme.time_text,
         theme.bg,
-        false,
+        true,
         theme.font_small,
         0
     );
