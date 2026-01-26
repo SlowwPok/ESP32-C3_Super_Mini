@@ -8,6 +8,7 @@
 #include "display/widgets/common/footer/footer_container.h"
 #include "display/widgets/screens/rgb_preview/ui_rgb_screen.h"
 #include "res/ui_color_palette.h"
+#include "system/user_config.h"
 
 static void handlePowerAndSleep(const SystemState& state)
 {
@@ -30,7 +31,7 @@ void DisplayUI_Render(const SystemState& state)
     static unsigned long lastUpdate = 0;
     unsigned long now = millis();
     
-    if (now - lastUpdate < 33) { // ~30 FPS
+    if (now - lastUpdate < DISPLAY_REFRESH_RATE_MS) { // ~30 FPS
         return;
     }
     lastUpdate = now;

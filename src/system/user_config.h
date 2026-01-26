@@ -1,3 +1,4 @@
+//path: src/system/user_config.h
 #pragma once
 
 // ============ USER CONFIGURATION ============

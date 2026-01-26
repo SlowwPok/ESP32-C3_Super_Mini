@@ -1,6 +1,5 @@
 #include "system/system_state.h"
 #include "system/system_control.h"
-#include "system/time/time_service.h"
 #include "system/time/rtc_service.h"
 #include "system/serial_commands.h"
 #include "controls/controls.h"
