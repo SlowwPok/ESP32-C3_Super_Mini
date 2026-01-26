@@ -60,6 +60,7 @@ void UI_SensorInfoScreen_Render()
             theme.bg
         );
 
+        // cards layout
         cards[0] = { padding, bodyTop + padding, cellW, cellH };
         cards[1] = { padding * 2 + cellW, bodyTop + padding, cellW, cellH };
         cards[2] = { padding, bodyTop + padding * 2 + cellH, cellW, cellH };
@@ -68,9 +69,20 @@ void UI_SensorInfoScreen_Render()
         for (int i = 0; i < 4; i++)
             UI_DrawCard(cards[i]);
 
+        BME280WidgetLayout bmeLayout = {
+            cards[0].x,
+            cards[0].y,
+            cards[0].w,
+            cards[0].h
+        };
+
+        // 🧠 title — ТІЛЬКИ ТУТ
+        BME280Widget_DrawTitle(bmeLayout);
+
         layoutDirty = false;
-        dataDirty   = true; // після layout треба оновити дані
+        dataDirty = true;
     }
+
     if (dataDirty)
     {
         BME280WidgetLayout bmeLayout = {
@@ -80,7 +92,8 @@ void UI_SensorInfoScreen_Render()
             cards[0].h
         };
 
-        BME280Widget_Draw(cachedBME, bmeLayout);
+        // 🔁 тільки значення
+        BME280Widget_DrawValues(cachedBME, bmeLayout);
 
         dataDirty = false;
     }

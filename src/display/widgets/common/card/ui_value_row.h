@@ -3,11 +3,9 @@
 
 struct UIValueRowLayout
 {
-    int x;
-    int y;
-    int w;
-
+    int labelX;
     int valueX;
+    int y;
     int valueW;
 };
 
@@ -16,5 +14,5 @@ void UIValueRow_Draw(
     const char* value,
     const UIValueRowLayout& l,
     uint16_t color,
-    bool force = false
+    bool drawLabel
 );

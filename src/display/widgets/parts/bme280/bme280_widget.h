@@ -9,7 +9,8 @@ struct BME280WidgetLayout
     int h;
 };
 
-void BME280Widget_Draw(
+void BME280Widget_DrawTitle(const BME280WidgetLayout& l);
+void BME280Widget_DrawValues(
     const BME280Data& data,
-    const BME280WidgetLayout& layout
+    const BME280WidgetLayout& l
 );

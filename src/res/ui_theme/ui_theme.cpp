@@ -13,6 +13,7 @@ static UITheme defaultTheme = {
     UI_COLOR_FOOTER_TEXT,
     UI_COLOR_TIME_TEXT,
     UI_COLOR_LINES,
+    UI_COLOR_SENSOR_TITLE,
 
     // fonts
     UIFonts::Ubuntu_Bold_10(), // title font
