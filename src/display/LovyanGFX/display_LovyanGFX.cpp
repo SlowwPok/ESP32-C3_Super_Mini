@@ -208,3 +208,15 @@ uint16_t Display_ColorFromRGB_ForPreview(const RGB& c)
         ((g & 0xFC) << 3) |
         (b >> 3);
 }
+
+int Display_GetTextWidth(
+    const char* text,
+    const lgfx::v1::IFont* font
+)
+{
+    if (!text || !font)
+        return 0;
+
+    lcd.setFont(font);
+    return lcd.textWidth(text);
+}

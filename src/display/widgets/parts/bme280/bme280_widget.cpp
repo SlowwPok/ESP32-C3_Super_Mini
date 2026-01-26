@@ -1,11 +1,18 @@
+//path: src/display/widgets/parts/bme280/bme280_widget.cpp
 #include "bme280_widget.h"
 
 #include "display/LovyanGFX/display_LovyanGFX.h"
 #include "display/widgets/ui_widget.h"
 #include "res/ui_theme/ui_theme.h"
+#include "display/widgets/common/card/ui_value_row.h"
 #include <stdio.h>
 
 static constexpr int CARD_RADIUS = 8;
+
+static float lastTemp = NAN;
+static float lastHum  = NAN;
+static float lastPres = NAN;
+static bool  lastValid = false;
 
 void BME280Widget_Draw(
     const BME280Data& data,
@@ -14,23 +21,21 @@ void BME280Widget_Draw(
 {
     const auto& theme = UI_GetTheme();
 
-    // Card background
-    Display_FillRoundRect(
-    l.x, l.y, l.w, l.h,
-    CARD_RADIUS,
-    theme.bg
-    );
+    // ---- розміри ----
+    int titleH = Display_GetFontHeight(theme.font_body);
+    int rowH   = Display_GetFontHeight(theme.font_small);
 
-    Display_DrawRoundRect(
-        l.x, l.y, l.w, l.h,
-        CARD_RADIUS,
-        theme.lines_color
-    );
+    int contentH =
+        titleH + 4 +
+        rowH * 3 + 2 * 2; // 3 рядки + відступи
 
+    // ---- центрування В КАРТЦІ ----
     int cx = l.x + UI_Padding();
-    int cy = l.y + UI_Padding();
+    int cy = l.y + (l.h - contentH) / 2;
 
-    // Title
+    int rowW = l.w - UI_Padding() * 2;
+
+    // ---- title ----
     Display_DrawTextEx(
         cx,
         cy,
@@ -42,63 +47,75 @@ void BME280Widget_Draw(
         0
     );
 
-    cy += Display_GetFontHeight(theme.font_body) + 4;
+    cy += titleH + 4;
 
-    char buf[32];
+    // ---- рядки ----
+    char buf[16];
 
     if (!data.valid)
     {
-        Display_DrawTextEx(
-            cx,
-            cy,
+        UIValueRow_Draw(
+            "",
             "No data",
+            {
+                cx,
+                cy,
+                rowW,
+                cx,          // valueX
+                rowW         // valueW
+            },
             theme.text_dim,
-            theme.bg,
-            false,
-            theme.font_small,
-            0
+            true
         );
         return;
     }
 
-    // Temperature
-    snprintf(buf, sizeof(buf), "Temp: %.1f C", data.temperature);
-    Display_DrawTextEx(
-        cx,
-        cy,
+    snprintf(buf, sizeof(buf), "%.1f C", data.temperature);
+    UIValueRow_Draw(
+        "Temp",
         buf,
+        {
+            cx,
+            cy,
+            rowW,
+            cx,
+            rowW
+        },
         theme.text,
-        theme.bg,
-        false,
-        theme.font_small,
-        0
+        true
     );
-    cy += Display_GetFontHeight(theme.font_small) + 2;
 
-    // Humidity
-    snprintf(buf, sizeof(buf), "Hum:  %.1f %%", data.humidity);
-    Display_DrawTextEx(
-        cx,
-        cy,
+    cy += rowH + 2;
+
+    snprintf(buf, sizeof(buf), "%.1f %%", data.humidity);
+    UIValueRow_Draw(
+        "Hum",
         buf,
+        {
+            cx,
+            cy,
+            rowW,
+            cx,
+            rowW
+        },
         theme.text,
-        theme.bg,
-        false,
-        theme.font_small,
-        0
+        true
     );
-    cy += Display_GetFontHeight(theme.font_small) + 2;
 
-    // Pressure
-    snprintf(buf, sizeof(buf), "Pres: %.0f hPa", data.pressure);
-    Display_DrawTextEx(
-        cx,
-        cy,
+    cy += rowH + 2;
+
+    snprintf(buf, sizeof(buf), "%.0f hPa", data.pressure);
+    UIValueRow_Draw(
+        "Pres",
         buf,
+        {
+            cx,
+            cy,
+            rowW,
+            cx,
+            rowW
+        },
         theme.text,
-        theme.bg,
-        false,
-        theme.font_small,
-        0
+        true
     );
 }

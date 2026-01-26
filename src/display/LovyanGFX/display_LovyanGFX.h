@@ -48,6 +48,11 @@ void Display_DrawTextEx(
   uint8_t size
 );
 
+int Display_GetTextWidth(
+    const char* text,
+    const lgfx::v1::IFont* font
+);
+
 void Display_FillRoundRect(
     int16_t x,
     int16_t y,
