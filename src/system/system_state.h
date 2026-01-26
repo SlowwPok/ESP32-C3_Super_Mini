@@ -20,6 +20,7 @@ enum ScreenId
 struct SystemState
 {
     bool powerOn;
+    bool displayOn;
     uint8_t currentMode;
 
     ScreenId activeScreen;

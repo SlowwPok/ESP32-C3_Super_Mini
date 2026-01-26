@@ -15,6 +15,7 @@ struct ButtonFSM
     unsigned long lastDebounce;
     unsigned long pressStart;
     bool longDone;
+    bool wasPressed;
 };
 
 static ButtonFSM btnPower;
@@ -22,13 +23,16 @@ static ButtonFSM btnUI;
 
 void Controls_Init()
 {
+    delay(50);
+    
     btnPower = {
         .pin = BTN_POWER_PIN,
         .lastReading = false,
         .stableState = false,
         .lastDebounce = 0,
         .pressStart = 0,
-        .longDone = false
+        .longDone = false,
+        .wasPressed = false
     };
 
     pinMode(btnPower.pin, INPUT_PULLUP);
@@ -86,10 +90,15 @@ static ButtonEvent Button_Update(ButtonFSM& b, ButtonId id)
             {
                 b.pressStart = now;
                 b.longDone = false;
+                b.wasPressed = true;
             }
-            else if (!b.longDone)
+            else
             {
-                ev.type = BTN_EVENT_TAP;
+                if (b.wasPressed && !b.longDone)
+                    ev.type = BTN_EVENT_TAP;
+
+                b.wasPressed = false;
+                b.longDone = false;
             }
         }
     }

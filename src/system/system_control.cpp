@@ -6,6 +6,7 @@ void System_TogglePower()
 {
     SystemState& s = System_GetMutable();
     s.powerOn = !s.powerOn;
+    s.displayOn = s.powerOn;   // ← ЯВНО
 }
 
 void System_NextMode()

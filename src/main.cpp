@@ -43,6 +43,7 @@ void setup()
 
     Serial.println("Display_Init");
     Display_Init();
+    Display_Wakeup();
 
         // Тестовий вивід на дисплей
     Display_Clear(UI_COLOR_BG);
@@ -74,6 +75,19 @@ void loop()
     }
 
     SystemState& state = System_GetMutable();
+
+    static bool lastDisplay = true;
+
+    if (state.displayOn != lastDisplay)
+    {
+        if (!state.displayOn)
+            Display_Sleep();
+        else
+            Display_Wakeup();
+
+        lastDisplay = state.displayOn;
+    }
+
     BME280_Update(state);
     RTC_Update(state);
     RGB_Runtime_Update(state);

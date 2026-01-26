@@ -17,8 +17,27 @@ void UI_SensorInfoScreen_Init()
 
 void UI_SensorInfoScreen_Update(const SystemState& state)
 {
-    cachedState = state;
-    dirty = true;
+    static float lastT = 0;
+    static float lastH = 0;
+    static float lastP = 0;
+    static bool  lastValid = false;
+    static bool  first = true;
+
+    if (first ||
+        state.bme.valid       != lastValid ||
+        state.bme.temperature != lastT ||
+        state.bme.humidity    != lastH ||
+        state.bme.pressure    != lastP)
+    {
+        cachedState = state;
+        dirty = true;
+
+        lastValid = state.bme.valid;
+        lastT = state.bme.temperature;
+        lastH = state.bme.humidity;
+        lastP = state.bme.pressure;
+        first = false;
+    }
 }
 
 void UI_SensorInfoScreen_Render()

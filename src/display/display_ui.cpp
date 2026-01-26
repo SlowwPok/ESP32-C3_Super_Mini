@@ -13,16 +13,16 @@
 
 static void handlePowerAndSleep(const SystemState& state)
 {
-    static bool lastPower = true;
+    static bool lastDisplay = true;
 
-    if (state.powerOn != lastPower)
+    if (state.displayOn != lastDisplay)
     {
-        if (!state.powerOn)
+        if (!state.displayOn)
             Display_Sleep();
         else
             Display_Wakeup();
 
-        lastPower = state.powerOn;
+        lastDisplay = state.displayOn;
     }
 }
 
@@ -39,9 +39,9 @@ void DisplayUI_Render(const SystemState& state)
 
     static ScreenId lastScreen = SCREEN_RGB;
 
-    handlePowerAndSleep(state);
-    if (!state.powerOn)
-        return;
+    // handlePowerAndSleep(state);
+    // if (!state.displayOn)
+    //     return;
 
     if (state.activeScreen != lastScreen)
     {
