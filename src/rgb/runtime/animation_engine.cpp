@@ -248,7 +248,9 @@ void Animation_Update(AnimationState& s, const AnimationParams& p)
 {
     unsigned long now = millis();
 
-    float dt = (now - s.lastFrameTime) * 0.001f;
+    unsigned long elapsed = now - s.lastFrameTime;
+    float dt = elapsed * 0.001f;
+    
     s.lastFrameTime = now;
 
     // 1️⃣ Фаза — завжди

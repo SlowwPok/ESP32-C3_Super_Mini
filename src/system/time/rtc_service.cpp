@@ -11,7 +11,6 @@ void RTC_Init()
     Wire.begin(PIN_I2C_SDA, PIN_I2C_SCL);
     rtcOk = rtc.begin();
 
-    Serial.begin(115200);
     Serial.println("RTC begin: ");
     Serial.println(rtcOk ? "OK" : "FAIL");
 
@@ -24,27 +23,25 @@ void RTC_Init()
 
     if (!running)
     {
-        Serial.println("RTC was STOPPED - setting compile time with offset...");
+        // ЗМІНЕНО ↓
+        Serial.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+        Serial.println("⚠️  RTC NOT RUNNING!");
+        Serial.println("Please set time manually:");
+        Serial.println("TIME YYYY MM DD HH MM SS");
+        Serial.println("Example: TIME 2026 01 26 14 30 00");
+        Serial.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
         
-        // ✅ Додати компенсацію ~60 секунд
-        DateTime compileTime = DateTime(F(__DATE__), F(__TIME__));
-        
-        // Додаємо 60 секунд до часу компіляції
-        DateTime adjustedTime = DateTime(compileTime.unixtime() + 30);
-        
-        rtc.adjust(adjustedTime);
-        
-        Serial.println("RTC time set with +60s offset!");
+        // НЕ встановлюємо час автоматично!
+        // Користувач сам встановить через Serial
     }
     else
     {
-        Serial.println("RTC is already running - keeping current time");
+        Serial.println("RTC is already running");
+        DateTime now = rtc.now();
+        Serial.printf("Current RTC time: %04d/%02d/%02d %02d:%02d:%02d\n",
+                      now.year(), now.month(), now.day(),
+                      now.hour(), now.minute(), now.second());
     }
-    
-    DateTime now = rtc.now();
-    Serial.printf("Current RTC time: %04d/%02d/%02d %02d:%02d:%02d\n",
-                  now.year(), now.month(), now.day(),
-                  now.hour(), now.minute(), now.second());
 }
 
 bool RTC_IsOk()

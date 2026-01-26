@@ -73,7 +73,7 @@ void TimeWidget_Draw(int xRight, int y, int h)
 
     const auto& theme = UI_GetTheme();
 
-    char buf[48];
+    char buf[40]; // було 48
 
     if (!timeValid)
 {

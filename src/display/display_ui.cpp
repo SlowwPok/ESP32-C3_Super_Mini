@@ -26,6 +26,15 @@ static void handlePowerAndSleep(const SystemState& state)
 
 void DisplayUI_Render(const SystemState& state)
 {
+    // Оновлюй дисплей максимум 30 FPS
+    static unsigned long lastUpdate = 0;
+    unsigned long now = millis();
+    
+    if (now - lastUpdate < 33) { // ~30 FPS
+        return;
+    }
+    lastUpdate = now;
+
     static ScreenId lastScreen = SCREEN_RGB;
 
     handlePowerAndSleep(state);
