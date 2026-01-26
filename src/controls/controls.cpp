@@ -25,13 +25,16 @@ void Controls_Init()
     delay(50);
 
     btnPower.pin = BTN_POWER_PIN;
-    btnPower.lastReading = false;
-    btnPower.stable = false;
-    btnPower.lastDebounce = 0;
-    btnPower.pressStart = 0;
-    btnPower.holdFired = false;
+    pinMode(btnPower.pin, INPUT);   // ⬅️ БЕЗ PULLUP
+    delay(5);
 
-    pinMode(btnPower.pin, INPUT_PULLUP);
+    bool initial = digitalRead(btnPower.pin); // HIGH = pressed
+
+    btnPower.lastReading  = initial;
+    btnPower.stable       = initial;
+    btnPower.lastDebounce = millis();
+    btnPower.pressStart   = initial ? millis() : 0;
+    btnPower.holdFired    = false;
 
     // ---- UI BUTTON (ЗАГЛУШКА) ----
     btnUI.pin = 0xFF;
@@ -66,14 +69,14 @@ static ButtonEvent Button_Update(ButtonFSM& b, ButtonId id)
     if (b.pin == 0xFF)
         return { id, BTN_EVENT_NONE };
 
-    bool reading = !digitalRead(b.pin);
+    bool reading = digitalRead(b.pin);  // ⬅️ БЕЗ !
     uint32_t now = millis();
     ButtonEvent ev = { id, BTN_EVENT_NONE };
 
     if (reading != b.lastReading)
         b.lastDebounce = now;
 
-    if ((now - b.lastDebounce) > DEBOUNCE_DELAY)
+    if (now - b.lastDebounce > DEBOUNCE_DELAY)
     {
         if (reading != b.stable)
         {
@@ -111,25 +114,40 @@ ControlEvent Controls_Update()
     if (!ready)
     {
         if (startMs == 0)
+        {
             startMs = millis();
+            Serial.println("Controls: Warming up...");
+        }
 
-        if (millis() - startMs < 1500)
+        if (millis() - startMs < 500)
             return CTRL_NONE;
 
         ready = true;
+        Serial.println("Controls: READY");
     }
 
-    // 1️⃣ POWER button
+    // Обробка кнопки Power
     ButtonEvent ev = Button_Update(btnPower, BTN_ID_POWER);
     if (ev.type != BTN_EVENT_NONE)
     {
+        Serial.printf(
+            "[BTN EVT] type=%s millis=%lu\n",
+            ev.type == BTN_EVENT_TAP ? "TAP" : "HOLD",
+            millis()
+        );
+
         if (ev.type == BTN_EVENT_TAP)
+        {
             return CTRL_BTN_POWER_TAP;
+        }
+
         if (ev.type == BTN_EVENT_HOLD)
+        {
             return CTRL_BTN_POWER_HOLD;
+        }
     }
 
-    // 2️⃣ UI button (поки завжди NONE)
+    // Обробка кнопки UI (якщо підключена)
     ev = Button_Update(btnUI, BTN_ID_UI);
     if (ev.type != BTN_EVENT_NONE)
     {

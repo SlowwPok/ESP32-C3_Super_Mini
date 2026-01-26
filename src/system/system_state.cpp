@@ -6,12 +6,14 @@ static SystemState state;
 
 void System_Init()
 {
+    memset(&state, 0, sizeof(state));
+
     Wire.begin(PIN_I2C_SDA, PIN_I2C_SCL);
-    state.powerOn   = true;
+
+    state.powerOn = true;
     state.displayOn = true;
     state.currentMode = 0;
     state.activeScreen = SCREEN_SENSOR_INFO;
-    state.uptimeSec = 0;
 }
 
 const SystemState& System_Get()

@@ -12,40 +12,42 @@
 
 void setup()
 {
-    SerialCommands_Init();
+    SerialCommands_Init();  // ✅ 1. Serial (має бути першим!)
 
     Serial.println("BOOT");
     Serial.println("System_Init");
-    System_Init();
+    System_Init();  // ✅ 2. I2C ініціалізація
 
     Serial.println("Controls_Init");
-    Controls_Init();
-
-    Serial.println("RTC_Init");
-    RTC_Init();
-        if (RTC_IsOk()) {
-            Serial.println("✓ RTC OK");
-        } else {
-            Serial.println("❌ RTC FAILED - time will not be accurate!");
-        }
-    
-    Serial.println("BME280_Init");
-    BME280_Init();
-
-    SystemState& state = System_GetMutable();
-    RTC_Update(state);
-
-    Serial.println("RGB_Runtime_Init");
-    RGB_Runtime_Init();
-
-    Serial.println("RGB_strip_Init");
-    RGB_strip_Init();
+    Controls_Init();  // ✅ 3. Кнопки (НЕ залежать від I2C)
 
     Serial.println("Display_Init");
-    Display_Init();
+    Display_Init();  // ✅ 4. Дисплей (SPI, НЕ I2C)
     Display_Wakeup();
 
-        // Тестовий вивід на дисплей
+    Serial.println("RGB_Runtime_Init");
+    RGB_Runtime_Init();  // ✅ 5. RGB логіка
+
+    Serial.println("RGB_strip_Init");
+    RGB_strip_Init();  // ✅ 6. RGB ленти
+
+    // ⚠️ I2C пристрої ОСТАННІМИ (можуть затримувати)
+    Serial.println("RTC_Init");
+    RTC_Init();
+    if (RTC_IsOk()) {
+        Serial.println("✓ RTC OK");
+    } else {
+        Serial.println("❌ RTC FAILED");
+    }
+    
+    Serial.println("BME280_Init");
+    BME280_Init();  // ✅ 7. BME280 останнім (може затримувати)
+
+    SystemState& state = System_GetMutable();
+    BME280_Update(state);
+    RTC_Update(state);
+
+    // ✅ Показуємо стартовий екран
     Display_Clear(UI_COLOR_BG);
     Display_DrawText(10, 10, 1, "System Ready", UI_COLOR_TEXT);
     delay(1000);
@@ -53,9 +55,8 @@ void setup()
     Serial.println("SETUP DONE");
     Serial.println("");
 
-    // Показуємо довідку
     SerialCommands_PrintHelp();
-}   
+} 
 
 void loop()
 {
@@ -63,16 +64,20 @@ void loop()
 
     ControlEvent ev = Controls_Update();
 
+    // ✅ Обробка кнопок
     switch (ev)
     {
         case CTRL_BTN_POWER_TAP:
+        {
+            Serial.println("BTN: TAP -> NextMode");
             System_NextMode();
             break;
+        }
 
         case CTRL_BTN_POWER_HOLD:
         {
-            SystemState& s = System_GetMutable();
-            s.displayOn = !s.displayOn;
+            Serial.println("BTN: HOLD -> TogglePower");
+            System_TogglePower();
             break;
         }
 
@@ -82,18 +87,35 @@ void loop()
 
     SystemState& state = System_GetMutable();
 
-    static bool lastDisplay = true;
-
-    if (state.displayOn != lastDisplay)
+    // ✅ Синхронізація екрану з powerOn
+    static bool lastPowerOn = true;
+    
+    if (state.powerOn != lastPowerOn)
     {
-        if (!state.displayOn)
-            Display_Sleep();
-        else
-            Display_Wakeup();
+        Serial.printf(
+            "[POWER CHANGE] %d -> %d (millis=%lu)\n",
+            lastPowerOn,
+            state.powerOn,
+            millis()
+        );
 
-        lastDisplay = state.displayOn;
+        lastPowerOn = state.powerOn;
+
+        if (!state.powerOn)
+        {
+            Serial.println("POWER OFF -> Sleep Display");
+            Display_Sleep();
+            state.displayOn = false;
+        }
+        else
+        {
+            Serial.println("POWER ON -> Wake Display");
+            Display_Wakeup();
+            state.displayOn = true;
+        }
     }
 
+    // ✅ Оновлення компонентів
     BME280_Update(state);
     RTC_Update(state);
     RGB_Runtime_Update(state);

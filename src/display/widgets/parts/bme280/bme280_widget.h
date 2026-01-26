@@ -12,4 +12,4 @@ struct BME280WidgetLayout
 void BME280Widget_Draw(
     const BME280Data& data,
     const BME280WidgetLayout& layout
-)
+);

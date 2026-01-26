@@ -12,6 +12,8 @@ static BME280Data cachedBME;
 
 void UI_SensorInfoScreen_Init()
 {
+    cachedBME = {};
+    cachedBME.valid = false;
     dirty = true;
 }
 

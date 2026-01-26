@@ -5,6 +5,14 @@
 void System_TogglePower()
 {
     SystemState& s = System_GetMutable();
+
+    Serial.printf(
+        "[System_TogglePower] %d -> %d (millis=%lu)\n",
+        s.powerOn,
+        !s.powerOn,
+        millis()
+    );
+
     s.powerOn = !s.powerOn;
 }
 

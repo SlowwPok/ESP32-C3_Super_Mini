@@ -7,16 +7,25 @@ static bool bmeOk = false;
 
 void BME280_Init()
 {
-    // 0x76 — найчастіше, 0x77 — другий варіант
+    Serial.println("BME280_Init: Starting...");
+    
+    // ✅ Спроба 1: адреса 0x76
+    unsigned long start = millis();
     bmeOk = bme.begin(0x76);
-
-    if (!bmeOk)
+    
+    if (!bmeOk && (millis() - start < 1000))  // ✅ Таймаут 1 секунда
     {
+        Serial.println("BME280: Trying 0x77...");
         bmeOk = bme.begin(0x77);
     }
 
     Serial.print("BME280: ");
     Serial.println(bmeOk ? "OK" : "NOT FOUND");
+    
+    if (!bmeOk)
+    {
+        Serial.println("⚠️  BME280 not detected - sensor data will be unavailable");
+    }
 }
 
 bool BME280_IsOk()
@@ -27,11 +36,14 @@ bool BME280_IsOk()
 void BME280_Update(SystemState& state)
 {
     static uint32_t lastRead = 0;
+    static bool firstRead = true;
+
     uint32_t now = millis();
 
-    if (now - lastRead < 1000)
+    if (!firstRead && now - lastRead < 1000)
         return;
 
+    firstRead = false;
     lastRead = now;
 
     if (!bmeOk)
@@ -40,8 +52,8 @@ void BME280_Update(SystemState& state)
         return;
     }
 
-    state.bme.temperature = bme.readTemperature();          // °C
-    state.bme.humidity    = bme.readHumidity();             // %
-    state.bme.pressure    = bme.readPressure() / 100.0f;    // hPa
+    state.bme.temperature = bme.readTemperature();
+    state.bme.humidity    = bme.readHumidity();
+    state.bme.pressure    = bme.readPressure() / 100.0f;
     state.bme.valid       = true;
 }
