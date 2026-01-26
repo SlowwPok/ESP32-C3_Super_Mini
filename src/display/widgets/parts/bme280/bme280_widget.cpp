@@ -31,7 +31,8 @@ void BME280Widget_Draw(
 
     // ---- центрування В КАРТЦІ ----
     int cx = l.x + UI_Padding();
-    int cy = l.y + (l.h - contentH) / 2;
+    int contentTop = l.y + (l.h - contentH) / 2;
+    int cy = contentTop;
 
     int rowW = l.w - UI_Padding() * 2;
 

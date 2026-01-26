@@ -15,6 +15,15 @@ void UIValueRow_Draw(
     const auto& theme = UI_GetTheme();
     int h = Display_GetFontHeight(theme.font_small);
 
+    // чистимо ВСЮ строку один раз
+    Display_FillRect(
+        l.x,
+        l.y,
+        l.w,
+        h,
+        theme.bg
+    );
+
     if (drawLabel)
     {
         Display_DrawTextEx(
@@ -29,19 +38,10 @@ void UIValueRow_Draw(
         );
     }
 
-    // чистимо ТІЛЬКИ value
-    Display_FillRect(
-        l.valueX,
-        l.y,
-        l.valueW,
-        h,
-        theme.bg
-    );
-
     int valueWidth = Display_GetTextWidth(value, theme.font_small);
 
     Display_DrawTextEx(
-        l.valueX + l.valueW - valueWidth,
+        l.x + l.w - valueWidth,
         l.y,
         value,
         color,
