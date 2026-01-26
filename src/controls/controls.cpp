@@ -31,7 +31,7 @@ void Controls_Init()
         .longDone = false
     };
 
-    pinMode(btnPower.pin, INPUT);
+    pinMode(btnPower.pin, INPUT_PULLUP);
 
     // ---- UI BUTTON (ЗАГЛУШКА) ----
     btnUI = {
@@ -68,7 +68,7 @@ static ButtonEvent Button_Update(ButtonFSM& b, ButtonId id)
     if (b.pin == 0xFF)
     return { id, BTN_EVENT_NONE };
 
-    bool reading = digitalRead(b.pin);
+    bool reading = !digitalRead(b.pin);
     unsigned long now = millis();
 
     ButtonEvent ev = { id, BTN_EVENT_NONE };

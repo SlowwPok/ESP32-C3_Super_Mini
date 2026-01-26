@@ -67,6 +67,30 @@ void Display_FillRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color
   lcd.fillRect(x, y, w, h, color);
 }
 
+void Display_FillRoundRect(
+    int16_t x,
+    int16_t y,
+    int16_t w,
+    int16_t h,
+    int16_t radius,
+    uint16_t color
+)
+{
+    lcd.fillRoundRect(x, y, w, h, radius, color);
+}
+
+void Display_DrawRoundRect(
+    int16_t x,
+    int16_t y,
+    int16_t w,
+    int16_t h,
+    int16_t radius,
+    uint16_t color
+)
+{
+    lcd.drawRoundRect(x, y, w, h, radius, color);
+}
+
 int Display_GetFontHeight(const lgfx::v1::IFont* font)
 {
     lcd.setFont(font ? font : &lgfx::fonts::Font0);

@@ -15,8 +15,17 @@ void BME280Widget_Draw(
     const auto& theme = UI_GetTheme();
 
     // Card background
-    Display_FillRect(l.x, l.y, l.w, l.h, theme.bg);
-    Display_DrawRect(l.x, l.y, l.w, l.h, theme.lines_color);
+    Display_FillRoundRect(
+    l.x, l.y, l.w, l.h,
+    CARD_RADIUS,
+    theme.bg
+    );
+
+    Display_DrawRoundRect(
+        l.x, l.y, l.w, l.h,
+        CARD_RADIUS,
+        theme.lines_color
+    );
 
     int cx = l.x + UI_Padding();
     int cy = l.y + UI_Padding();

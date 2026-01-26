@@ -3,6 +3,7 @@
 #include "system/time/rtc_service.h"
 #include "system/serial_commands.h"
 #include "controls/controls.h"
+#include "bme280/bme280_service.h"
 #include "rgb/runtime/rgb_runtime.h"
 #include "rgb/strip/rgb_strip.h"
 #include "display/display_ui.h"
@@ -27,6 +28,9 @@ void setup()
         } else {
             Serial.println("❌ RTC FAILED - time will not be accurate!");
         }
+    
+    Serial.println("BME280_Init");
+    BME280_Init();
 
     SystemState& state = System_GetMutable();
     RTC_Update(state);
@@ -70,12 +74,7 @@ void loop()
     }
 
     SystemState& state = System_GetMutable();
-
-    state.bme.temperature = 23.4f;
-    state.bme.humidity    = 56.2f;
-    state.bme.pressure    = 1013.0f;
-    state.bme.valid       = true;
-
+    BME280_Update(state);
     RTC_Update(state);
     RGB_Runtime_Update(state);
     DisplayUI_Render(state);

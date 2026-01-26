@@ -48,6 +48,24 @@ void Display_DrawTextEx(
   uint8_t size
 );
 
+void Display_FillRoundRect(
+    int16_t x,
+    int16_t y,
+    int16_t w,
+    int16_t h,
+    int16_t radius,
+    uint16_t color
+);
+
+void Display_DrawRoundRect(
+    int16_t x,
+    int16_t y,
+    int16_t w,
+    int16_t h,
+    int16_t radius,
+    uint16_t color
+);
+
 // ===== POWER =====
 void Display_Sleep();
 void Display_Wakeup();

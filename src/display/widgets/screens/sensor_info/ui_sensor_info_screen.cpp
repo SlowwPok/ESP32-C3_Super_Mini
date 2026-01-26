@@ -17,8 +17,6 @@ void UI_SensorInfoScreen_Init()
 
 void UI_SensorInfoScreen_Update(const SystemState& state)
 {
-    // для початку — завжди dirty
-    // пізніше оптимізуємо
     cachedState = state;
     dirty = true;
 }
@@ -46,14 +44,17 @@ void UI_SensorInfoScreen_Render()
     // ===== Layout =====
     int padding = UI_Padding();
 
-    int cardH = bodyH / 4;
-    int cardW = Display_Width() / 2;
+    int bodyW = Display_Width();
 
+    int cellW = (bodyW - padding * 3) / 2;
+    int cellH = (bodyH - padding * 3) / 2;
+
+    // TOP-LEFT card
     BME280WidgetLayout layout = {
         .x = padding,
         .y = bodyTop + padding,
-        .w = cardW,
-        .h = cardH
+        .w = cellW,
+        .h = cellH
     };
 
     BME280Widget_Draw(cachedState, layout);
