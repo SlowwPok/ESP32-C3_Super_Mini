@@ -56,13 +56,6 @@ void loop()
 {
     SerialCommands_Process();
 
-    SystemState& state = System_GetMutable();
-
-    state.bme.temperature = 23.4f;
-    state.bme.humidity    = 56.2f;
-    state.bme.pressure    = 1013.0f;
-    state.bme.valid       = true;
-
     ControlEvent ev = Controls_Update();
     switch (ev)
     {
@@ -77,6 +70,12 @@ void loop()
     }
 
     SystemState& state = System_GetMutable();
+
+    state.bme.temperature = 23.4f;
+    state.bme.humidity    = 56.2f;
+    state.bme.pressure    = 1013.0f;
+    state.bme.valid       = true;
+
     RTC_Update(state);
     RGB_Runtime_Update(state);
     DisplayUI_Render(state);

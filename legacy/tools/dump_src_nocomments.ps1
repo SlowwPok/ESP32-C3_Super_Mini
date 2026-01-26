@@ -68,8 +68,12 @@ Write-Host "Files found:" $files.Count
 foreach ($file in $files) {
 
     Add-Content -LiteralPath $outputFile "===== $($file.FullName) ====="
+    $code = Get-Content -LiteralPath $file.FullName -Raw -ErrorAction SilentlyContinue
 
-    $code = Get-Content -LiteralPath $file.FullName -Raw
+    if ([string]::IsNullOrWhiteSpace($code)) {
+        Add-Content -LiteralPath $outputFile ""
+        continue
+    }
 
     # remove /* ... */ comments
     $code = [regex]::Replace($code, '/\*.*?\*/', '', 'Singleline')
