@@ -8,7 +8,7 @@
 #include "display/widgets/parts/bme280/bme280_widget.h"
 
 static bool dirty = true;
-static SystemState cachedState;
+static BME280Data cachedBME;
 
 void UI_SensorInfoScreen_Init()
 {
@@ -17,25 +17,16 @@ void UI_SensorInfoScreen_Init()
 
 void UI_SensorInfoScreen_Update(const SystemState& state)
 {
-    static float lastT = 0;
-    static float lastH = 0;
-    static float lastP = 0;
-    static bool  lastValid = false;
-    static bool  first = true;
+    static bool first = true;
 
     if (first ||
-        state.bme.valid       != lastValid ||
-        state.bme.temperature != lastT ||
-        state.bme.humidity    != lastH ||
-        state.bme.pressure    != lastP)
+        state.bme.valid       != cachedBME.valid ||
+        state.bme.temperature != cachedBME.temperature ||
+        state.bme.humidity    != cachedBME.humidity ||
+        state.bme.pressure    != cachedBME.pressure)
     {
-        cachedState = state;
+        cachedBME = state.bme;
         dirty = true;
-
-        lastValid = state.bme.valid;
-        lastT = state.bme.temperature;
-        lastH = state.bme.humidity;
-        lastP = state.bme.pressure;
         first = false;
     }
 }
@@ -50,15 +41,6 @@ void UI_SensorInfoScreen_Render()
     int bodyTop    = UI_BodyTop();
     int bodyBottom = UI_BodyBottom();
     int bodyH      = bodyBottom - bodyTop;
-
-    // очистити body
-    Display_FillRect(
-        0,
-        bodyTop,
-        Display_Width(),
-        bodyH,
-        theme.bg
-    );
 
     // ===== Layout =====
     int padding = UI_Padding();
@@ -76,7 +58,7 @@ void UI_SensorInfoScreen_Render()
         .h = cellH
     };
 
-    BME280Widget_Draw(cachedState, layout);
+    BME280Widget_Draw(cachedBME, layout);
 
     dirty = false;
 }

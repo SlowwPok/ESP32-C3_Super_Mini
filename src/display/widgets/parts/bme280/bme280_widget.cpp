@@ -8,7 +8,7 @@
 static constexpr int CARD_RADIUS = 8;
 
 void BME280Widget_Draw(
-    const SystemState& state,
+    const BME280Data& data,
     const BME280WidgetLayout& l
 )
 {
@@ -46,7 +46,7 @@ void BME280Widget_Draw(
 
     char buf[32];
 
-    if (!state.bme.valid)
+    if (!data.valid)
     {
         Display_DrawTextEx(
             cx,
@@ -62,7 +62,7 @@ void BME280Widget_Draw(
     }
 
     // Temperature
-    snprintf(buf, sizeof(buf), "Temp: %.1f C", state.bme.temperature);
+    snprintf(buf, sizeof(buf), "Temp: %.1f C", data.temperature);
     Display_DrawTextEx(
         cx,
         cy,
@@ -76,7 +76,7 @@ void BME280Widget_Draw(
     cy += Display_GetFontHeight(theme.font_small) + 2;
 
     // Humidity
-    snprintf(buf, sizeof(buf), "Hum:  %.1f %%", state.bme.humidity);
+    snprintf(buf, sizeof(buf), "Hum:  %.1f %%", data.humidity);
     Display_DrawTextEx(
         cx,
         cy,
@@ -90,7 +90,7 @@ void BME280Widget_Draw(
     cy += Display_GetFontHeight(theme.font_small) + 2;
 
     // Pressure
-    snprintf(buf, sizeof(buf), "Pres: %.0f hPa", state.bme.pressure);
+    snprintf(buf, sizeof(buf), "Pres: %.0f hPa", data.pressure);
     Display_DrawTextEx(
         cx,
         cy,

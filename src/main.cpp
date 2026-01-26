@@ -62,14 +62,20 @@ void loop()
     SerialCommands_Process();
 
     ControlEvent ev = Controls_Update();
+
     switch (ev)
     {
-        case CTRL_BTN_POWER_HOLD:
-            System_TogglePower();
-            break;
         case CTRL_BTN_POWER_TAP:
             System_NextMode();
             break;
+
+        case CTRL_BTN_POWER_HOLD:
+        {
+            SystemState& s = System_GetMutable();
+            s.displayOn = !s.displayOn;
+            break;
+        }
+
         default:
             break;
     }

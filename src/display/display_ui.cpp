@@ -11,23 +11,11 @@
 #include "res/ui_color_palette.h"
 #include "system/user_config.h"
 
-static void handlePowerAndSleep(const SystemState& state)
-{
-    static bool lastDisplay = true;
-
-    if (state.displayOn != lastDisplay)
-    {
-        if (!state.displayOn)
-            Display_Sleep();
-        else
-            Display_Wakeup();
-
-        lastDisplay = state.displayOn;
-    }
-}
-
 void DisplayUI_Render(const SystemState& state)
 {
+    if (!state.displayOn)
+    return;
+    
     // Оновлюй дисплей максимум 30 FPS
     static unsigned long lastUpdate = 0;
     unsigned long now = millis();

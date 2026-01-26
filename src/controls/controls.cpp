@@ -11,11 +11,10 @@ struct ButtonFSM
 {
     uint8_t pin;
     bool lastReading;
-    bool stableState;
-    unsigned long lastDebounce;
-    unsigned long pressStart;
-    bool longDone;
-    bool wasPressed;
+    bool stable;
+    uint32_t lastDebounce;
+    uint32_t pressStart;
+    bool holdFired;
 };
 
 static ButtonFSM btnPower;
@@ -24,28 +23,23 @@ static ButtonFSM btnUI;
 void Controls_Init()
 {
     delay(50);
-    
-    btnPower = {
-        .pin = BTN_POWER_PIN,
-        .lastReading = false,
-        .stableState = false,
-        .lastDebounce = 0,
-        .pressStart = 0,
-        .longDone = false,
-        .wasPressed = false
-    };
+
+    btnPower.pin = BTN_POWER_PIN;
+    btnPower.lastReading = false;
+    btnPower.stable = false;
+    btnPower.lastDebounce = 0;
+    btnPower.pressStart = 0;
+    btnPower.holdFired = false;
 
     pinMode(btnPower.pin, INPUT_PULLUP);
 
     // ---- UI BUTTON (ЗАГЛУШКА) ----
-    btnUI = {
-        .pin = 0xFF,           // ❗ недійсний пін
-        .lastReading = false,
-        .stableState = false,
-        .lastDebounce = 0,
-        .pressStart = 0,
-        .longDone = false
-    };
+    btnUI.pin = 0xFF;
+    btnUI.lastReading = false;
+    btnUI.stable = false;
+    btnUI.lastDebounce = 0;
+    btnUI.pressStart = 0;
+    btnUI.holdFired = false;
 }
 
 enum ButtonId
@@ -70,11 +64,10 @@ struct ButtonEvent
 static ButtonEvent Button_Update(ButtonFSM& b, ButtonId id)
 {
     if (b.pin == 0xFF)
-    return { id, BTN_EVENT_NONE };
+        return { id, BTN_EVENT_NONE };
 
     bool reading = !digitalRead(b.pin);
-    unsigned long now = millis();
-
+    uint32_t now = millis();
     ButtonEvent ev = { id, BTN_EVENT_NONE };
 
     if (reading != b.lastReading)
@@ -82,32 +75,28 @@ static ButtonEvent Button_Update(ButtonFSM& b, ButtonId id)
 
     if ((now - b.lastDebounce) > DEBOUNCE_DELAY)
     {
-        if (reading != b.stableState)
+        if (reading != b.stable)
         {
-            b.stableState = reading;
+            b.stable = reading;
 
-            if (b.stableState)
+            if (b.stable)
             {
                 b.pressStart = now;
-                b.longDone = false;
-                b.wasPressed = true;
+                b.holdFired = false;
             }
             else
             {
-                if (b.wasPressed && !b.longDone)
+                if (!b.holdFired)
                     ev.type = BTN_EVENT_TAP;
-
-                b.wasPressed = false;
-                b.longDone = false;
             }
         }
     }
 
-    if (b.stableState && !b.longDone &&
+    if (b.stable && !b.holdFired &&
         now - b.pressStart >= LONG_PRESS_TIME)
     {
         ev.type = BTN_EVENT_HOLD;
-        b.longDone = true;
+        b.holdFired = true;
     }
 
     b.lastReading = reading;
@@ -116,6 +105,20 @@ static ButtonEvent Button_Update(ButtonFSM& b, ButtonId id)
 
 ControlEvent Controls_Update()
 {
+    static uint32_t startMs = 0;
+    static bool ready = false;
+
+    if (!ready)
+    {
+        if (startMs == 0)
+            startMs = millis();
+
+        if (millis() - startMs < 1500)
+            return CTRL_NONE;
+
+        ready = true;
+    }
+
     // 1️⃣ POWER button
     ButtonEvent ev = Button_Update(btnPower, BTN_ID_POWER);
     if (ev.type != BTN_EVENT_NONE)

@@ -7,6 +7,7 @@
   #include "system/system_pin_setup.h"
  ============================================================
 */
+#define PIN_GPIO_1   1
 #define PIN_GPIO_2   2
 #define PIN_GPIO_3   3
 #define PIN_GPIO_4   4
@@ -22,7 +23,7 @@
 /* =========================
    КНОПКИ
    ========================= */
-#define PIN_BTN_POWER_UI      PIN_GPIO_4    // TTP223: on/off дисплею + on/off RGB + перемикання режимів
+#define PIN_BTN_POWER_UI      PIN_GPIO_1    // TTP223: on/off дисплею + on/off RGB + перемикання режимів
 //#define PIN_BTN_UI            ?    // інша кнопка (поки немає) на перемикання екранів
 
 /* =========================
