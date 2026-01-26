@@ -6,6 +6,7 @@
 #include "display/widgets/ui_widget.h"
 #include "display/widgets/common/header/header_container.h"
 #include "display/widgets/common/footer/footer_container.h"
+#include "display/widgets/screens/sensor_info/ui_sensor_info_screen.h"
 #include "display/widgets/screens/rgb_preview/ui_rgb_screen.h"
 #include "res/ui_color_palette.h"
 #include "system/user_config.h"
@@ -50,6 +51,8 @@ void DisplayUI_Render(const SystemState& state)
 
         if (state.activeScreen == SCREEN_RGB)
             UI_RGBScreen_Init();
+        else if (state.activeScreen == SCREEN_SENSOR_INFO)
+        UI_SensorInfoScreen_Init();
 
         lastScreen = state.activeScreen;
     }
@@ -61,6 +64,11 @@ void DisplayUI_Render(const SystemState& state)
     {
         UI_RGBScreen_Update(state);
         UI_RGBScreen_Render();
+    }
+    else if (state.activeScreen == SCREEN_SENSOR_INFO)
+    {
+        UI_SensorInfoScreen_Update(state);
+        UI_SensorInfoScreen_Render();
     }
 }
 

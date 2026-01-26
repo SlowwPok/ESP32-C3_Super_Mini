@@ -11,8 +11,9 @@
 
 enum ScreenId
 {
-    SCREEN_RGB = 0,   // поточний екран RGB
-    SCREEN_SYSTEM,    // системна інфа (uptime, датчики і т.д.)
+    SCREEN_SENSOR_INFO = 0,
+    SCREEN_RGB,
+    SCREEN_SYSTEM,
     SCREEN_COUNT
 };
 
