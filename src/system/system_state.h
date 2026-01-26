@@ -2,6 +2,7 @@
 #pragma once
 #include <stdint.h>
 #include "system/time/system_datetime.h"
+#include "bme280/bme280_types.h"
 
 /*
   SystemState — ЄДИНЕ МІСЦЕ,
@@ -24,6 +25,8 @@ struct SystemState
     uint32_t uptimeSec;
 
     SystemDateTime time;
+
+    BME280Data bme;
 };
 
 // ініціалізація (один раз в setup)
@@ -38,3 +41,4 @@ SystemState& System_GetMutable();
 // дії над станом
 void System_TogglePower();
 void System_NextMode();
+
